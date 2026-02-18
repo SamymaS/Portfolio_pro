@@ -1,160 +1,208 @@
-/* ===== CURSOR ===== */
-const cursor = document.getElementById('cursor');
-const cursorDot = document.getElementById('cursorDot');
-let mx = 0, my = 0, cx = 0, cy = 0;
-const isMobile = () => window.matchMedia('(pointer: coarse)').matches;
+/* =============================================================
+   MAIN.JS — Portfolio Samy Boudaoud
+   ============================================================= */
 
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  if (cursorDot) { cursorDot.style.left = mx + 'px'; cursorDot.style.top = my + 'px'; }
+/* ---------- UTILS ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
+
+/* ---------- CUSTOM CURSOR (desktop only) ---------- */
+const cursor    = $('#cursor');
+const cursorDot = $('#cursorDot');
+
+if (cursor && !isTouchDevice()) {
+  let mx=0, my=0, cx=0, cy=0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (cursorDot) { cursorDot.style.left = mx+'px'; cursorDot.style.top = my+'px'; }
+  });
+  (function animCursor() {
+    cx += (mx-cx) * 0.12; cy += (my-cy) * 0.12;
+    cursor.style.left = cx+'px'; cursor.style.top = cy+'px';
+    requestAnimationFrame(animCursor);
+  })();
+  $$('a, button, .project-card, .skill-category, .game-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+}
+
+/* ---------- SCROLL PROGRESS BAR ---------- */
+const progressBar = $('#scrollProgress');
+function updateProgress() {
+  if (!progressBar) return;
+  const max = document.body.scrollHeight - window.innerHeight;
+  progressBar.style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+
+/* ---------- THEME TOGGLE ---------- */
+const html      = document.documentElement;
+const themeBtn  = $('#themeToggle');
+let isDark = true;
+themeBtn?.addEventListener('click', () => {
+  isDark = !isDark;
+  html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  themeBtn.textContent = isDark ? '☀' : '🌙';
+  updateNavBg();
 });
-(function animCursor() {
-  cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
-  if (cursor) { cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px'; }
-  requestAnimationFrame(animCursor);
-})();
-document.querySelectorAll('a, button, .project-card, .skill-category, .game-card').forEach(el => {
-  el.addEventListener('mouseenter', () => cursor && cursor.classList.add('hover'));
-  el.addEventListener('mouseleave', () => cursor && cursor.classList.remove('hover'));
-});
 
-/* ===== SCROLL PROGRESS ===== */
-const progressBar = document.getElementById('scrollProgress');
-window.addEventListener('scroll', () => {
-  const h = document.body.scrollHeight - window.innerHeight;
-  if (progressBar) progressBar.style.width = (window.scrollY / h * 100) + '%';
-}, { passive: true });
+/* ---------- NAVBAR SCROLL ---------- */
+const navbar = $('#navbar');
+function updateNavBg() {
+  if (!navbar) return;
+  const scrolled = window.scrollY > 50;
+  navbar.classList.toggle('scrolled', scrolled);
+}
+window.addEventListener('scroll', updateNavBg, { passive: true });
 
-/* ===== THEME TOGGLE ===== */
-const themeBtn = document.getElementById('themeToggle');
-const html = document.documentElement;
-let dark = true;
-themeBtn && themeBtn.addEventListener('click', () => {
-  dark = !dark;
-  html.setAttribute('data-theme', dark ? 'dark' : 'light');
-  themeBtn.textContent = dark ? '☀' : '🌙';
-});
-
-/* ===== HAMBURGER ===== */
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
+/* ---------- HAMBURGER MENU ---------- */
+const hamburger  = $('#hamburger');
+const mobileMenu = $('#mobileMenu');
 let menuOpen = false;
-function toggleMenu(force) {
-  menuOpen = force !== undefined ? force : !menuOpen;
-  hamburger && hamburger.classList.toggle('open', menuOpen);
-  mobileMenu && mobileMenu.classList.toggle('open', menuOpen);
+
+function setMenu(open) {
+  menuOpen = open;
+  hamburger?.classList.toggle('open', menuOpen);
+  mobileMenu?.classList.toggle('open', menuOpen);
   document.body.style.overflow = menuOpen ? 'hidden' : '';
 }
-hamburger && hamburger.addEventListener('click', () => toggleMenu());
-document.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', () => toggleMenu(false)));
 
-/* ===== NAVBAR SCROLL ===== */
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  const s = window.scrollY > 50;
-  if (navbar) navbar.style.background = s
-    ? (dark ? 'rgba(8,11,16,0.97)' : 'rgba(248,250,252,0.98)')
-    : '';
-}, { passive: true });
+hamburger?.addEventListener('click', () => setMenu(!menuOpen));
 
-/* ===== HERO THREE.JS 3D ===== */
-(function() {
-  const canvas = document.getElementById('threeCanvas');
+// Close when tapping a link
+$$('.mob-link').forEach(link => {
+  link.addEventListener('click', () => {
+    setMenu(false);
+    // Smooth scroll
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+  });
+});
+
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    setMenu(false);
+    $('#easterEgg')?.classList.add('hidden');
+  }
+});
+
+/* ---------- THREE.JS 3D HERO ---------- */
+(function initThree() {
+  const canvas = $('#threeCanvas');
   if (!canvas || typeof THREE === 'undefined') return;
+
+  const W = window.innerWidth, H = window.innerHeight;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(60, W/H, 0.1, 1000);
   camera.position.z = 30;
+
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(W, H);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  // Particles
-  const N = isMobile() ? 800 : 2000;
+  // Fewer particles on mobile for performance
+  const N = isTouchDevice() ? 600 : 2000;
   const geo = new THREE.BufferGeometry();
-  const pos = new Float32Array(N * 3);
-  const col = new Float32Array(N * 3);
-  for (let i = 0; i < N; i++) {
-    pos[i*3]   = (Math.random()-0.5)*120;
-    pos[i*3+1] = (Math.random()-0.5)*80;
-    pos[i*3+2] = (Math.random()-0.5)*60;
+  const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+  for (let i=0; i<N; i++) {
+    pos[i*3]   = (Math.random()-.5)*120;
+    pos[i*3+1] = (Math.random()-.5)*80;
+    pos[i*3+2] = (Math.random()-.5)*60;
     const t = Math.random();
-    col[i*3]   = t * 0.48;
-    col[i*3+1] = (1-t) * 0.9;
-    col[i*3+2] = 1;
+    col[i*3] = t*.48; col[i*3+1] = (1-t)*.9; col[i*3+2] = 1;
   }
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  const mat = new THREE.PointsMaterial({ size: 0.15, vertexColors: true, transparent: true, opacity: 0.7 });
+  geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.PointsMaterial({ size:.15, vertexColors: true, transparent: true, opacity:.7 });
   const particles = new THREE.Points(geo, mat);
   scene.add(particles);
 
   // Wireframe shapes
-  const shapes = [];
-  const mats = [
-    new THREE.MeshBasicMaterial({ color: 0x00e5ff, wireframe: true, transparent: true, opacity: 0.14 }),
-    new THREE.MeshBasicMaterial({ color: 0x7c3aed, wireframe: true, transparent: true, opacity: 0.11 }),
+  const shapeMats = [
+    new THREE.MeshBasicMaterial({ color:0x00e5ff, wireframe:true, transparent:true, opacity:.14 }),
+    new THREE.MeshBasicMaterial({ color:0x7c3aed, wireframe:true, transparent:true, opacity:.11 }),
   ];
-  const geos = [new THREE.IcosahedronGeometry(3,1), new THREE.OctahedronGeometry(2.5,0), new THREE.TetrahedronGeometry(2,0)];
-  for (let i = 0; i < 6; i++) {
-    const m = new THREE.Mesh(geos[i%geos.length], mats[i%mats.length]);
-    m.position.set((Math.random()-0.5)*60, (Math.random()-0.5)*40, (Math.random()-0.5)*20-5);
+  const shapeGeos = [new THREE.IcosahedronGeometry(3,1), new THREE.OctahedronGeometry(2.5,0), new THREE.TetrahedronGeometry(2,0)];
+  const shapes = [];
+  const shapeCount = isTouchDevice() ? 3 : 6;
+  for (let i=0; i<shapeCount; i++) {
+    const m = new THREE.Mesh(shapeGeos[i%3], shapeMats[i%2]);
+    m.position.set((Math.random()-.5)*60, (Math.random()-.5)*40, (Math.random()-.5)*20-5);
     m.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
-    shapes.push({ m, rx:(Math.random()-0.5)*0.005, ry:(Math.random()-0.5)*0.005, o:Math.random()*Math.PI*2 });
+    shapes.push({ m, rx:(Math.random()-.5)*.005, ry:(Math.random()-.5)*.005, o:Math.random()*Math.PI*2 });
     scene.add(m);
   }
 
   let tRx=0, tRy=0, cRx=0, cRy=0;
-  window.addEventListener('mousemove', e => {
-    tRy = (e.clientX/window.innerWidth - 0.5) * 0.35;
-    tRx = (e.clientY/window.innerHeight - 0.5) * 0.18;
-  });
+  if (!isTouchDevice()) {
+    window.addEventListener('mousemove', e => {
+      tRy = (e.clientX/window.innerWidth -.5) * .35;
+      tRx = (e.clientY/window.innerHeight-.5) * .18;
+    });
+  }
 
-  let t = 0;
-  (function render() {
+  let elapsed = 0;
+  let lastTime = performance.now();
+  (function render(now) {
     requestAnimationFrame(render);
-    t += 0.016;
-    cRx += (tRx-cRx)*0.05; cRy += (tRy-cRy)*0.05;
-    particles.rotation.x = t*0.015 + cRx*0.5;
-    particles.rotation.y = t*0.02 + cRy*0.5;
-    shapes.forEach(({m,rx,ry,o}) => { m.rotation.x+=rx; m.rotation.y+=ry; m.position.y+=Math.sin(t+o)*0.003; });
+    const dt = Math.min((now - lastTime) / 1000, 0.05);
+    lastTime = now;
+    elapsed += dt;
+
+    cRx += (tRx-cRx)*.05; cRy += (tRy-cRy)*.05;
+    particles.rotation.x = elapsed*.015 + cRx*.5;
+    particles.rotation.y = elapsed*.02  + cRy*.5;
+    shapes.forEach(({m,rx,ry,o}) => {
+      m.rotation.x += rx; m.rotation.y += ry;
+      m.position.y += Math.sin(elapsed+o)*.003;
+    });
     renderer.render(scene, camera);
-  })();
+  })(lastTime);
 
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
-  // Parallax
+
+  // Parallax on scroll (only when hero visible)
   window.addEventListener('scroll', () => {
-    if (window.scrollY < window.innerHeight)
-      canvas.style.transform = `translateY(${window.scrollY * 0.25}px)`;
+    if (window.scrollY < window.innerHeight) {
+      canvas.style.transform = `translateY(${window.scrollY * 0.22}px)`;
+    }
   }, { passive: true });
 })();
 
-/* ===== HERO ENTRANCE ===== */
+/* ---------- HERO ENTRANCE ---------- */
 window.addEventListener('load', () => {
-  setTimeout(() => document.querySelector('#hero')?.classList.add('hero-ready'), 150);
+  setTimeout(() => $('#hero')?.classList.add('hero-ready'), 150);
 });
 
-/* ===== SCROLL REVEAL ===== */
+/* ---------- SCROLL REVEAL ---------- */
 const revealObs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+$$('.reveal').forEach(el => revealObs.observe(el));
 
-/* ===== ACTIVE NAV LINK ===== */
-const navLinks = document.querySelectorAll('.nav-link');
-const sectionObs = new IntersectionObserver(entries => {
+/* ---------- ACTIVE NAV LINK ---------- */
+const navLinks = $$('.nav-link');
+const secObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) navLinks.forEach(l => {
-      l.style.color = l.getAttribute('href') === '#'+e.target.id ? 'var(--accent)' : '';
-    });
+    if (e.isIntersecting) {
+      navLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href') === '#'+e.target.id);
+      });
+    }
   });
-}, { threshold: 0.4 });
-document.querySelectorAll('section[id]').forEach(s => sectionObs.observe(s));
+}, { threshold: 0.35 });
+$$('section[id]').forEach(s => secObs.observe(s));
 
-/* ===== STATS COUNTER ===== */
+/* ---------- STATS COUNTER ---------- */
 const statObs = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (!entry.isIntersecting) return;
@@ -172,72 +220,78 @@ const statObs = new IntersectionObserver(entries => {
     statObs.unobserve(entry.target);
   });
 }, { threshold: 0.5 });
-const statsBar = document.querySelector('.stats-bar');
+const statsBar = $('.stats-bar');
 if (statsBar) statObs.observe(statsBar);
 
-/* ===== PROJECT FILTER ===== */
-document.querySelectorAll('.filter-btn').forEach(btn => {
+/* ---------- PROJECT FILTER ---------- */
+$$('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    $$('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const f = btn.dataset.filter;
-    document.querySelectorAll('.project-card').forEach(card => {
+    $$('.project-card').forEach(card => {
       const show = f === 'all' || card.dataset.cat === f;
       card.classList.toggle('hidden', !show);
-      if (show) card.style.animation = 'cardIn 0.35s ease forwards';
+      if (show) card.style.animation = 'cardIn .35s ease forwards';
     });
   });
 });
-const s2 = document.createElement('style');
-s2.textContent = `
-@keyframes cardIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-`;
-document.head.appendChild(s2);
+const s1 = document.createElement('style');
+s1.textContent = '@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}';
+document.head.appendChild(s1);
 
-/* ===== CONTACT FORM ===== */
-document.getElementById('contactForm')?.addEventListener('submit', e => {
-  e.preventDefault();
-  const btn = e.target.querySelector('button');
-  const orig = btn.textContent;
-  btn.textContent = '✓ Message envoyé !';
-  btn.style.background = '#22c55e';
-  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; e.target.reset(); }, 3000);
-});
-
-/* ===== SMOOTH SCROLL ===== */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
+/* ---------- SMOOTH SCROLL (desktop anchor links) ---------- */
+$$('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
-    e.preventDefault();
-    const t = document.querySelector(a.getAttribute('href'));
-    if (t) t.scrollIntoView({ behavior: 'smooth' });
+    const href = a.getAttribute('href');
+    if (href === '#') return;
+    const target = document.querySelector(href);
+    if (target) {
+      e.preventDefault();
+      setMenu(false);
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 });
 
-/* ===== EASTER EGG TERMINAL ===== */
-const ee = document.getElementById('easterEgg');
-const eeBody = document.getElementById('eeBody');
-const eeInput = document.getElementById('eeInput');
-const eeClose = document.getElementById('eeClose');
-let konamiBuffer = '';
-const trigger = 'sb';
-
-document.addEventListener('keydown', e => {
-  if (document.activeElement === eeInput) return;
-  konamiBuffer = (konamiBuffer + e.key).slice(-trigger.length);
-  if (konamiBuffer === trigger) openTerminal();
+/* ---------- CONTACT FORM ---------- */
+$('#contactForm')?.addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Message envoyé !';
+  btn.style.background = '#22c55e';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; e.target.reset(); }, 3200);
 });
-eeClose?.addEventListener('click', () => ee.classList.add('hidden'));
+
+/* ---------- EASTER EGG TERMINAL ---------- */
+const ee      = $('#easterEgg');
+const eeBody  = $('#eeBody');
+const eeInput = $('#eeInput');
+const eeClose = $('#eeClose');
+
+// Trigger: type "sb" anywhere (not inside inputs/textareas)
+let kbuf = '';
+document.addEventListener('keydown', e => {
+  if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+  if (e.key === 'Escape') { ee?.classList.add('hidden'); return; }
+  kbuf = (kbuf + e.key.toLowerCase()).slice(-2);
+  if (kbuf === 'sb') openTerminal();
+});
+eeClose?.addEventListener('click', () => ee?.classList.add('hidden'));
 
 function openTerminal() {
+  if (!ee) return;
   ee.classList.remove('hidden');
-  eeBody.innerHTML = '';
+  if (eeBody) eeBody.innerHTML = '';
   eePrint('Bienvenue dans le terminal de Samy ! 👾', 'accent');
   eePrint('────────────────────────────────');
-  eePrint("Tape 'help' pour voir les commandes disponibles.", 'success');
+  eePrint("Tape 'help' pour voir les commandes.", 'success');
   eeInput?.focus();
 }
 
 function eePrint(text, cls='') {
+  if (!eeBody) return;
   const span = document.createElement('span');
   span.className = 'ee-line' + (cls ? ' '+cls : '');
   span.textContent = text;
@@ -245,71 +299,48 @@ function eePrint(text, cls='') {
   eeBody.scrollTop = eeBody.scrollHeight;
 }
 
-const commands = {
+const cmds = {
   help: () => {
     eePrint('Commandes disponibles :', 'accent');
-    eePrint('  whoami      → Qui suis-je ?');
-    eePrint('  stack       → Mon stack technique');
-    eePrint('  github      → Lien GitHub');
-    eePrint('  linkedin    → Lien LinkedIn');
-    eePrint('  contact     → Me contacter');
-    eePrint('  joke        → Une blague de dev');
-    eePrint('  matrix      → 😏');
-    eePrint('  clear       → Vider le terminal');
-    eePrint('  exit        → Fermer');
+    ['whoami','stack','github','linkedin','contact','joke','matrix','clear','exit']
+      .forEach(c => eePrint('  ' + c));
   },
-  whoami: () => {
-    eePrint('Samy Boudaoud — Ingénieur Logiciel Fullstack & IoT', 'success');
-    eePrint('24 ans · Aix-en-Provence · En alternance @ CS GROUP');
-  },
-  stack: () => {
-    eePrint('Backend  → Java, Kotlin, Python, Spring, Flask', 'accent');
-    eePrint('Mobile   → Flutter, Dart, React Native');
-    eePrint('IoT      → ESP32, Raspberry Pi, MQTT, BLE');
-    eePrint('Devops   → Git, Docker, CI/CD, Ansible');
-  },
-  github: () => {
-    eePrint('→ https://github.com/SamymaS', 'success');
-    window.open('https://github.com/SamymaS', '_blank');
-  },
-  linkedin: () => {
-    eePrint('→ https://linkedin.com/in/samy-boudaoud', 'success');
-    window.open('https://www.linkedin.com/in/samy-boudaoud', '_blank');
-  },
-  contact: () => {
-    eePrint('✉  samyboudaoud95@gmail.com', 'success');
-    eePrint('✆  06 67 72 14 76');
-  },
+  whoami:   () => { eePrint('Samy Boudaoud — Ingénieur Logiciel Fullstack & IoT', 'success'); eePrint('24 ans · Aix-en-Provence · Alternance @ CS GROUP'); },
+  stack:    () => { eePrint('Backend  → Java, Kotlin, Python, Spring, Flask', 'accent'); eePrint('Mobile   → Flutter, Dart, React Native'); eePrint('IoT      → ESP32, Raspberry Pi, MQTT, BLE'); eePrint('Devops   → Git, Docker, CI/CD, Ansible'); },
+  github:   () => { eePrint('→ https://github.com/SamymaS', 'success'); window.open('https://github.com/SamymaS','_blank'); },
+  linkedin: () => { eePrint('→ https://linkedin.com/in/samy-boudaoud', 'success'); window.open('https://www.linkedin.com/in/samy-boudaoud','_blank'); },
+  contact:  () => { eePrint('✉  samyboudaoud95@gmail.com', 'success'); eePrint('✆  06 67 72 14 76'); },
   joke: () => {
     const jokes = [
-      "Pourquoi les développeurs Java portent-ils des lunettes ? Parce qu'ils ne voient pas C#.",
-      "Un null pointer entre dans un bar... segmentation fault.",
-      "Je voulais faire une blague sur les WebSockets... mais elle n'avait pas de fin.",
-      "git push --force : la seule solution aux conflits selon les juniors.",
-      "Il y a 10 types de personnes : ceux qui comprennent le binaire et les autres."
+      'Pourquoi les devs Java portent des lunettes ? Parce qu\'ils ne voient pas C#.',
+      'Un null pointer entre dans un bar... Segmentation fault.',
+      'git push --force : la solution aux conflits selon les juniors.',
+      'Il y a 10 types de personnes : ceux qui comprennent le binaire, et les autres.',
+      'Je voulais faire une blague sur les WebSockets... mais elle n\'avait pas de fin.',
     ];
     eePrint(jokes[Math.floor(Math.random()*jokes.length)], 'success');
   },
   matrix: () => {
-    eePrint('Initialisation de la matrice...', 'accent');
-    let chars = '日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｪｩｨ01';
-    let i = 0;
-    const interval = setInterval(() => {
+    eePrint('Initialisation matrice...', 'accent');
+    const chars = '日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｪｩｨ01';
+    let i=0;
+    const iv = setInterval(() => {
       let line = '';
-      for(let j=0;j<30;j++) line += chars[Math.floor(Math.random()*chars.length)];
+      for(let j=0;j<28;j++) line += chars[Math.floor(Math.random()*chars.length)];
       eePrint(line, 'accent');
-      if(++i>12) clearInterval(interval);
+      if(++i>10) clearInterval(iv);
     }, 80);
   },
-  clear: () => { eeBody.innerHTML = ''; },
-  exit: () => { ee.classList.add('hidden'); },
+  clear: () => { if(eeBody) eeBody.innerHTML=''; },
+  exit:  () => { ee?.classList.add('hidden'); },
 };
 
 eeInput?.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const val = eeInput.value.trim().toLowerCase();
+  if (!val) return;
   eePrint('$ ' + val);
-  if (commands[val]) commands[val]();
-  else eePrint(`Commande inconnue : "${val}". Tape 'help'.`, 'error');
+  if (cmds[val]) cmds[val]();
+  else eePrint(`Commande inconnue: "${val}". Tape 'help'.`, 'error');
   eeInput.value = '';
 });

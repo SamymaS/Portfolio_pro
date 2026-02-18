@@ -45,7 +45,7 @@ gameModal?.addEventListener('click', e => { if(e.target === gameModal) closeGame
    PUISSANCE 4 vs IA (Minimax)
    ============================== */
 function initConnect4() {
-  const COLS=7, ROWS=6, W=50;
+  const COLS=7, ROWS=6;
   const ACCENT='#00e5ff', P2='#f97316', EMPTY='#1a2535', BG='#0d1117';
   let board, currentPlayer, gameOver;
 
@@ -56,8 +56,11 @@ function initConnect4() {
   status.style.cssText = `font-family:var(--font-mono);font-size:0.8rem;color:${ACCENT};min-height:1.5rem;text-align:center`;
 
   const canvas = document.createElement('canvas');
+  // Responsive cell size based on available width
+  const availW = Math.min(gameContainer.clientWidth - 32, 360);
+  const W = Math.floor(availW / COLS);
   canvas.width = COLS*W; canvas.height = ROWS*W;
-  canvas.style.cssText = `border-radius:8px;cursor:pointer;max-width:100%;touch-action:manipulation`;
+  canvas.style.cssText = `border-radius:8px;cursor:pointer;width:100%;max-width:${COLS*W}px;touch-action:manipulation`;
 
   const resetBtn = document.createElement('button');
   resetBtn.textContent = '↺ Rejouer';
@@ -201,7 +204,9 @@ function initConnect4() {
    SNAKE
    ============================== */
 function initSnake() {
-  const SZ=20, COLS=20, ROWS=16;
+  const COLS=20, ROWS=15;
+  const availW = Math.min(gameContainer.clientWidth - 32, 400);
+  const SZ = Math.floor(availW / COLS);
   const W=SZ*COLS, H=SZ*ROWS;
   const ACCENT='#00e5ff', FOOD='#f97316', BG='#0a0f16', GRID='#111821';
 
@@ -211,7 +216,7 @@ function initSnake() {
   wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0.8rem;width:100%';
 
   const info = document.createElement('div');
-  info.style.cssText = 'display:flex;justify-content:space-between;width:100%;max-width:'+W+'px;font-family:var(--font-mono);font-size:0.75rem;color:#6b7280';
+  info.style.cssText = `display:flex;justify-content:space-between;width:100%;max-width:${W}px;font-family:var(--font-mono);font-size:0.75rem;color:#6b7280`;
 
   const scoreEl = document.createElement('span');
   const status  = document.createElement('span');
@@ -219,17 +224,18 @@ function initSnake() {
 
   const canvas = document.createElement('canvas');
   canvas.width=W; canvas.height=H;
-  canvas.style.cssText=`border-radius:8px;max-width:100%;border:1px solid #1a2535`;
+  canvas.style.cssText=`border-radius:8px;width:100%;max-width:${W}px;border:1px solid #1a2535;touch-action:none`;
 
-  // Mobile controls
+  // Mobile D-pad
   const dpad = document.createElement('div');
-  dpad.style.cssText='display:grid;grid-template-columns:repeat(3,44px);gap:4px';
-  const arrows=[['↑','ArrowUp',[0,0]],['←','ArrowLeft',[1,0]],['·','',[1,1]],['→','ArrowRight',[1,2]],['↓','ArrowDown',[2,0]]];
-  const btns={};
-  for(const [label,key,pos] of arrows) {
+  dpad.style.cssText='display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,48px);gap:5px';
+  const arrows=[['↑','ArrowUp',1,2],['←','ArrowLeft',2,1],['↓','ArrowDown',2,2],['→','ArrowRight',2,3]];
+  for(const [label,key,row,col] of arrows) {
     const b=document.createElement('button');
-    b.textContent=label; b.style.cssText=`grid-row:${pos[0]+1};grid-column:${pos[1]+1};padding:0.6rem;background:#111821;border:1px solid #1a2535;border-radius:6px;color:#e2e8f0;font-size:1rem;cursor:pointer`;
-    if(key) { btns[key]=b; b.addEventListener('click',()=>handleKey(key)); }
+    b.textContent=label;
+    b.style.cssText=`grid-row:${row};grid-column:${col};padding:0;width:48px;height:48px;background:#111821;border:1px solid #1a2535;border-radius:8px;color:#e2e8f0;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center`;
+    b.addEventListener('click',()=>handleKey(key));
+    b.addEventListener('touchstart',e=>{e.preventDefault();handleKey(key);},{passive:false});
     dpad.appendChild(b);
   }
 
@@ -240,11 +246,21 @@ function initSnake() {
   gameContainer.appendChild(wrap);
   const ctx=canvas.getContext('2d');
 
+  // Swipe support
+  let touchStartX=0, touchStartY=0;
+  canvas.addEventListener('touchstart', e => { touchStartX=e.touches[0].clientX; touchStartY=e.touches[0].clientY; }, {passive:true});
+  canvas.addEventListener('touchend', e => {
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    const dy=e.changedTouches[0].clientY-touchStartY;
+    if(Math.abs(dx)>Math.abs(dy)) handleKey(dx>0?'ArrowRight':'ArrowLeft');
+    else handleKey(dy>0?'ArrowDown':'ArrowUp');
+  }, {passive:true});
+
   function handleKey(key) {
     const map={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
     if(!map[key]) return;
     const [dx,dy]=map[key];
-    if(dx===-dir[0]&&dy===-dir[1]) return; // no reverse
+    if(dx===-dir[0]&&dy===-dir[1]) return;
     nextDir=[dx,dy];
   }
 
@@ -311,7 +327,8 @@ function initSnake() {
    CASSE-BRIQUES
    ============================== */
 function initBreakout() {
-  const W=480, H=320;
+  const SCALE = Math.min(1, (gameContainer.clientWidth - 32) / 480);
+  const W=Math.floor(480*SCALE), H=Math.floor(320*SCALE);
   const ACCENT='#00e5ff', BG='#0a0f16';
 
   let paddle, ball, bricks, score, lives, running, raf;
@@ -320,18 +337,18 @@ function initBreakout() {
   wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:0.8rem;width:100%';
 
   const info=document.createElement('div');
-  info.style.cssText='display:flex;justify-content:space-between;width:100%;max-width:'+W+'px;font-family:var(--font-mono);font-size:0.75rem;color:#6b7280';
+  info.style.cssText=`display:flex;justify-content:space-between;width:100%;max-width:${W}px;font-family:var(--font-mono);font-size:0.75rem;color:#6b7280`;
   const scoreEl=document.createElement('span');
   const livesEl=document.createElement('span');
   info.append(scoreEl,livesEl);
 
   const canvas=document.createElement('canvas');
   canvas.width=W; canvas.height=H;
-  canvas.style.cssText='border-radius:8px;max-width:100%;border:1px solid #1a2535;touch-action:none';
+  canvas.style.cssText=`border-radius:8px;width:100%;max-width:${W}px;border:1px solid #1a2535;touch-action:none`;
 
   const hint=document.createElement('div');
   hint.style.cssText='font-family:var(--font-mono);font-size:0.68rem;color:#6b7280;text-align:center';
-  hint.textContent='Souris / toucher pour déplacer la raquette';
+  hint.textContent='Souris / glisser le doigt pour la raquette';
 
   const restartBtn=document.createElement('button');
   restartBtn.textContent='↺ Rejouer'; restartBtn.className='btn-primary'; restartBtn.style.fontSize='0.75rem';
@@ -340,16 +357,20 @@ function initBreakout() {
   gameContainer.appendChild(wrap);
   const ctx=canvas.getContext('2d');
 
-  const BRICK_COLS=8, BRICK_ROWS=4, BRICK_W=50, BRICK_H=16, BRICK_PAD=4;
+  const BRICK_COLS=8, BRICK_ROWS=4;
+  const BRICK_W=Math.floor((W-60)/BRICK_COLS), BRICK_H=Math.max(10,Math.floor(14*SCALE)), BRICK_PAD=Math.floor(4*SCALE);
   const COLORS=['#f97316','#7c3aed','#00e5ff','#22c55e'];
 
   function newGame() {
-    paddle={x:W/2-40,y:H-20,w:80,h:10,spd:0};
-    ball={x:W/2,y:H-40,r:7,dx:3,dy:-3.5};
+    const pw=Math.floor(80*SCALE);
+    paddle={x:W/2-pw/2,y:H-Math.floor(20*SCALE),w:pw,h:Math.floor(10*SCALE)};
+    const spd=Math.max(2, 3*SCALE);
+    ball={x:W/2,y:H-Math.floor(40*SCALE),r:Math.max(4,Math.floor(7*SCALE)),dx:spd,dy:-spd*1.1};
     score=0; lives=3; running=false;
     bricks=[];
+    const startX=Math.floor(30*SCALE);
     for(let r=0;r<BRICK_ROWS;r++) for(let c=0;c<BRICK_COLS;c++)
-      bricks.push({x:c*(BRICK_W+BRICK_PAD)+30,y:r*(BRICK_H+BRICK_PAD)+40,alive:true,color:COLORS[r%4]});
+      bricks.push({x:startX+c*(BRICK_W+BRICK_PAD),y:Math.floor(40*SCALE)+r*(BRICK_H+BRICK_PAD),alive:true,color:COLORS[r%4]});
     scoreEl.textContent='Score: 0'; livesEl.textContent='Vies: ♥♥♥';
     draw(); running=true; loop();
   }
@@ -377,8 +398,9 @@ function initBreakout() {
     if(ball.y+ball.r>H) {
       lives--;
       livesEl.textContent='Vies: '+'♥'.repeat(lives)+'♡'.repeat(3-lives);
-      if(lives<=0){running=false;draw();ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,W,H);ctx.fillStyle=ACCENT;ctx.font='bold 28px Syne,sans-serif';ctx.textAlign='center';ctx.fillText('Game Over',W/2,H/2);return;}
-      ball={x:W/2,y:H-60,r:7,dx:3*(Math.random()>0.5?1:-1),dy:-3.5};
+      const spd2=Math.max(2,3*SCALE);
+      if(lives<=0){running=false;draw();ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,W,H);ctx.fillStyle=ACCENT;ctx.font=`bold ${Math.floor(22*SCALE)}px Syne,sans-serif`;ctx.textAlign='center';ctx.fillText('Game Over',W/2,H/2);return;}
+      ball={x:W/2,y:H-Math.floor(60*SCALE),r:Math.max(4,Math.floor(7*SCALE)),dx:spd2*(Math.random()>0.5?1:-1),dy:-spd2*1.1};
     }
     // Bricks
     for(const b of bricks) {
@@ -388,7 +410,7 @@ function initBreakout() {
         scoreEl.textContent='Score: '+score;
       }
     }
-    if(bricks.every(b=>!b.alive)){running=false;draw();ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#22c55e';ctx.font='bold 28px Syne,sans-serif';ctx.textAlign='center';ctx.fillText('Victoire ! 🎉',W/2,H/2);}
+    if(bricks.every(b=>!b.alive)){running=false;draw();ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#22c55e';ctx.font=`bold ${Math.floor(22*SCALE)}px Syne,sans-serif`;ctx.textAlign='center';ctx.fillText('Victoire ! 🎉',W/2,H/2);}
   }
 
   function draw() {
