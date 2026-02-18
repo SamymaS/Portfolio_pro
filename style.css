@@ -271,6 +271,7 @@ body {
   padding: 2rem 1.2rem;
   max-width: 900px;
   width: 100%;
+  overflow: hidden;
 }
 .hero-tag {
   font-family: var(--fm); font-size: .7rem;
@@ -279,11 +280,13 @@ body {
   opacity: 0; transform: translateY(20px);
 }
 .hero-title {
-  font-size: clamp(3rem, 13vw, 9rem);
-  font-weight: 800; line-height: .9;
-  letter-spacing: -.04em; margin-bottom: 1.2rem;
+  font-size: clamp(2.2rem, 10vw, 9rem);
+  font-weight: 800; line-height: .95;
+  letter-spacing: -.03em; margin-bottom: 1.2rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
-.hero-title .line { display: block; opacity: 0; transform: translateY(60px); }
+.hero-title .line { display: block; opacity: 0; transform: translateY(60px); overflow: hidden; text-overflow: ellipsis; }
 .hero-title .line:last-child {
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   -webkit-background-clip: text;
