@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Samy Boudaoud – Ingénieur Logiciel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">SB<span class="dot">.</span></div>
+  <ul class="nav-links">
+    <li><a href="#hero" class="nav-link">Accueil</a></li>
+    <li><a href="#about" class="nav-link">Profil</a></li>
+    <li><a href="#skills" class="nav-link">Skills</a></li>
+    <li><a href="#xp" class="nav-link">Expériences</a></li>
+    <li><a href="#projects" class="nav-link">Projets</a></li>
+    <li><a href="#contact" class="nav-link">Contact</a></li>
+  </ul>
+  <div class="nav-status"><span class="status-dot"></span>Disponible</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="threeCanvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag reveal">Ingénieur Logiciel · Fullstack & IoT · 24 ans</div>
+    <h1 class="hero-title">
+      <span class="line reveal-line">Samy</span>
+      <span class="line reveal-line delay-1">Boudaoud</span>
+    </h1>
+    <p class="hero-sub reveal delay-2">
+      Backend robuste · Frontend interactif · Systèmes embarqués
+    </p>
+    <div class="hero-ctas reveal delay-3">
+      <a href="#projects" class="btn-primary">Voir mes projets</a>
+      <a href="#contact" class="btn-secondary">Me contacter</a>
+    </div>
+    <div class="hero-socials reveal delay-4">
+      <a href="https://github.com/SamymaS" target="_blank" class="social-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="https://www.linkedin.com/in/samy-boudaoud" target="_blank" class="social-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Profil</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p class="about-lead">
+          Ingénieur logiciel passionné, je couvre l'<strong>ensemble du cycle de développement</strong> — du backend robuste aux systèmes embarqués en passant par le frontend interactif.
+        </p>
+        <p>
+          Actuellement en alternance chez <strong>CS GROUP</strong> sur la plateforme MobilitX, je travaille sur des architectures modulaires Java/Kotlin à forte contrainte de performance. Mon parcours combine formations solides et expériences professionnelles variées en environnements industriels et startup.
+        </p>
+        <p>
+          Curieux, autonome, et orienté qualité — j'aime construire des choses qui durent et qui ont du sens.
+        </p>
+        <div class="about-meta">
+          <div class="meta-item">
+            <span class="meta-label">Formation</span>
+            <span class="meta-value">Mastère Expert Dev Logiciel & IoT – Ynov Aix 2024–2026</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Rythme</span>
+            <span class="meta-value">3 semaines entreprise / 1 semaine école</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Localisation</span>
+            <span class="meta-value">Aix-en-Provence, France</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Langues</span>
+            <span class="meta-value">Français · Anglais C2 (TOEIC 900+) · Espagnol</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual">
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dot red"></span>
+            <span class="code-dot yellow"></span>
+            <span class="code-dot green"></span>
+            <span class="code-filename">profile.json</span>
+          </div>
+          <pre class="code-content"><span class="c-bracket">{</span>
+  <span class="c-key">"name"</span><span class="c-colon">:</span> <span class="c-str">"Samy Boudaoud"</span><span class="c-comma">,</span>
+  <span class="c-key">"role"</span><span class="c-colon">:</span> <span class="c-str">"Software Engineer"</span><span class="c-comma">,</span>
+  <span class="c-key">"stack"</span><span class="c-colon">:</span> <span class="c-bracket">[</span>
+    <span class="c-str">"Java"</span><span class="c-comma">,</span> <span class="c-str">"Kotlin"</span><span class="c-comma">,</span>
+    <span class="c-str">"Python"</span><span class="c-comma">,</span> <span class="c-str">"Flutter"</span><span class="c-comma">,</span>
+    <span class="c-str">"C++"</span><span class="c-comma">,</span> <span class="c-str">"JavaScript"</span>
+  <span class="c-bracket">]</span><span class="c-comma">,</span>
+  <span class="c-key">"focus"</span><span class="c-colon">:</span> <span class="c-bracket">[</span>
+    <span class="c-str">"Backend"</span><span class="c-comma">,</span>
+    <span class="c-str">"Mobile"</span><span class="c-comma">,</span>
+    <span class="c-str">"IoT"</span><span class="c-comma">,</span>
+    <span class="c-str">"Architecture"</span>
+  <span class="c-bracket">]</span><span class="c-comma">,</span>
+  <span class="c-key">"available"</span><span class="c-colon">:</span> <span class="c-bool">true</span>
+<span class="c-bracket">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section dark-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Compétences</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-category">
+        <h3 class="skill-cat-title"><span class="skill-icon">⬡</span> Langages</h3>
+        <div class="skill-tags">
+          <span class="skill-tag main">Java</span>
+          <span class="skill-tag main">Kotlin</span>
+          <span class="skill-tag main">Python</span>
+          <span class="skill-tag main">C++</span>
+          <span class="skill-tag">Dart</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">PHP</span>
+          <span class="skill-tag">HTML/CSS</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <h3 class="skill-cat-title"><span class="skill-icon">⬡</span> Frameworks & Outils</h3>
+        <div class="skill-tags">
+          <span class="skill-tag main">Spring</span>
+          <span class="skill-tag main">Flutter</span>
+          <span class="skill-tag main">Flask</span>
+          <span class="skill-tag">Qt</span>
+          <span class="skill-tag">Node.js</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">Git/GitLab</span>
+          <span class="skill-tag">Ansible</span>
+          <span class="skill-tag">CI/CD</span>
+          <span class="skill-tag">Jira</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <h3 class="skill-cat-title"><span class="skill-icon">⬡</span> Bases de données</h3>
+        <div class="skill-tags">
+          <span class="skill-tag main">MySQL</span>
+          <span class="skill-tag main">PostgreSQL</span>
+          <span class="skill-tag">PL/SQL</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <h3 class="skill-cat-title"><span class="skill-icon">⬡</span> IoT & Systèmes</h3>
+        <div class="skill-tags">
+          <span class="skill-tag main">ESP32</span>
+          <span class="skill-tag main">Raspberry Pi</span>
+          <span class="skill-tag main">MQTT</span>
+          <span class="skill-tag">Arduino</span>
+          <span class="skill-tag">Modbus RTU</span>
+          <span class="skill-tag">BLE</span>
+          <span class="skill-tag">UART/I2C</span>
+          <span class="skill-tag">Linux</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <h3 class="skill-cat-title"><span class="skill-icon">⬡</span> Architecture</h3>
+        <div class="skill-tags">
+          <span class="skill-tag main">Micro-services</span>
+          <span class="skill-tag main">Event-driven</span>
+          <span class="skill-tag main">API REST</span>
+          <span class="skill-tag">OpenAPI</span>
+          <span class="skill-tag">Design Patterns</span>
+          <span class="skill-tag">UML</span>
+          <span class="skill-tag">UX/UI Figma</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCES -->
+<section id="xp" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Expériences</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="xp-header">
+            <div>
+              <h3 class="xp-title">Ingénieur Logiciel – Alternance</h3>
+              <p class="xp-company">CS GROUP</p>
+            </div>
+            <span class="xp-date">Sep 2024 → Aujourd'hui</span>
+          </div>
+          <p class="xp-desc">Développement backend Java / Kotlin sur la plateforme <strong>MobilitX</strong> (transport & données temps réel). Architecture modulaire et événementielle. Résolution de tickets industriels avec fortes contraintes de performance et fiabilité.</p>
+          <div class="xp-tags">
+            <span>Java</span><span>Kotlin</span><span>GitLab</span><span>Jira</span><span>CI/CD</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="xp-header">
+            <div>
+              <h3 class="xp-title">Développeur Fullstack Salesforce – Alternance</h3>
+              <p class="xp-company">Niji</p>
+            </div>
+            <span class="xp-date">Nov 2022 → Jun 2023</span>
+          </div>
+          <p class="xp-desc">Analyse des besoins clients, développement et paramétrage d'applications Salesforce. Application des bonnes pratiques de dev avec processus CI/CD.</p>
+          <div class="xp-tags">
+            <span>Salesforce</span><span>Apex</span><span>JavaScript</span><span>HTML/CSS</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="xp-header">
+            <div>
+              <h3 class="xp-title">Développeur Logiciel Fullstack – Alternance</h3>
+              <p class="xp-company">REZZO Telecom</p>
+            </div>
+            <span class="xp-date">Oct 2021 → Oct 2022</span>
+          </div>
+          <p class="xp-desc">Refonte du logiciel de facturation LUCY. Frontend C++/Qt, backend Python Flask. Mise à jour de procédures PL/SQL et développement de systèmes d'import de données CSV/XLSX.</p>
+          <div class="xp-tags">
+            <span>C++/Qt</span><span>Python</span><span>Flask</span><span>PL/SQL</span><span>AWS</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="xp-header">
+            <div>
+              <h3 class="xp-title">Technicien Informatique – Stage</h3>
+              <p class="xp-company">Groupe ORTEC</p>
+            </div>
+            <span class="xp-date">Sep 2020 → Déc 2020</span>
+          </div>
+          <p class="xp-desc">Digitalisation de documents vers un ERP, création de modules e-learning en Java/SharePoint. Support technique, maintenance réseau et déploiement de postes de travail.</p>
+          <div class="xp-tags">
+            <span>Java</span><span>SharePoint</span><span>Réseau</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="section dark-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Projets</h2>
+    </div>
+
+    <div class="projects-filter">
+      <button class="filter-btn active" data-filter="all">Tous</button>
+      <button class="filter-btn" data-filter="mobile">Mobile</button>
+      <button class="filter-btn" data-filter="iot">IoT</button>
+      <button class="filter-btn" data-filter="web">Web & API</button>
+      <button class="filter-btn" data-filter="realtime">Temps Réel</button>
+    </div>
+
+    <div class="projects-grid" id="projectsGrid">
+
+      <div class="project-card" data-cat="mobile">
+        <div class="project-top">
+          <span class="project-cat">Mobile · Gamification</span>
+          <a href="https://github.com/SamymaS" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">Sameva</h3>
+        <p class="project-desc">Application mobile de productivité gamifiée basée sur un système de quêtes. Intégration d'une IA pour valider les défis. MVP pensé UX-first avec Figma & Rive.</p>
+        <div class="project-tech"><span>Flutter</span><span>Figma</span><span>Rive</span><span>IA</span></div>
+        <div class="project-status in-progress">En cours</div>
+      </div>
+
+      <div class="project-card" data-cat="mobile">
+        <div class="project-top">
+          <span class="project-cat">Mobile · Mobilité</span>
+          <a href="https://github.com/SamymaS" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">COCI</h3>
+        <p class="project-desc">Application complète de covoiturage urbain pour la Côte-d'Ivoire. Frontend React Native + API backend robuste avec gestion DTOs, authentification et paiement OTP SMS.</p>
+        <div class="project-tech"><span>React Native</span><span>API REST</span><span>OpenAPI</span></div>
+        <div class="project-status in-progress">En cours</div>
+      </div>
+
+      <div class="project-card" data-cat="iot">
+        <div class="project-top">
+          <span class="project-cat">IoT · Flutter</span>
+          <a href="https://github.com/SamymaS" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">Maison Connectée</h3>
+        <p class="project-desc">Pilotage d'une maison connectée via app Flutter. Communication ESP32 via BLE, Wi-Fi et MQTT. Gestion de capteurs/actionneurs (LED, ventilateur, température, LCD).</p>
+        <div class="project-tech"><span>Flutter</span><span>ESP32</span><span>MQTT</span><span>BLE</span></div>
+      </div>
+
+      <div class="project-card" data-cat="iot">
+        <div class="project-top">
+          <span class="project-cat">IoT · Industriel</span>
+          <a href="https://github.com/SamymaS/smart-home-modbus-UART" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">Modbus RTU</h3>
+        <p class="project-desc">Communication série Modbus RTU entre ESP32 et Raspberry Pi via UART. Simulation de supervision d'équipements industriels.</p>
+        <div class="project-tech"><span>ESP32</span><span>Raspberry Pi</span><span>Modbus RTU</span><span>UART</span></div>
+      </div>
+
+      <div class="project-card" data-cat="web">
+        <div class="project-top">
+          <span class="project-cat">Backend · NLP</span>
+          <a href="https://github.com/SamymaS/ham" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">Assistant Vocal</h3>
+        <p class="project-desc">Backend Flask pour assistant intelligent avec NLP (spaCy), TTS/STT et intégration d'APIs externes (OpenAI, météo, Spotify). Communication JSON.</p>
+        <div class="project-tech"><span>Python</span><span>Flask</span><span>spaCy</span><span>OpenAI</span></div>
+      </div>
+
+      <div class="project-card" data-cat="web">
+        <div class="project-top">
+          <span class="project-cat">Fullstack · E-commerce</span>
+          <a href="https://github.com/SamymaS" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">SeaRiders</h3>
+        <p class="project-desc">Plateforme e-commerce pour planches à voile recyclées. Dev back et front, branding et éco-conception. Vision produit orientée startup durable.</p>
+        <div class="project-tech"><span>Fullstack</span><span>UX/UI</span><span>Éco-conception</span></div>
+      </div>
+
+      <div class="project-card" data-cat="web">
+        <div class="project-top">
+          <span class="project-cat">Fullstack · RBAC</span>
+          <a href="https://github.com/SamymaS/TPwebservices" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">YNOV Express</h3>
+        <p class="project-desc">Application web full stack avec architecture micro-services et contrôle d'accès par rôles (RBAC). Architecture orientée services académique.</p>
+        <div class="project-tech"><span>Node.js</span><span>RBAC</span><span>Micro-services</span></div>
+      </div>
+
+      <div class="project-card" data-cat="realtime">
+        <div class="project-top">
+          <span class="project-cat">Temps réel · WebSockets</span>
+          <a href="https://github.com/SamymaS/Puissance-4-Websockets" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">Puissance 4 Multijoueur</h3>
+        <p class="project-desc">Jeu Puissance 4 en ligne temps réel. Backend Node.js avec WebSockets pour la gestion des parties et événements multijoueur.</p>
+        <div class="project-tech"><span>Node.js</span><span>WebSockets</span><span>Temps réel</span></div>
+      </div>
+
+      <div class="project-card" data-cat="realtime">
+        <div class="project-top">
+          <span class="project-cat">APIs · Streaming</span>
+          <a href="https://github.com/SamymaS/tiktok-minecraft" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">TikTok → Minecraft</h3>
+        <p class="project-desc">Intégration temps réel entre un live TikTok et un serveur Minecraft. Les événements TikTok déclenchent des actions en jeu via APIs et streaming.</p>
+        <div class="project-tech"><span>APIs</span><span>Streaming</span><span>Node.js</span></div>
+      </div>
+
+      <div class="project-card" data-cat="mobile">
+        <div class="project-top">
+          <span class="project-cat">Mobile · Jeu</span>
+          <a href="https://github.com/SamymaS/Action-Verite" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">Action ou Vérité</h3>
+        <p class="project-desc">Application mobile de jeu avec intégration du paiement en ligne Stripe. Gestion des règles et de l'expérience utilisateur.</p>
+        <div class="project-tech"><span>Mobile</span><span>Stripe</span><span>UX</span></div>
+      </div>
+
+      <div class="project-card" data-cat="iot">
+        <div class="project-top">
+          <span class="project-cat">Hardware · BTS</span>
+          <a href="https://github.com/SamymaS" target="_blank" class="project-link">↗</a>
+        </div>
+        <h3 class="project-name">B4SKET G4ME</h3>
+        <p class="project-desc">Reproduction grandeur nature d'un Puissance 4 pour l'entraînement sportif. Script Python sur Raspberry Pi pour la gestion des trames et capteurs.</p>
+        <div class="project-tech"><span>C++</span><span>Python</span><span>Raspberry Pi</span><span>MySQL</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Contact</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-left">
+        <p class="contact-lead">Vous avez un projet, une opportunité ou envie d'échanger ? Je suis disponible et à l'écoute.</p>
+        <div class="contact-info">
+          <a href="mailto:samyboudaoud95@gmail.com" class="contact-item">
+            <span class="contact-icon">✉</span>
+            <span>samyboudaoud95@gmail.com</span>
+          </a>
+          <a href="tel:0667721476" class="contact-item">
+            <span class="contact-icon">✆</span>
+            <span>06 67 72 14 76</span>
+          </a>
+          <div class="contact-item">
+            <span class="contact-icon">◎</span>
+            <span>Aix-en-Provence, France</span>
+          </div>
+        </div>
+        <div class="contact-socials">
+          <a href="https://github.com/SamymaS" target="_blank" class="contact-social">GitHub ↗</a>
+          <a href="https://www.linkedin.com/in/samy-boudaoud" target="_blank" class="contact-social">LinkedIn ↗</a>
+        </div>
+      </div>
+      <div class="contact-right">
+        <form class="contact-form" id="contactForm">
+          <div class="form-group">
+            <input type="text" placeholder="Votre nom" class="form-input" required />
+          </div>
+          <div class="form-group">
+            <input type="email" placeholder="Votre email" class="form-input" required />
+          </div>
+          <div class="form-group">
+            <textarea placeholder="Votre message..." class="form-input form-textarea" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn-primary full-width">Envoyer le message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2025 Samy Boudaoud</span>
+    <span>Conçu & développé avec ♥</span>
+    <span>Aix-en-Provence, France</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
