@@ -218,6 +218,16 @@ body {
 }
 .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+.nav-btn-cv {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: rgba(0,229,255,.08); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--accent); font-size: .95rem;
+  text-decoration: none; cursor: pointer; transition: all .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-btn-cv:hover { background: rgba(0,229,255,.15); border-color: var(--accent); }
+
 .hamburger {
   display: flex; flex-direction: column;
   justify-content: center; align-items: center;
@@ -417,6 +427,21 @@ body {
 }
 .skill-tag.main { background: rgba(0,229,255,.08); border-color: rgba(0,229,255,.25); color: var(--accent); }
 
+/* -------- CERTIFICATIONS -------- */
+.certs-grid { display: flex; flex-direction: column; gap: 1rem; }
+.cert-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.3rem;
+  display: flex; gap: 1.2rem;
+  transition: all .3s ease;
+}
+.cert-card:hover { border-color: rgba(0,229,255,.3); box-shadow: 0 8px 16px rgba(0,229,255,.05); }
+.cert-icon { font-size: 2.5rem; flex-shrink: 0; }
+.cert-content { flex: 1; }
+.cert-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: .3rem; }
+.cert-school { font-family: var(--fm); font-size: .75rem; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .2rem; }
+.cert-year { font-size: .8rem; color: var(--muted); }
+
 /* -------- TIMELINE -------- */
 .timeline { position: relative; padding-left: 1.5rem; }
 .timeline::before {
@@ -541,10 +566,13 @@ body {
 .contact-item {
   display: flex; align-items: center; gap: .9rem;
   color: var(--dim); text-decoration: none; font-size: .88rem;
-  transition: color .2s;
+  transition: all .2s;
   word-break: break-all;
+  padding: .4rem 0;
 }
-.contact-item:hover { color: var(--accent); }
+.contact-item:hover { color: var(--accent); opacity: 1; }
+.contact-item[style*="cursor: pointer"] { cursor: pointer; user-select: none; }
+.contact-item[style*="cursor: pointer"]:hover { background: rgba(0,229,255,.04); padding-left: .4rem; margin-left: -.4rem; }
 .contact-icon { font-size: .95rem; width: 22px; text-align: center; color: var(--accent); flex-shrink: 0; }
 .contact-socials { display: flex; gap: 1.2rem; flex-wrap: wrap; }
 .contact-social { font-family: var(--fm); font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); text-decoration: none; transition: color .2s; }
@@ -572,6 +600,22 @@ body {
 .form-textarea { resize: vertical; min-height: 140px; }
 .form-error { display: none; color: var(--error); font-family: var(--fm); font-size: .7rem; margin-top: .3rem; }
 .form-error.show { display: block; }
+
+/* -------- SCROLL TO TOP BUTTON -------- */
+.scroll-top-btn {
+  position: fixed; bottom: 2rem; right: 1.5rem;
+  width: 40px; height: 40px;
+  background: var(--accent); color: #000;
+  border: none; border-radius: 50%;
+  font-size: 1.2rem; font-weight: 700;
+  cursor: pointer; z-index: 999;
+  display: none; align-items: center; justify-content: center;
+  transition: all .3s ease;
+  box-shadow: 0 4px 12px rgba(0,229,255,.2);
+}
+.scroll-top-btn.show { display: flex; }
+.scroll-top-btn:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0,229,255,.3); }
+.scroll-top-btn:active { transform: translateY(0); }
 
 /* -------- FOOTER -------- */
 .footer { padding: 1.5rem 0; border-top: 1px solid var(--border); }
@@ -651,6 +695,9 @@ kbd { background: var(--surface); border: 1px solid var(--border); border-radius
 
   .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
   .skill-category:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,229,255,.08); }
+
+  .certs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+  .cert-card:hover { transform: translateY(-4px); }
 
   .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
   .project-card:hover { transform: translateY(-5px); border-color: rgba(0,229,255,.3); box-shadow: 0 16px 32px rgba(0,229,255,.1); }

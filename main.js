@@ -43,17 +43,38 @@ function updateProgress() {
   if (!progressBar) return;
   const max = document.body.scrollHeight - window.innerHeight;
   progressBar.style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+  
+  // Show/hide scroll-to-top button
+  const scrollTopBtn = $('#scrollTop');
+  if (scrollTopBtn) {
+    scrollTopBtn.classList.toggle('show', window.scrollY > 300);
+  }
 }
 window.addEventListener('scroll', updateProgress, { passive: true });
+
+/* ---------- SCROLL TO TOP BUTTON ---------- */
+const scrollTopBtn = $('#scrollTop');
+scrollTopBtn?.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
 /* ---------- THEME TOGGLE ---------- */
 const html      = document.documentElement;
 const themeBtn  = $('#themeToggle');
-let isDark = true;
-themeBtn?.addEventListener('click', () => {
-  isDark = !isDark;
+let isDark = localStorage.getItem('theme') !== 'light';
+
+function setTheme(dark) {
+  isDark = dark;
   html.setAttribute('data-theme', isDark ? 'dark' : 'light');
   themeBtn.textContent = isDark ? '☀' : '🌙';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Initial theme
+setTheme(isDark);
+
+themeBtn?.addEventListener('click', () => {
+  setTheme(!isDark);
   updateNavBg();
 });
 
@@ -285,6 +306,24 @@ $$('a[href^="#"]').forEach(a => {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
+});
+
+/* ---------- COPY TO CLIPBOARD ---------- */
+$$('.contact-item').forEach(item => {
+  const text = item.textContent.trim();
+  if (text.includes('@') || text.match(/\d{2}/)) {
+    item.style.cursor = 'pointer';
+    item.title = 'Cliquez pour copier';
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const value = text.replace(/\s/g, '');
+      navigator.clipboard.writeText(value).then(() => {
+        const orig = item.textContent;
+        item.textContent = '✓ Copié !';
+        setTimeout(() => item.textContent = orig, 2000);
+      });
+    });
+  }
 });
 
 /* ---------- CONTACT FORM ---------- */
