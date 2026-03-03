@@ -54,7 +54,31 @@ function updateNavBg() {
   if (!navbar) return;
   const scrolled = window.scrollY > 50;
   navbar.classList.toggle('scrolled', scrolled);
+  updateActiveNav();
 }
+
+function updateActiveNav() {
+  const sections = $$('section[id], footer');
+  let activeId = null;
+  
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    // Section is visible in viewport
+    if (rect.top <= 200 && rect.bottom >= 200) {
+      activeId = section.id;
+    }
+  });
+  
+  const navLinks = $$('.nav-link, .mob-link');
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    const href = link.getAttribute('href');
+    if (href === '#' + activeId) {
+      link.classList.add('active');
+    }
+  });
+}
+
 window.addEventListener('scroll', updateNavBg, { passive: true });
 
 /* ---------- HAMBURGER MENU ---------- */
@@ -255,14 +279,84 @@ $$('a[href^="#"]').forEach(a => {
 });
 
 /* ---------- CONTACT FORM ---------- */
-$('#contactForm')?.addEventListener('submit', e => {
-  e.preventDefault();
-  const btn = e.target.querySelector('button[type="submit"]');
-  const orig = btn.textContent;
-  btn.textContent = '✓ Message envoyé !';
-  btn.style.background = '#22c55e';
-  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; e.target.reset(); }, 3200);
-});
+const contactForm = $('#contactForm');
+if (contactForm) {
+  const inputs = contactForm.querySelectorAll('.form-input');
+  
+  // Real-time validation
+  inputs.forEach(input => {
+    input.addEventListener('blur', () => validateField(input));
+    input.addEventListener('input', () => {
+      if (input.classList.contains('error')) validateField(input);
+    });
+  });
+  
+  function validateField(input) {
+    const isEmail = input.type === 'email';
+    const isEmpty = !input.value.trim();
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    const isValid = isEmpty ? false : (isEmail ? isValidEmail : true);
+    
+    input.classList.remove('error', 'success');
+    const feedback = input.parentElement.querySelector('.form-error');
+    
+    if (isEmpty && input === document.activeElement) {
+      input.classList.add('error');
+      if (feedback) { feedback.classList.add('show'); feedback.textContent = 'Ce champ est requis'; }
+    } else if (!isEmpty && !isValid) {
+      input.classList.add('error');
+      if (feedback) { 
+        feedback.classList.add('show'); 
+        feedback.textContent = isEmail ? 'Email invalide' : 'Ce champ est invalide';
+      }
+    } else if (!isEmpty && isValid) {
+      input.classList.add('success');
+      if (feedback) { feedback.classList.remove('show'); }
+    }
+  }
+  
+  contactForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    let valid = true;
+    
+    inputs.forEach(input => {
+      const isEmpty = !input.value.trim();
+      const isEmail = input.type === 'email';
+      const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+      const isFieldValid = isEmpty ? false : (isEmail ? isValidEmail : true);
+      
+      if (!isFieldValid) {
+        input.classList.add('error');
+        valid = false;
+        const feedback = input.parentElement.querySelector('.form-error');
+        if (feedback) { 
+          feedback.classList.add('show'); 
+          feedback.textContent = isEmpty ? 'Ce champ est requis' : 'Format invalide';
+        }
+      }
+    });
+    
+    if (!valid) return;
+    
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Envoi...';
+    
+    setTimeout(() => {
+      btn.textContent = '✓ Message envoyé !';
+      btn.style.background = '';
+      btn.classList.add('success-btn');
+      setTimeout(() => { 
+        btn.disabled = false;
+        btn.textContent = orig; 
+        btn.classList.remove('success-btn');
+        contactForm.reset();
+        inputs.forEach(i => { i.classList.remove('success', 'error'); });
+      }, 2500);
+    }, 800);
+  });
+}
 
 /* ---------- EASTER EGG TERMINAL ---------- */
 const ee      = $('#easterEgg');
