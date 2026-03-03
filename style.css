@@ -463,7 +463,8 @@ body {
 .project-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r); padding: 1.4rem;
-  position: relative; transition: all .3s; overflow: hidden;
+  position: relative; transition: all .3s ease; overflow: hidden;
+  cursor: pointer;
 }
 .project-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
@@ -471,10 +472,11 @@ body {
   transform: scaleX(0); transform-origin: left; transition: transform .4s;
 }
 .project-card:hover::before { transform: scaleX(1); }
+.project-card:hover { border-color: rgba(0,229,255,.3); box-shadow: 0 12px 24px rgba(0,229,255,.08); }
 .project-card.hidden { display: none; }
 .project-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .7rem; }
 .project-cat { font-family: var(--fm); font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); }
-.project-link { color: var(--muted); text-decoration: none; font-size: 1rem; transition: color .2s; }
+.project-link { color: var(--muted); text-decoration: none; font-size: 1rem; transition: color .2s; padding: .4rem; margin: -.4rem; display: flex; align-items: center; justify-content: center; }
 .project-link:hover { color: var(--accent); }
 .project-name { font-size: 1.05rem; font-weight: 700; margin-bottom: .55rem; }
 .project-desc { font-size: .82rem; color: var(--dim); line-height: 1.65; margin-bottom: .9rem; }

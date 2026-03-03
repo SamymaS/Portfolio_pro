@@ -28,6 +28,15 @@ if (cursor && !isTouchDevice()) {
   });
 }
 
+/* ---------- PROJECT CARDS CLICKABLE ---------- */
+$$('.project-card').forEach(card => {
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', () => {
+    const link = card.querySelector('.project-link');
+    if (link) window.open(link.href, link.target);
+  });
+});
+
 /* ---------- SCROLL PROGRESS BAR ---------- */
 const progressBar = $('#scrollProgress');
 function updateProgress() {

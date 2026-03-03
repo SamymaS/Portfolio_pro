@@ -12,6 +12,11 @@ const GAME_TITLES = {
   snake:    '🐍 Snake',
   breakout: '🧱 Casse-Briques',
   quiz:     '💡 Quiz Tech',
+  memory:   '🧠 Memory',
+  tamagotchi: '🤖 Tamagotchi',
+  '2048':   '2️⃣ 2048',
+  simon:    '🎯 Simon Says',
+  tictactoe: '⭕ Tic Tac Toe',
 };
 
 function openGame(name) {
@@ -20,10 +25,15 @@ function openGame(name) {
   gameContainer.innerHTML = '';
   document.body.style.overflow = 'hidden';
   switch(name) {
-    case 'connect4': initConnect4(); break;
-    case 'snake':    initSnake();    break;
-    case 'breakout': initBreakout(); break;
-    case 'quiz':     initQuiz();     break;
+    case 'connect4':   initConnect4();   break;
+    case 'snake':      initSnake();      break;
+    case 'breakout':   initBreakout();   break;
+    case 'quiz':       initQuiz();       break;
+    case 'memory':     initMemory();     break;
+    case 'tamagotchi': initTamagotchi(); break;
+    case '2048':       init2048();       break;
+    case 'simon':      initSimon();      break;
+    case 'tictactoe':  initTicTacToe();  break;
   }
 }
 
@@ -536,4 +546,565 @@ function initQuiz() {
 
   nextBtn.addEventListener('click',()=>{ idx++; show(); });
   show();
+}
+
+/* ==============================
+   MEMORY GAME
+   ============================== */
+function initMemory() {
+  const symbols = ['🍎', '🍌', '🍒', '🍓', '🍊', '🍋', '🍉', '🍇'];
+  const cards = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+  let flipped = [];
+  let matched = 0;
+  let moves = 0;
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:1.5rem;width:100%';
+
+  const stats = document.createElement('div');
+  stats.style.cssText = 'font-family:var(--font-mono);font-size:0.85rem;color:var(--accent);text-align:center';
+
+  const board = document.createElement('div');
+  board.style.cssText = `
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;max-width:340px;
+    padding:1rem;background:rgba(0,0,0,.2);border-radius:8px;
+  `;
+
+  const resetBtn = document.createElement('button');
+  resetBtn.textContent = '↺ Rejouer';
+  resetBtn.className = 'btn-primary';
+  resetBtn.style.fontSize = '0.75rem';
+
+  wrap.append(stats, board, resetBtn);
+  gameContainer.appendChild(wrap);
+
+  function updateStats() {
+    stats.textContent = `Paires: ${matched}/8 | Coups: ${moves}`;
+  }
+
+  function createCard(idx) {
+    const card = document.createElement('div');
+    card.style.cssText = `
+      width:70px;height:70px;background:var(--accent);border:none;border-radius:6px;
+      font-size:2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:all .2s;user-select:none;
+    `;
+    card.textContent = '?';
+    card.dataset.idx = idx;
+    card.dataset.flipped = false;
+
+    card.addEventListener('click', () => {
+      if (card.dataset.flipped === 'true' || flipped.length >= 2 || flipped.includes(idx)) return;
+      card.textContent = cards[idx];
+      card.dataset.flipped = 'true';
+      flipped.push(idx);
+
+      if (flipped.length === 2) {
+        moves++;
+        const [a, b] = flipped;
+        if (cards[a] === cards[b]) {
+          matched++;
+          flipped = [];
+          updateStats();
+          if (matched === 8) {
+            setTimeout(() => {
+              const msg = document.createElement('div');
+              msg.style.cssText = 'text-align:center;padding:1rem';
+              msg.innerHTML = `<h3 style="color:var(--accent);margin-bottom:0.5rem">Gagné ! 🎉</h3><p style="color:var(--muted);margin-bottom:1rem">${moves} coups</p>`;
+              const replay = document.createElement('button');
+              replay.textContent = '↺ Rejouer';
+              replay.className = 'btn-primary';
+              replay.addEventListener('click', () => { matched=0; moves=0; cards.sort(()=>Math.random()-0.5); board.innerHTML=''; flipped=[]; cards.forEach((s,i)=>board.appendChild(createCard(i))); updateStats(); });
+              msg.appendChild(replay);
+              board.parentElement.insertBefore(msg, board);
+              board.style.display = 'none';
+              resetBtn.style.display = 'none';
+            }, 300);
+          }
+        } else {
+          setTimeout(() => {
+            const [ca, cb] = flipped.map(i => board.querySelector(`[data-idx="${i}"]`));
+            ca.textContent = '?'; ca.dataset.flipped = 'false';
+            cb.textContent = '?'; cb.dataset.flipped = 'false';
+            flipped = [];
+          }, 800);
+        }
+        updateStats();
+      }
+    });
+    return card;
+  }
+
+  cards.forEach((s, i) => board.appendChild(createCard(i)));
+  updateStats();
+
+  resetBtn.addEventListener('click', () => {
+    matched = 0; moves = 0;
+    flipped = [];
+    cards.sort(() => Math.random() - 0.5);
+    board.innerHTML = '';
+    cards.forEach((s, i) => board.appendChild(createCard(i)));
+    updateStats();
+  });
+}
+
+/* ==============================
+   2048 GAME
+   ============================== */
+function init2048() {
+  const SIZE = 4;
+  let grid = Array(SIZE).fill(null).map(() => Array(SIZE).fill(0));
+  let score = 0;
+  let gameOver = false;
+
+  function addNewTile() {
+    const empty = [];
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) if (grid[r][c] === 0) empty.push([r, c]);
+    if (empty.length) {
+      const [r, c] = empty[Math.floor(Math.random() * empty.length)];
+      grid[r][c] = Math.random() < 0.9 ? 2 : 4;
+    }
+  }
+
+  function canMove() {
+    for (let r = 0; r < SIZE; r++) {
+      for (let c = 0; c < SIZE; c++) {
+        if (grid[r][c] === 0) return true;
+        if (c < SIZE - 1 && grid[r][c] === grid[r][c + 1]) return true;
+        if (r < SIZE - 1 && grid[r][c] === grid[r + 1][c]) return true;
+      }
+    }
+    return false;
+  }
+
+  function slide(arr) {
+    arr = arr.filter(v => v !== 0);
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i] === arr[i + 1]) {
+        arr[i] *= 2;
+        score += arr[i];
+        arr.splice(i + 1, 1);
+      }
+    }
+    while (arr.length < SIZE) arr.push(0);
+    return arr;
+  }
+
+  function move(dir) {
+    if (gameOver) return;
+    const old = JSON.stringify(grid);
+
+    if (dir === 'left' || dir === 'right') {
+      for (let r = 0; r < SIZE; r++) {
+        grid[r] = dir === 'left' ? slide(grid[r]) : slide(grid[r].reverse()).reverse();
+      }
+    } else {
+      for (let c = 0; c < SIZE; c++) {
+        let col = grid.map(r => r[c]);
+        col = dir === 'up' ? slide(col) : slide(col.reverse()).reverse();
+        for (let r = 0; r < SIZE; r++) grid[r][c] = col[r];
+      }
+    }
+
+    if (JSON.stringify(grid) !== old) {
+      addNewTile();
+      gameOver = !canMove();
+      render();
+    }
+  }
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:1.2rem;width:100%';
+
+  const scoreEl = document.createElement('div');
+  scoreEl.style.cssText = 'font-family:var(--font-mono);font-size:1rem;color:var(--accent)';
+
+  const board = document.createElement('div');
+  board.style.cssText = `
+    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+    background:#cdc1b4;border-radius:6px;padding:8px;max-width:280px;
+  `;
+
+  const info = document.createElement('div');
+  info.style.cssText = 'font-size:0.8rem;color:var(--muted);text-align:center';
+
+  wrap.append(scoreEl, board, info);
+  gameContainer.appendChild(wrap);
+
+  function render() {
+    board.innerHTML = '';
+    for (let r = 0; r < SIZE; r++) {
+      for (let c = 0; c < SIZE; c++) {
+        const val = grid[r][c];
+        const cell = document.createElement('div');
+        cell.textContent = val || '';
+        const colors = { 2: '#eee4da', 4: '#ede0c8', 8: '#f2b179', 16: '#f59563', 32: '#f67c5f', 64: '#f65e3b', 128: '#edcf72', 256: '#edcc61', 512: '#edc850', 1024: '#edc53f', 2048: '#edc22e' };
+        cell.style.cssText = `
+          width:60px;height:60px;background:${colors[val] || '#3c3c2f'};
+          display:flex;align-items:center;justify-content:center;
+          font-size:1.8rem;font-weight:700;border-radius:3px;
+          color:${val > 4 ? '#f9f6f2' : '#776e65'};
+        `;
+        board.appendChild(cell);
+      }
+    }
+    scoreEl.textContent = `Score: ${score}`;
+    info.textContent = gameOver ? '❌ Jeu Terminé!' : '⬅️➡️⬆️⬇️ ou Touches directionnelles';
+  }
+
+  addNewTile();
+  addNewTile();
+  render();
+
+  document.addEventListener('keydown', e => {
+    const keys = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' };
+    if (keys[e.key]) { e.preventDefault(); move(keys[e.key]); }
+  });
+
+  const btns = ['⬅️ Gauche', '➡️ Droite', '⬆️ Haut', '⬇️ Bas'].map((label, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    btn.style.fontSize = '0.7rem';
+    btn.className = 'btn-secondary';
+    const dirs = ['left', 'right', 'up', 'down'];
+    btn.addEventListener('click', () => move(dirs[i]));
+    return btn;
+  });
+
+  const btnGrid = document.createElement('div');
+  btnGrid.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;max-width:280px;width:100%';
+  btns.forEach(b => btnGrid.appendChild(b));
+  wrap.appendChild(btnGrid);
+}
+
+/* ==============================
+   SIMON SAYS GAME
+   ============================== */
+function initSimon() {
+  const colors = ['#ff6b6b', '#51cf66', '#4ecdc4', '#ffd93d'];
+  const colorNames = ['Red', 'Green', 'Blue', 'Yellow'];
+  let sequence = [];
+  let playerSequence = [];
+  let level = 1;
+  let gameActive = true;
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:1.5rem;width:100%';
+
+  const levelEl = document.createElement('div');
+  levelEl.style.cssText = 'font-family:var(--font-mono);font-size:1.2rem;color:var(--accent)';
+
+  const board = document.createElement('div');
+  board.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-width:250px';
+
+  const message = document.createElement('div');
+  message.style.cssText = 'font-size:0.9rem;color:var(--muted);text-align:center;height:24px';
+
+  wrap.append(levelEl, board, message);
+  gameContainer.appendChild(wrap);
+
+  function playSound(idx) {
+    const btn = board.children[idx];
+    const orig = btn.style.filter || '';
+    btn.style.filter = 'brightness(1.3)';
+    setTimeout(() => btn.style.filter = orig, 300);
+  }
+
+  function addNewColor() {
+    sequence.push(Math.floor(Math.random() * 4));
+  }
+
+  function playSequence() {
+    message.textContent = 'Regardez...';
+    gameActive = false;
+    let i = 0;
+    const iv = setInterval(() => {
+      playSound(sequence[i]);
+      i++;
+      if (i >= sequence.length) {
+        clearInterval(iv);
+        message.textContent = 'À vous !';
+        gameActive = true;
+        playerSequence = [];
+      }
+    }, 800);
+  }
+
+  function checkSequence() {
+    if (playerSequence[playerSequence.length - 1] !== sequence[playerSequence.length - 1]) {
+      message.textContent = `❌ Perdu au niveau ${level}!`;
+      gameActive = false;
+      return;
+    }
+
+    if (playerSequence.length === sequence.length) {
+      level++;
+      levelEl.textContent = `Niveau: ${level}`;
+      message.textContent = '✓ Correct!';
+      playerSequence = [];
+      addNewColor();
+      setTimeout(playSequence, 1500);
+    }
+  }
+
+  colors.forEach((color, idx) => {
+    const btn = document.createElement('div');
+    btn.style.cssText = `
+      width:100px;height:100px;background:${color};border-radius:8px;
+      cursor:pointer;transition:all .1s;box-shadow:0 4px 8px rgba(0,0,0,.3);
+    `;
+    btn.addEventListener('click', () => {
+      if (!gameActive) return;
+      playSound(idx);
+      playerSequence.push(idx);
+      checkSequence();
+    });
+    board.appendChild(btn);
+  });
+
+  const startBtn = document.createElement('button');
+  startBtn.textContent = '▶ Commencer';
+  startBtn.className = 'btn-primary';
+  startBtn.style.fontSize = '0.75rem';
+  startBtn.addEventListener('click', () => {
+    sequence = [];
+    level = 1;
+    gameActive = true;
+    levelEl.textContent = `Niveau: ${level}`;
+    addNewColor();
+    playSequence();
+    startBtn.style.display = 'none';
+  });
+
+  wrap.appendChild(startBtn);
+  levelEl.textContent = `Niveau: ${level}`;
+  message.textContent = 'Appuyez sur Commencer';
+}
+
+/* ==============================
+   TIC TAC TOE GAME
+   ============================== */
+function initTicTacToe() {
+  let board = Array(9).fill('');
+  let gameActive = true;
+  let isPlayerX = true;
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:1.2rem;width:100%';
+
+  const status = document.createElement('div');
+  status.style.cssText = 'font-family:var(--font-mono);font-size:1rem;color:var(--accent)';
+
+  const boardEl = document.createElement('div');
+  boardEl.style.cssText = `
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+    background:var(--surface);padding:12px;border-radius:8px;max-width:220px;
+  `;
+
+  wrap.append(status, boardEl);
+  gameContainer.appendChild(wrap);
+
+  function checkWinner(b) {
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+    for (let [a, b1, b2] of lines) {
+      if (b[a] && b[a] === b[b1] && b[a] === b[b2]) return b[a];
+    }
+    return null;
+  }
+
+  function aiMove() {
+    const empty = board.map((v, i) => v === '' ? i : -1).filter(i => i !== -1);
+    if (empty.length === 0) return;
+
+    // Simple AI: try to win, else block, else random
+    for (let idx of empty) {
+      board[idx] = 'O';
+      if (checkWinner(board) === 'O') return;
+      board[idx] = '';
+    }
+    for (let idx of empty) {
+      board[idx] = 'X';
+      if (checkWinner(board) === 'X') {
+        board[idx] = 'O';
+        return;
+      }
+      board[idx] = '';
+    }
+    board[empty[Math.floor(Math.random() * empty.length)]] = 'O';
+  }
+
+  function render() {
+    boardEl.innerHTML = '';
+    board.forEach((val, idx) => {
+      const cell = document.createElement('div');
+      cell.textContent = val;
+      cell.style.cssText = `
+        width:70px;height:70px;display:flex;align-items:center;justify-content:center;
+        background:var(--bg2);border:1px solid var(--border);border-radius:6px;
+        font-size:1.8rem;font-weight:700;cursor:pointer;transition:all .2s;
+      `;
+      cell.addEventListener('mouseover', () => { if (!val && gameActive) cell.style.background = 'rgba(0,229,255,.1)'; });
+      cell.addEventListener('mouseleave', () => { if (!val && gameActive) cell.style.background = 'var(--bg2)'; });
+      cell.addEventListener('click', () => {
+        if (!val && gameActive) {
+          board[idx] = 'X';
+          let winner = checkWinner(board);
+          if (winner) {
+            status.textContent = '🎉 Vous avez gagné!';
+            gameActive = false;
+          } else if (board.every(v => v !== '')) {
+            status.textContent = '🤝 Match nul!';
+            gameActive = false;
+          } else {
+            aiMove();
+            winner = checkWinner(board);
+            if (winner) {
+              status.textContent = '😢 L\'IA a gagné!';
+              gameActive = false;
+            } else if (board.every(v => v !== '')) {
+              status.textContent = '🤝 Match nul!';
+              gameActive = false;
+            }
+          }
+          render();
+        }
+      });
+      boardEl.appendChild(cell);
+    });
+  }
+
+  const resetBtn = document.createElement('button');
+  resetBtn.textContent = '↺ Rejouer';
+  resetBtn.className = 'btn-primary';
+  resetBtn.style.fontSize = '0.75rem';
+  resetBtn.addEventListener('click', () => {
+    board = Array(9).fill('');
+    gameActive = true;
+    status.textContent = 'À votre tour (X)';
+    render();
+  });
+
+  wrap.append(status, boardEl, resetBtn);
+  render();
+  status.textContent = 'À votre tour (X)';
+}
+
+/* ==============================
+   TAMAGOTCHI GAME
+   ============================== */
+function initTamagotchi() {
+  let hunger = 50;
+  let happiness = 50;
+  let energy = 70;
+  let age = 0;
+  let level = 'Bébé';
+  let alive = true;
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:1.2rem;max-width:300px;margin:0 auto;width:100%';
+
+  const display = document.createElement('div');
+  display.style.cssText = `
+    background:var(--surface);border:2px solid var(--accent);border-radius:8px;
+    padding:1.5rem;text-align:center;font-family:var(--font-mono);
+  `;
+
+  const creature = document.createElement('div');
+  creature.style.cssText = 'font-size:5rem;margin-bottom:0.5rem;line-height:1;min-height:80px;display:flex;align-items:center;justify-content:center';
+
+  const stats = document.createElement('div');
+  stats.style.cssText = 'margin-bottom:1rem;font-size:0.75rem;color:var(--muted);text-align:left';
+
+  const buttons = document.createElement('div');
+  buttons.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;width:100%';
+
+  display.append(creature, stats);
+  wrap.append(display, buttons);
+  gameContainer.appendChild(wrap);
+
+  function getCreatureFace() {
+    if (!alive) return '☠️';
+    if (happiness < 20) return '😢';
+    if (hunger > 80) return '😫';
+    if (energy < 20) return '😴';
+    if (happiness > 75) return '😄';
+    return '😊';
+  }
+
+  function updateDisplay() {
+    creature.textContent = getCreatureFace();
+    hunger = Math.max(0, Math.min(100, hunger));
+    happiness = Math.max(0, Math.min(100, happiness));
+    energy = Math.max(0, Math.min(100, energy));
+    age++;
+
+    if (age < 10) level = 'Bébé';
+    else if (age < 30) level = 'Enfant';
+    else if (age < 60) level = 'Adulte';
+    else level = 'Sage';
+
+    hunger += 0.5;
+    energy -= 0.3;
+    happiness -= 0.2;
+
+    if (hunger > 95 || happiness < 5) alive = false;
+
+    stats.innerHTML = `
+      <div>🎂 Âge: ${age} | Niveau: <span style="color:var(--accent)">${level}</span></div>
+      <div>🍗 Faim: <span style="${hunger>75?'color:#ff6b6b':'color:#51cf66'}">${Math.round(hunger)}%</span></div>
+      <div>😊 Bonheur: <span style="${happiness<30?'color:#ff6b6b':'color:#51cf66'}">${Math.round(happiness)}%</span></div>
+      <div>⚡ Énergie: <span style="${energy<30?'color:#ff6b6b':'color:#51cf66'}">${Math.round(energy)}%</span></div>
+    `;
+
+    if (!alive) {
+      stats.innerHTML += '<div style="color:var(--error);margin-top:0.5rem">💀 Il n\'a pas survécu...</div>';
+      $$('button', buttons).forEach(b=>b.disabled=true);
+    }
+  }
+
+  const btnFeed = document.createElement('button');
+  btnFeed.textContent = '🍗 Nourrir';
+  btnFeed.className = 'btn-primary';
+  btnFeed.style.fontSize = '0.75rem';
+  btnFeed.addEventListener('click', () => {
+    if (alive) { hunger -= 30; happiness += 5; updateDisplay(); }
+  });
+
+  const btnPlay = document.createElement('button');
+  btnPlay.textContent = '🎮 Jouer';
+  btnPlay.className = 'btn-primary';
+  btnPlay.style.fontSize = '0.75rem';
+  btnPlay.addEventListener('click', () => {
+    if (alive && energy > 20) { happiness += 20; hunger += 10; energy -= 20; updateDisplay(); }
+  });
+
+  const btnSleep = document.createElement('button');
+  btnSleep.textContent = '😴 Dormir';
+  btnSleep.className = 'btn-secondary';
+  btnSleep.style.fontSize = '0.75rem';
+  btnSleep.addEventListener('click', () => {
+    if (alive) { energy = 100; hunger += 20; updateDisplay(); }
+  });
+
+  const btnReset = document.createElement('button');
+  btnReset.textContent = '↺ Nouveau';
+  btnReset.className = 'btn-secondary';
+  btnReset.style.fontSize = '0.75rem';
+  btnReset.addEventListener('click', () => {
+    hunger = 50; happiness = 50; energy = 70; age = 0; alive = true;
+    btnFeed.disabled = false; btnPlay.disabled = false; btnSleep.disabled = false;
+    updateDisplay();
+  });
+
+  buttons.append(btnFeed, btnPlay, btnSleep, btnReset);
+  updateDisplay();
+
+  const gameLoop = setInterval(() => {
+    if (alive && document.body.contains(wrap)) updateDisplay();
+    else clearInterval(gameLoop);
+  }, 1000);
 }
