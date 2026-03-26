@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>404 — Page introuvable · Samy Boudaoud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--accent:#00e5ff;--bg:#080b10;--text:#e2e8f0;--muted:#8892a4;--fm:'Space Mono',monospace;--ff:'Syne',sans-serif}
+    html,body{height:100%}
+    body{background:var(--bg);color:var(--text);font-family:var(--ff);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;min-height:100vh;overflow:hidden}
+    canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .content{position:relative;z-index:1;max-width:560px}
+    .err-code{
+      font-size:clamp(5rem,22vw,11rem);font-weight:800;line-height:1;
+      background:linear-gradient(130deg,var(--accent),#7c3aed);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      letter-spacing:-.04em;margin-bottom:1rem;
+    }
+    .err-title{font-size:clamp(1.2rem,4vw,1.8rem);font-weight:800;margin-bottom:.8rem}
+    .err-msg{font-family:var(--fm);font-size:.8rem;color:var(--muted);line-height:1.8;margin-bottom:2rem}
+    .err-code-line{
+      font-family:var(--fm);font-size:.76rem;color:#7dd3fc;
+      background:#0a0f16;border:1px solid rgba(255,255,255,.08);
+      padding:.8rem 1.2rem;border-radius:8px;margin-bottom:2rem;
+      text-align:left;
+    }
+    .err-code-line .c{color:#86efac}.err-code-line .n{color:#f97316}
+    a.btn{
+      display:inline-flex;align-items:center;gap:.5rem;
+      padding:.75rem 1.7rem;background:var(--accent);color:#000;
+      font-family:var(--fm);font-size:.72rem;font-weight:700;
+      text-transform:uppercase;letter-spacing:.1em;text-decoration:none;
+      border-radius:6px;transition:filter .2s;
+    }
+    a.btn:hover{filter:brightness(1.12)}
+    a.sec{
+      display:inline-flex;align-items:center;
+      padding:.75rem 1.7rem;background:transparent;color:var(--text);
+      font-family:var(--fm);font-size:.72rem;
+      text-transform:uppercase;letter-spacing:.1em;text-decoration:none;
+      border:2px solid rgba(255,255,255,.1);border-radius:6px;
+      transition:border-color .2s,color .2s;
+    }
+    a.sec:hover{border-color:var(--accent);color:var(--accent)}
+    .btns{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+    @media(prefers-color-scheme:light){
+      :root{--bg:#f5f7fa;--text:#0f172a;--muted:#64748b}
+    }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="content">
+  <div class="err-code">404</div>
+  <h1 class="err-title">Page introuvable</h1>
+  <p class="err-msg">Cette URL n'existe pas ou a été déplacée.<br>Peut-être un typo dans l'adresse ?</p>
+  <div class="err-code-line">
+    <span class="c">throw new</span> NotFoundException(<span class="n">"Page not found"</span>)<span class="c">;</span><br>
+    <span style="color:#8892a4">// status: </span><span class="n">404</span> <span style="color:#8892a4">· path: </span><span style="color:#e2e8f0" id="errPath"></span>
+  </div>
+  <div class="btns">
+    <a href="/" class="btn">← Retour à l'accueil</a>
+    <a href="/#contact" class="sec">Me contacter</a>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  document.getElementById('errPath').textContent = location.pathname;
+  const canvas=document.getElementById('c');
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,1000);
+  cam.position.z=30;
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  const N=600,geo=new THREE.BufferGeometry(),pos=new Float32Array(N*3),col=new Float32Array(N*3);
+  for(let i=0;i<N;i++){pos[i*3]=(Math.random()-.5)*100;pos[i*3+1]=(Math.random()-.5)*70;pos[i*3+2]=(Math.random()-.5)*50;col[i*3]=0;col[i*3+1]=.9;col[i*3+2]=1;}
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const pts=new THREE.Points(geo,new THREE.PointsMaterial({size:.12,vertexColors:true,transparent:true,opacity:.6}));
+  scene.add(pts);
+  let t=0;(function r(){requestAnimationFrame(r);t+=.012;pts.rotation.y=t*.015;renderer.render(scene,cam)})();
+  window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script>
+</body>
+</html>
