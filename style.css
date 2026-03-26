@@ -684,6 +684,94 @@ kbd{
   font-family:var(--fm);font-size:.6rem;color:var(--accent);
 }
 
+
+/* ── BOUTON CV ──────────────────────────────────────────────────── */
+.btn-cv{
+  display:inline-flex;align-items:center;gap:.5rem;
+  position:relative;overflow:hidden;
+  font-family:var(--fm);font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  text-decoration:none;border:none;
+  border-radius:var(--r-sm);cursor:pointer;
+  transition:all .25s ease;
+  -webkit-tap-highlight-color:transparent;
+  white-space:nowrap;
+}
+/* Shimmer effect */
+.btn-cv::before{
+  content:'';
+  position:absolute;top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  transition:left .5s ease;
+}
+.btn-cv:hover::before{left:140%}
+
+.btn-cv svg{
+  width:15px;height:15px;flex-shrink:0;
+  transition:transform .25s ease;
+}
+.btn-cv:hover svg{transform:translateY(2px)}
+
+/* Variante NAV — compacte */
+.nav-cv{
+  height:34px;padding:0 .85rem;
+  background:rgba(0,229,255,.12);
+  border:1.5px solid rgba(0,229,255,.4);
+  color:var(--accent);font-size:.62rem;
+  box-shadow:0 0 12px rgba(0,229,255,.1);
+}
+.nav-cv:hover{
+  background:var(--accent);color:#000;
+  border-color:var(--accent);
+  box-shadow:0 0 20px rgba(0,229,255,.35);
+  transform:translateY(-1px);
+}
+.nav-cv span{font-size:.62rem}
+
+/* Variante HERO — même taille que les autres boutons hero */
+.hero-cv{
+  padding:.78rem 1.7rem;
+  background:transparent;
+  border:2px solid rgba(0,229,255,.5);
+  color:var(--accent);font-size:.73rem;
+  box-shadow:0 0 16px rgba(0,229,255,.08);
+}
+.hero-cv:hover{
+  background:rgba(0,229,255,.1);
+  border-color:var(--accent);
+  box-shadow:0 0 28px rgba(0,229,255,.25);
+  transform:translateY(-2px);
+}
+
+/* Variante ABOUT — plein, accentué */
+.about-cv{
+  margin-top:1.5rem;
+  padding:.85rem 1.8rem;
+  background:linear-gradient(135deg,rgba(0,229,255,.15),rgba(124,58,237,.15));
+  border:1.5px solid rgba(0,229,255,.35);
+  color:var(--accent);font-size:.73rem;
+  box-shadow:0 4px 20px rgba(0,229,255,.1);
+  align-self:flex-start;
+}
+.about-cv:hover{
+  background:linear-gradient(135deg,rgba(0,229,255,.25),rgba(124,58,237,.25));
+  border-color:var(--accent);
+  box-shadow:0 6px 28px rgba(0,229,255,.25);
+  transform:translateY(-2px);
+}
+
+/* Badge taille fichier */
+.cv-badge{
+  display:inline-flex;align-items:center;
+  padding:.15rem .5rem;margin-left:.2rem;
+  background:rgba(0,229,255,.12);
+  border:1px solid rgba(0,229,255,.25);
+  border-radius:999px;
+  font-size:.58rem;letter-spacing:.06em;
+  color:var(--accent);opacity:.8;
+}
+
 /* ================================================================
    RESPONSIVE SCALE-UP  (mobile-first → min-width breakpoints)
    ================================================================ */
