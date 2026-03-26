@@ -328,7 +328,8 @@
          if(target){
            e.preventDefault();
            setMenu(false);
-           const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'))||64;
+           const navHStr = getComputedStyle(document.documentElement).getPropertyValue('--nav-h').trim();
+           const navH = parseInt(navHStr) || 64;
            const top = target.getBoundingClientRect().top + window.scrollY - navH;
            window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
          }
@@ -341,6 +342,15 @@
        const EMAILJS_SERVICE  = 'service_w9mc9od';
        const EMAILJS_TEMPLATE = 'template_jh6ptam';
        const EMAILJS_KEY      = 'kvrIDeCmjxUFxlP6O';
+       // Init EmailJS v4
+       if(typeof emailjs !== 'undefined') {
+         try {
+           emailjs.init({ publicKey: EMAILJS_KEY });
+         } catch(e) {
+           // fallback for older versions
+           try { emailjs.init(EMAILJS_KEY); } catch(e2) {}
+         }
+       }
    
        function getVal(n){ return (form.querySelector('[name="'+n+'"]')||{}).value?.trim()||''; }
        function setErr(n,msg){
@@ -363,32 +373,57 @@
          const val=getVal(n);
          if(n==='name'){if(!val){setErr(n,'Nom requis');return false;}setOk(n);clearErr(n);return true;}
          if(n==='email'){if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){setErr(n,'Email invalide');return false;}setOk(n);clearErr(n);return true;}
-         if(n==='message'){if(val.length<5){setErr(n,'Message requis');return false;}setOk(n);clearErr(n);return true;}
+         if(n==='message'){if(val.length<3){setErr(n,'Message requis');return false;}setOk(n);clearErr(n);return true;}
          return true;
        }
        form.querySelectorAll('.form-input').forEach(inp=>{
          inp.addEventListener('blur',()=>validateField(inp.name));
          inp.addEventListener('input',()=>{ if(inp.classList.contains('is-err')) validateField(inp.name); });
        });
-       form.addEventListener('submit',async e=>{
+       form.addEventListener('submit', async e=>{
          e.preventDefault();
          if(!['name','email','message'].every(f=>validateField(f))) return;
-         const btn=form.querySelector('[type="submit"]');
-         const orig=btn.textContent;
-         btn.disabled=true; btn.textContent='Envoi…';
+         const btn = form.querySelector('[type="submit"]');
+         const orig = btn.textContent;
+         btn.disabled = true;
+         btn.textContent = 'Envoi en cours…';
          try {
-           if(typeof emailjs!=='undefined'){
-             await emailjs.sendForm(EMAILJS_SERVICE,EMAILJS_TEMPLATE,form,EMAILJS_KEY);
+           // EmailJS v4 — send via object params (more reliable than sendForm)
+           const params = {
+             name:    getVal('name'),
+             email:   getVal('email'),
+             message: getVal('message'),
+             // also pass as template vars used by default template
+             from_name:  getVal('name'),
+             from_email: getVal('email'),
+             reply_to:   getVal('email'),
+           };
+           if(typeof emailjs !== 'undefined'){
+             await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, params);
            } else {
-             await new Promise(r=>setTimeout(r,800));
+             // Fallback demo mode
+             await new Promise(r=>setTimeout(r,900));
            }
-           btn.textContent='✓ Envoyé !'; btn.classList.add('ok');
+           btn.textContent = '✓ Message envoyé !';
+           btn.style.background = '#22c55e';
            form.reset();
            form.querySelectorAll('.form-input').forEach(i=>i.classList.remove('is-ok','is-err'));
-           setTimeout(()=>{btn.disabled=false;btn.textContent=orig;btn.classList.remove('ok');},3500);
-         } catch(err){
-           btn.textContent='Erreur, réessayez';
-           setTimeout(()=>{btn.disabled=false;btn.textContent=orig;},3000);
+           setTimeout(()=>{
+             btn.disabled = false;
+             btn.textContent = orig;
+             btn.style.background = '';
+           }, 4000);
+         } catch(err) {
+           console.error('EmailJS error:', err);
+           btn.textContent = '✗ Erreur — réessayez';
+           btn.style.background = '#f87171';
+           btn.style.color = '#000';
+           setTimeout(()=>{
+             btn.disabled = false;
+             btn.textContent = orig;
+             btn.style.background = '';
+             btn.style.color = '';
+           }, 3500);
          }
        });
      }
