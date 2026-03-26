@@ -6,16 +6,10 @@
   <meta name="description" content="Portfolio de Samy Boudaoud — Ingénieur Logiciel Fullstack & IoT, Aix-en-Provence"/>
   <meta name="theme-color" content="#080b10"/>
   <title>Samy Boudaoud – Ingénieur Logiciel</title>
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-  <!-- EmailJS (async, non-blocking) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" async></script>
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css"/>
-  <!-- i18n must load before main -->
-  <script src="i18n.js" defer></script>
 </head>
 <body>
 
@@ -25,7 +19,7 @@
 <!-- SCROLL PROGRESS -->
 <div id="scrollProgress" aria-hidden="true"></div>
 
-<!-- CURSOR (desktop only) -->
+<!-- CURSOR -->
 <div class="cursor" id="cursor" aria-hidden="true"></div>
 <div class="cursor-dot" aria-hidden="true"></div>
 
@@ -53,66 +47,60 @@
   </div>
 </div>
 
-<!-- ── NAV ──────────────────────────────────────────────────────── -->
+<!-- NAV -->
 <nav id="navbar" role="navigation" aria-label="Navigation principale">
   <a href="#hero" class="nav-logo" aria-label="Accueil">SB<span class="dot">.</span></a>
   <ul class="nav-links" id="navLinks" role="menubar">
-    <li role="none"><a href="#hero"          class="nav-link" role="menuitem" data-i18n="nav_home">Accueil</a></li>
-    <li role="none"><a href="#about"         class="nav-link" role="menuitem" data-i18n="nav_about">Profil</a></li>
-    <li role="none"><a href="#skills"        class="nav-link" role="menuitem" data-i18n="nav_skills">Skills</a></li>
-    <li role="none"><a href="#xp"            class="nav-link" role="menuitem" data-i18n="nav_xp">Expériences</a></li>
-    <li role="none"><a href="#projects"      class="nav-link" role="menuitem" data-i18n="nav_projects">Projets</a></li>
-    <li role="none"><a href="#certs"         class="nav-link" role="menuitem" data-i18n="nav_certs">Formations</a></li>
-    <li role="none"><a href="#games"         class="nav-link" role="menuitem" data-i18n="nav_games">Jeux</a></li>
-    <li role="none"><a href="#contact"       class="nav-link" role="menuitem" data-i18n="nav_contact">Contact</a></li>
+    <li><a href="#hero"     class="nav-link" role="menuitem">Accueil</a></li>
+    <li><a href="#about"    class="nav-link" role="menuitem">Profil</a></li>
+    <li><a href="#skills"   class="nav-link" role="menuitem">Skills</a></li>
+    <li><a href="#xp"       class="nav-link" role="menuitem">Expériences</a></li>
+    <li><a href="#projects" class="nav-link" role="menuitem">Projets</a></li>
+    <li><a href="#certs"    class="nav-link" role="menuitem">Formations</a></li>
+    <li><a href="#games"    class="nav-link" role="menuitem">Jeux</a></li>
+    <li><a href="#contact"  class="nav-link" role="menuitem">Contact</a></li>
   </ul>
   <div class="nav-right">
-    <div class="nav-status" aria-label="Statut de disponibilité">
+    <div class="nav-status">
       <span class="status-dot" aria-hidden="true"></span>
-      <span data-i18n="nav_available">Disponible</span>
+      <span>Disponible</span>
     </div>
-    <!-- CV download -->
-    <a href="CV_Samy_Boudaoud.pdf" download
-       class="nav-icon-btn" aria-label="Télécharger le CV" data-i18n-title="cv_download"
-       title="Télécharger mon CV">📄</a>
-    <!-- Language toggle -->
-    <button id="langBtn" class="lang-btn" aria-label="Changer la langue">EN</button>
-    <!-- Theme toggle -->
-    <button id="themeBtn" class="nav-icon-btn" aria-label="Changer le thème" title="Thème clair/sombre">☀</button>
-    <!-- Hamburger -->
-    <button id="hamburger" class="hamburger" aria-label="Menu mobile" aria-expanded="false" aria-controls="mobileMenu">
+    <a href="CV_Samy_Boudaoud.pdf" download class="nav-icon-btn" title="Télécharger mon CV" aria-label="Télécharger le CV">📄</a>
+    <button id="langBtn" class="lang-btn" aria-label="Switch to English">EN</button>
+    <button id="themeBtn" class="nav-icon-btn" aria-label="Changer le thème">☀</button>
+    <button id="hamburger" class="hamburger" aria-label="Menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
 <!-- MOBILE MENU -->
-<div id="mobileMenu" class="mobile-menu" role="dialog" aria-label="Menu mobile">
+<div id="mobileMenu" class="mobile-menu">
   <ul>
-    <li><a href="#hero"     class="mob-link" data-i18n="nav_home">Accueil</a></li>
-    <li><a href="#about"    class="mob-link" data-i18n="nav_about">Profil</a></li>
-    <li><a href="#skills"   class="mob-link" data-i18n="nav_skills">Skills</a></li>
-    <li><a href="#xp"       class="mob-link" data-i18n="nav_xp">Expériences</a></li>
-    <li><a href="#projects" class="mob-link" data-i18n="nav_projects">Projets</a></li>
-    <li><a href="#certs"    class="mob-link" data-i18n="nav_certs">Formations</a></li>
-    <li><a href="#games"    class="mob-link" data-i18n="nav_games">Jeux</a></li>
-    <li><a href="#contact"  class="mob-link" data-i18n="nav_contact">Contact</a></li>
+    <li><a href="#hero"     class="mob-link">Accueil</a></li>
+    <li><a href="#about"    class="mob-link">Profil</a></li>
+    <li><a href="#skills"   class="mob-link">Skills</a></li>
+    <li><a href="#xp"       class="mob-link">Expériences</a></li>
+    <li><a href="#projects" class="mob-link">Projets</a></li>
+    <li><a href="#certs"    class="mob-link">Formations</a></li>
+    <li><a href="#games"    class="mob-link">Jeux</a></li>
+    <li><a href="#contact"  class="mob-link">Contact</a></li>
   </ul>
 </div>
 
-<!-- ── HERO ─────────────────────────────────────────────────────── -->
+<!-- HERO -->
 <section id="hero" aria-label="Introduction">
   <canvas id="threeCanvas" aria-hidden="true"></canvas>
   <div class="hero-content">
-    <p class="hero-tag" data-i18n="hero_tag">Ingénieur Logiciel · Fullstack &amp; IoT · 24 ans</p>
+    <p class="hero-tag">Ingénieur Logiciel · Fullstack &amp; IoT · 24 ans</p>
     <h1 class="hero-title">
       <span class="line">Samy</span>
       <span class="line">Boudaoud</span>
     </h1>
-    <p class="hero-sub" data-i18n="hero_sub">Backend robuste · Frontend interactif · Systèmes embarqués</p>
+    <p class="hero-sub">Backend robuste · Frontend interactif · Systèmes embarqués</p>
     <div class="hero-ctas">
-      <a href="#projects" class="btn btn-primary" data-i18n="hero_cta1">Voir mes projets</a>
-      <a href="#contact"  class="btn btn-secondary" data-i18n="hero_cta2">Me contacter</a>
+      <a href="#projects" class="btn btn-primary">Voir mes projets</a>
+      <a href="#contact"  class="btn btn-secondary">Me contacter</a>
     </div>
     <div class="hero-socials">
       <a href="https://github.com/SamymaS" target="_blank" rel="noopener" class="social-link" aria-label="GitHub">
@@ -131,35 +119,50 @@
 <!-- STATS -->
 <section class="stats-bar" aria-label="Statistiques">
   <div class="container stats-grid">
-    <div class="stat-item"><div class="stat-row"><span class="stat-num" data-target="4">0</span><span class="stat-plus">+</span></div><span class="stat-label" data-i18n="stat1_label">Ans d'expérience</span></div>
-    <div class="stat-item"><div class="stat-row"><span class="stat-num" data-target="11">0</span><span class="stat-plus">+</span></div><span class="stat-label" data-i18n="stat2_label">Projets réalisés</span></div>
-    <div class="stat-item"><div class="stat-row"><span class="stat-num" data-target="8">0</span><span class="stat-plus">+</span></div><span class="stat-label" data-i18n="stat3_label">Langages maîtrisés</span></div>
-    <div class="stat-item"><div class="stat-row"><span class="stat-num" data-target="900">0</span><span class="stat-plus">+</span></div><span class="stat-label" data-i18n="stat4_label">Score TOEIC</span></div>
+    <div class="stat-item">
+      <div class="stat-row"><span class="stat-num" data-target="4">0</span><span class="stat-plus">+</span></div>
+      <span class="stat-label">Ans d'expérience</span>
+    </div>
+    <div class="stat-item">
+      <div class="stat-row"><span class="stat-num" data-target="11">0</span><span class="stat-plus">+</span></div>
+      <span class="stat-label">Projets réalisés</span>
+    </div>
+    <div class="stat-item">
+      <div class="stat-row"><span class="stat-num" data-target="8">0</span><span class="stat-plus">+</span></div>
+      <span class="stat-label">Langages maîtrisés</span>
+    </div>
+    <div class="stat-item">
+      <div class="stat-row"><span class="stat-num" data-target="900">0</span><span class="stat-plus">+</span></div>
+      <span class="stat-label">Score TOEIC</span>
+    </div>
   </div>
 </section>
 
-<!-- ── ABOUT ─────────────────────────────────────────────────────── -->
+<!-- ABOUT -->
 <section id="about" class="section">
   <div class="container">
     <div class="section-header reveal">
-      <span class="section-num" data-i18n="about_num">01</span>
-      <h2 class="section-title" data-i18n="about_title">Profil</h2>
+      <span class="section-num">01</span>
+      <h2 class="section-title">Profil</h2>
     </div>
     <div class="about-grid">
       <div class="about-text reveal">
-        <p class="about-lead" data-i18n="about_lead">Ingénieur logiciel passionné, je couvre l'<strong>ensemble du cycle de développement</strong> — du backend robuste aux systèmes embarqués.</p>
-        <p data-i18n="about_p1">Actuellement en alternance chez <strong>CS GROUP</strong> sur MobilitX, architectures Java/Kotlin à forte contrainte de performance.</p>
-        <p data-i18n="about_p2">Curieux, autonome, et orienté qualité — j'aime construire des choses qui durent.</p>
+        <p class="about-lead">Ingénieur logiciel passionné, je couvre l'<strong>ensemble du cycle de développement</strong> — du backend robuste aux systèmes embarqués en passant par le frontend interactif.</p>
+        <p>Actuellement en alternance chez <strong>CS GROUP</strong> sur la plateforme MobilitX, je travaille sur des architectures modulaires Java/Kotlin à forte contrainte de performance.</p>
+        <p>Curieux, autonome, et orienté qualité — j'aime construire des choses qui durent et qui ont du sens.</p>
         <div class="about-meta">
-          <div class="meta-item"><span class="meta-label" data-i18n="meta_formation_label">Formation</span><span class="meta-value" data-i18n="meta_formation_val">Mastère Expert Dev Logiciel &amp; IoT – Ynov Aix 2024–2026</span></div>
-          <div class="meta-item"><span class="meta-label" data-i18n="meta_rythme_label">Rythme</span><span class="meta-value" data-i18n="meta_rythme_val">3 semaines entreprise / 1 semaine école</span></div>
-          <div class="meta-item"><span class="meta-label" data-i18n="meta_loc_label">Localisation</span><span class="meta-value" data-i18n="meta_loc_val">Aix-en-Provence, France</span></div>
-          <div class="meta-item"><span class="meta-label" data-i18n="meta_lang_label">Langues</span><span class="meta-value" data-i18n="meta_lang_val">Français · Anglais C2 (TOEIC 900+) · Espagnol</span></div>
+          <div class="meta-item"><span class="meta-label">Formation</span><span class="meta-value">Mastère Expert Dev Logiciel &amp; IoT – Ynov Aix 2024–2026</span></div>
+          <div class="meta-item"><span class="meta-label">Rythme</span><span class="meta-value">3 semaines entreprise / 1 semaine école</span></div>
+          <div class="meta-item"><span class="meta-label">Localisation</span><span class="meta-value">Aix-en-Provence, France</span></div>
+          <div class="meta-item"><span class="meta-label">Langues</span><span class="meta-value">Français · Anglais C2 (TOEIC 900+) · Espagnol</span></div>
         </div>
       </div>
       <div class="about-visual reveal d1">
         <div class="code-block">
-          <div class="code-header"><span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span><span class="code-filename">profile.json</span></div>
+          <div class="code-header">
+            <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+            <span class="code-filename">profile.json</span>
+          </div>
           <pre class="code-content"><span class="cbr">{</span>
   <span class="ck">"name"</span><span class="col">:</span> <span class="cs">"Samy Boudaoud"</span><span class="cc">,</span>
   <span class="ck">"role"</span><span class="col">:</span> <span class="cs">"Software Engineer"</span><span class="cc">,</span>
@@ -176,10 +179,10 @@
   </div>
 </section>
 
-<!-- ── SKILLS ────────────────────────────────────────────────────── -->
+<!-- SKILLS -->
 <section id="skills" class="section dark-section">
   <div class="container">
-    <div class="section-header reveal"><span class="section-num" data-i18n="skills_num">02</span><h2 class="section-title" data-i18n="skills_title">Compétences</h2></div>
+    <div class="section-header reveal"><span class="section-num">02</span><h2 class="section-title">Compétences</h2></div>
     <div class="skills-grid">
       <div class="skill-cat reveal"><h3 class="skill-cat-title"><span class="skill-icon">⬡</span> Langages</h3><div class="tags"><span class="tag main">Java</span><span class="tag main">Kotlin</span><span class="tag main">Python</span><span class="tag main">C++</span><span class="tag">Dart</span><span class="tag">JavaScript</span><span class="tag">PHP</span><span class="tag">HTML/CSS</span></div></div>
       <div class="skill-cat reveal d1"><h3 class="skill-cat-title"><span class="skill-icon">⬡</span> Frameworks &amp; Outils</h3><div class="tags"><span class="tag main">Spring</span><span class="tag main">Flutter</span><span class="tag main">Flask</span><span class="tag">Qt</span><span class="tag">Node.js</span><span class="tag">Docker</span><span class="tag">Git/GitLab</span><span class="tag">Ansible</span><span class="tag">CI/CD</span><span class="tag">Jira</span></div></div>
@@ -190,33 +193,61 @@
   </div>
 </section>
 
-<!-- ── EXPERIENCES ───────────────────────────────────────────────── -->
+<!-- EXPERIENCES -->
 <section id="xp" class="section">
   <div class="container">
-    <div class="section-header reveal"><span class="section-num" data-i18n="xp_num">03</span><h2 class="section-title" data-i18n="xp_title">Expériences</h2></div>
+    <div class="section-header reveal"><span class="section-num">03</span><h2 class="section-title">Expériences</h2></div>
     <div class="timeline">
-      <div class="tl-item reveal"><div class="tl-dot"></div><div class="tl-body"><div class="tl-header"><div><div class="tl-title" data-i18n="xp1_title">Ingénieur Logiciel – Alternance</div><div class="tl-company">CS GROUP</div></div><span class="tl-date">Sep 2024 → Aujourd'hui</span></div><p class="tl-desc" data-i18n="xp1_desc">Développement backend Java / Kotlin sur la plateforme <strong>MobilitX</strong>.</p><div class="tl-tags"><span>Java</span><span>Kotlin</span><span>GitLab</span><span>Jira</span><span>CI/CD</span></div></div></div>
-      <div class="tl-item reveal"><div class="tl-dot"></div><div class="tl-body"><div class="tl-header"><div><div class="tl-title" data-i18n="xp2_title">Développeur Fullstack Salesforce – Alternance</div><div class="tl-company">Niji</div></div><span class="tl-date">Nov 2022 → Jun 2023</span></div><p class="tl-desc" data-i18n="xp2_desc">Analyse des besoins, développement Salesforce, CI/CD.</p><div class="tl-tags"><span>Salesforce</span><span>Apex</span><span>JavaScript</span></div></div></div>
-      <div class="tl-item reveal"><div class="tl-dot"></div><div class="tl-body"><div class="tl-header"><div><div class="tl-title" data-i18n="xp3_title">Développeur Fullstack – Alternance</div><div class="tl-company">REZZO Telecom</div></div><span class="tl-date">Oct 2021 → Oct 2022</span></div><p class="tl-desc" data-i18n="xp3_desc">Refonte logiciel LUCY. C++/Qt, Python Flask, PL/SQL.</p><div class="tl-tags"><span>C++/Qt</span><span>Python</span><span>Flask</span><span>PL/SQL</span></div></div></div>
-      <div class="tl-item reveal"><div class="tl-dot"></div><div class="tl-body"><div class="tl-header"><div><div class="tl-title" data-i18n="xp4_title">Technicien Informatique – Stage</div><div class="tl-company">Groupe ORTEC</div></div><span class="tl-date">Sep 2020 → Déc 2020</span></div><p class="tl-desc" data-i18n="xp4_desc">Digitalisation ERP, modules e-learning, support technique.</p><div class="tl-tags"><span>Java</span><span>SharePoint</span><span>Réseau</span></div></div></div>
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-body">
+          <div class="tl-header"><div><div class="tl-title">Ingénieur Logiciel – Alternance</div><div class="tl-company">CS GROUP</div></div><span class="tl-date">Sep 2024 → Aujourd'hui</span></div>
+          <p class="tl-desc">Développement backend Java / Kotlin sur la plateforme <strong>MobilitX</strong> (transport &amp; données temps réel). Architecture modulaire et événementielle.</p>
+          <div class="tl-tags"><span>Java</span><span>Kotlin</span><span>GitLab</span><span>Jira</span><span>CI/CD</span></div>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-body">
+          <div class="tl-header"><div><div class="tl-title">Développeur Fullstack Salesforce – Alternance</div><div class="tl-company">Niji</div></div><span class="tl-date">Nov 2022 → Jun 2023</span></div>
+          <p class="tl-desc">Analyse des besoins clients, développement et paramétrage d'applications Salesforce. Bonnes pratiques CI/CD.</p>
+          <div class="tl-tags"><span>Salesforce</span><span>Apex</span><span>JavaScript</span><span>HTML/CSS</span></div>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-body">
+          <div class="tl-header"><div><div class="tl-title">Développeur Logiciel Fullstack – Alternance</div><div class="tl-company">REZZO Telecom</div></div><span class="tl-date">Oct 2021 → Oct 2022</span></div>
+          <p class="tl-desc">Refonte du logiciel de facturation LUCY. Frontend C++/Qt, backend Python Flask. PL/SQL &amp; imports CSV/XLSX.</p>
+          <div class="tl-tags"><span>C++/Qt</span><span>Python</span><span>Flask</span><span>PL/SQL</span></div>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-body">
+          <div class="tl-header"><div><div class="tl-title">Technicien Informatique – Stage</div><div class="tl-company">Groupe ORTEC</div></div><span class="tl-date">Sep 2020 → Déc 2020</span></div>
+          <p class="tl-desc">Digitalisation ERP, modules e-learning Java/SharePoint, support technique et déploiement de postes.</p>
+          <div class="tl-tags"><span>Java</span><span>SharePoint</span><span>Réseau</span></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ── PROJECTS ──────────────────────────────────────────────────── -->
+<!-- PROJECTS -->
 <section id="projects" class="section dark-section">
   <div class="container">
-    <div class="section-header reveal"><span class="section-num" data-i18n="proj_num">04</span><h2 class="section-title" data-i18n="proj_title">Projets</h2></div>
+    <div class="section-header reveal"><span class="section-num">04</span><h2 class="section-title">Projets</h2></div>
     <div class="filter-bar reveal">
-      <button class="filter-btn active" data-filter="all" data-i18n="filter_all">Tous</button>
-      <button class="filter-btn" data-filter="mobile" data-i18n="filter_mobile">Mobile</button>
-      <button class="filter-btn" data-filter="iot" data-i18n="filter_iot">IoT</button>
-      <button class="filter-btn" data-filter="web" data-i18n="filter_web">Web &amp; API</button>
-      <button class="filter-btn" data-filter="realtime" data-i18n="filter_rt">Temps Réel</button>
+      <button class="filter-btn active" data-filter="all">Tous</button>
+      <button class="filter-btn" data-filter="mobile">Mobile</button>
+      <button class="filter-btn" data-filter="iot">IoT</button>
+      <button class="filter-btn" data-filter="web">Web &amp; API</button>
+      <button class="filter-btn" data-filter="realtime">Temps Réel</button>
     </div>
     <div class="projects-grid" id="projectsGrid">
-      <div class="proj-card reveal" data-cat="mobile"><div class="proj-top"><span class="proj-cat">Mobile · Gamification</span><a href="https://github.com/SamymaS" target="_blank" rel="noopener" class="proj-link" aria-label="Voir Sameva sur GitHub">↗</a></div><h3 class="proj-name">Sameva</h3><p class="proj-desc">Application mobile de productivité gamifiée. Système de quêtes avec validation IA.</p><div class="proj-tech"><span>Flutter</span><span>Figma</span><span>Rive</span><span>IA</span></div><span class="badge-wip" data-i18n="wip">En cours</span></div>
-      <div class="proj-card reveal" data-cat="mobile"><div class="proj-top"><span class="proj-cat">Mobile · Mobilité</span><a href="https://github.com/SamymaS" target="_blank" rel="noopener" class="proj-link">↗</a></div><h3 class="proj-name">COCI</h3><p class="proj-desc">Covoiturage urbain Côte-d'Ivoire. React Native + API REST complète.</p><div class="proj-tech"><span>React Native</span><span>API REST</span><span>OpenAPI</span></div><span class="badge-wip" data-i18n="wip">En cours</span></div>
+      <div class="proj-card reveal" data-cat="mobile"><div class="proj-top"><span class="proj-cat">Mobile · Gamification</span><a href="https://github.com/SamymaS" target="_blank" rel="noopener" class="proj-link">↗</a></div><h3 class="proj-name">Sameva</h3><p class="proj-desc">Application mobile de productivité gamifiée. Système de quêtes avec validation IA.</p><div class="proj-tech"><span>Flutter</span><span>Figma</span><span>Rive</span><span>IA</span></div><span class="badge-wip">En cours</span></div>
+      <div class="proj-card reveal" data-cat="mobile"><div class="proj-top"><span class="proj-cat">Mobile · Mobilité</span><a href="https://github.com/SamymaS" target="_blank" rel="noopener" class="proj-link">↗</a></div><h3 class="proj-name">COCI</h3><p class="proj-desc">Covoiturage urbain Côte-d'Ivoire. React Native + API REST complète.</p><div class="proj-tech"><span>React Native</span><span>API REST</span><span>OpenAPI</span></div><span class="badge-wip">En cours</span></div>
       <div class="proj-card reveal" data-cat="iot"><div class="proj-top"><span class="proj-cat">IoT · Flutter</span><a href="https://github.com/SamymaS" target="_blank" rel="noopener" class="proj-link">↗</a></div><h3 class="proj-name">Maison Connectée</h3><p class="proj-desc">Pilotage Flutter d'une maison connectée via BLE, Wi-Fi et MQTT.</p><div class="proj-tech"><span>Flutter</span><span>ESP32</span><span>MQTT</span><span>BLE</span></div></div>
       <div class="proj-card reveal" data-cat="iot"><div class="proj-top"><span class="proj-cat">IoT · Industriel</span><a href="https://github.com/SamymaS/smart-home-modbus-UART" target="_blank" rel="noopener" class="proj-link">↗</a></div><h3 class="proj-name">Modbus RTU</h3><p class="proj-desc">Communication Modbus RTU ESP32 ↔ Raspberry Pi via UART.</p><div class="proj-tech"><span>ESP32</span><span>Raspberry Pi</span><span>Modbus RTU</span><span>UART</span></div></div>
       <div class="proj-card reveal" data-cat="web"><div class="proj-top"><span class="proj-cat">Backend · NLP</span><a href="https://github.com/SamymaS/ham" target="_blank" rel="noopener" class="proj-link">↗</a></div><h3 class="proj-name">Assistant Vocal</h3><p class="proj-desc">Backend Flask + NLP (spaCy), TTS/STT, APIs OpenAI, météo, Spotify.</p><div class="proj-tech"><span>Python</span><span>Flask</span><span>spaCy</span><span>OpenAI</span></div></div>
@@ -230,10 +261,10 @@
   </div>
 </section>
 
-<!-- ── FORMATIONS ────────────────────────────────────────────────── -->
+<!-- FORMATIONS -->
 <section id="certs" class="section">
   <div class="container">
-    <div class="section-header reveal"><span class="section-num" data-i18n="cert_num">05</span><h2 class="section-title" data-i18n="cert_title">Formations &amp; Certifications</h2></div>
+    <div class="section-header reveal"><span class="section-num">05</span><h2 class="section-title">Formations &amp; Certifications</h2></div>
     <div class="certs-grid">
       <div class="cert-card reveal"><div class="cert-icon">🎓</div><div class="cert-content"><h3>Mastère Expert Dev Logiciel &amp; IoT</h3><p class="cert-school">Ynov Campus Aix-en-Provence</p><p class="cert-year">2024 – 2026</p></div></div>
       <div class="cert-card reveal d1"><div class="cert-icon">📜</div><div class="cert-content"><h3>Bachelor Responsable Ingénierie Logiciel</h3><p class="cert-school">CESI Aix-en-Provence</p><p class="cert-year">2021 – 2022</p></div></div>
@@ -243,14 +274,14 @@
   </div>
 </section>
 
-<!-- ── GAMES ─────────────────────────────────────────────────────── -->
+<!-- GAMES -->
 <section id="games" class="section dark-section">
   <div class="container">
-    <div class="section-header reveal"><span class="section-num" data-i18n="games_num">06</span><h2 class="section-title" data-i18n="games_title">Mini-Jeux</h2></div>
-    <p class="games-intro reveal" data-i18n="games_intro">Un peu de fun ? Joue directement dans le navigateur.</p>
+    <div class="section-header reveal"><span class="section-num">06</span><h2 class="section-title">Mini-Jeux</h2></div>
+    <p class="games-intro reveal">Un peu de fun ? 8 jeux jouables directement dans le navigateur.</p>
     <div class="games-grid">
       <div class="game-card reveal"><div class="game-icon">🔴</div><h3>Puissance 4</h3><p>Joue contre une IA avec Minimax.</p><button class="btn btn-primary" style="margin-top:.3rem;font-size:.68rem;padding:.55rem 1.1rem" data-game="connect4">Jouer</button></div>
-      <div class="game-card reveal d1"><div class="game-icon">🐍</div><h3>Snake</h3><p>Classique revisité aux couleurs du portfolio.</p><button class="btn btn-primary" style="margin-top:.3rem;font-size:.68rem;padding:.55rem 1.1rem" data-game="snake">Jouer</button></div>
+      <div class="game-card reveal d1"><div class="game-icon">🐍</div><h3>Snake</h3><p>Le classique revisité.</p><button class="btn btn-primary" style="margin-top:.3rem;font-size:.68rem;padding:.55rem 1.1rem" data-game="snake">Jouer</button></div>
       <div class="game-card reveal d2"><div class="game-icon">🧱</div><h3>Casse-Briques</h3><p>Détruire les briques, monter le score.</p><button class="btn btn-primary" style="margin-top:.3rem;font-size:.68rem;padding:.55rem 1.1rem" data-game="breakout">Jouer</button></div>
       <div class="game-card reveal d3"><div class="game-icon">💡</div><h3>Quiz Tech</h3><p>Teste tes connaissances sur mon stack.</p><button class="btn btn-primary" style="margin-top:.3rem;font-size:.68rem;padding:.55rem 1.1rem" data-game="quiz">Jouer</button></div>
       <div class="game-card reveal"><div class="game-icon">🧠</div><h3>Memory</h3><p>Trouve toutes les paires cachées.</p><button class="btn btn-primary" style="margin-top:.3rem;font-size:.68rem;padding:.55rem 1.1rem" data-game="memory">Jouer</button></div>
@@ -261,13 +292,13 @@
   </div>
 </section>
 
-<!-- ── CONTACT ───────────────────────────────────────────────────── -->
+<!-- CONTACT -->
 <section id="contact" class="section">
   <div class="container">
-    <div class="section-header reveal"><span class="section-num" data-i18n="contact_num">07</span><h2 class="section-title" data-i18n="contact_title">Contact</h2></div>
+    <div class="section-header reveal"><span class="section-num">07</span><h2 class="section-title">Contact</h2></div>
     <div class="contact-grid">
       <div class="reveal">
-        <p class="contact-lead" data-i18n="contact_lead">Vous avez un projet ou envie d'échanger ? Je suis disponible.</p>
+        <p class="contact-lead">Vous avez un projet, une opportunité ou envie d'échanger ? Je suis disponible et à l'écoute.</p>
         <div class="contact-info">
           <a href="mailto:samyboudaoud95@gmail.com" class="contact-item"><span class="contact-icon">✉</span><span>samyboudaoud95@gmail.com</span></a>
           <a href="tel:+33667721476" class="contact-item"><span class="contact-icon">✆</span><span>06 67 72 14 76</span></a>
@@ -281,21 +312,21 @@
       <div class="reveal d1">
         <form id="contactForm" class="contact-form" novalidate>
           <div class="form-field">
-            <label class="form-label" for="name" data-i18n="form_name">Votre nom</label>
-            <input id="name" name="name" type="text" class="form-input" data-i18n="form_name" placeholder="Votre nom" required autocomplete="name"/>
+            <label class="form-label" for="name">Votre nom</label>
+            <input id="name" name="name" type="text" class="form-input" placeholder="Votre nom" required autocomplete="name"/>
             <span class="form-err" data-err="name"></span>
           </div>
           <div class="form-field">
-            <label class="form-label" for="email" data-i18n="form_email">Votre email</label>
-            <input id="email" name="email" type="email" class="form-input" data-i18n="form_email" placeholder="Votre email" required autocomplete="email"/>
+            <label class="form-label" for="email">Votre email</label>
+            <input id="email" name="email" type="email" class="form-input" placeholder="Votre email" required autocomplete="email"/>
             <span class="form-err" data-err="email"></span>
           </div>
           <div class="form-field">
-            <label class="form-label" for="message" data-i18n="form_msg">Votre message</label>
-            <textarea id="message" name="message" class="form-input form-textarea" data-i18n="form_msg" placeholder="Votre message..." required rows="5"></textarea>
+            <label class="form-label" for="message">Votre message</label>
+            <textarea id="message" name="message" class="form-input form-textarea" placeholder="Votre message..." required rows="5"></textarea>
             <span class="form-err" data-err="message"></span>
           </div>
-          <button type="submit" class="btn btn-primary btn-w100" data-i18n="form_send">Envoyer le message</button>
+          <button type="submit" class="btn btn-primary btn-w100">Envoyer le message</button>
         </form>
       </div>
     </div>
@@ -303,18 +334,20 @@
 </section>
 
 <!-- SCROLL TO TOP -->
-<button class="scroll-top" aria-label="Retour en haut" data-i18n-title="stt_title" title="Retour en haut">↑</button>
+<button class="scroll-top" aria-label="Retour en haut" title="Retour en haut">↑</button>
 
 <!-- FOOTER -->
 <footer class="footer" role="contentinfo">
   <div class="container footer-inner">
     <span>© 2025 Samy Boudaoud</span>
-    <span class="footer-hint">Tapez <kbd>sb</kbd> pour un easter egg 🥚</span>
+    <span>Tapez <kbd>sb</kbd> pour un easter egg 🥚</span>
     <span>Aix-en-Provence 🇫🇷</span>
   </div>
 </footer>
 
+<!-- Scripts — ordre important -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="i18n.js"></script>
 <script src="main.js"></script>
 <script src="games.js"></script>
