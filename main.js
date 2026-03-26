@@ -10,42 +10,120 @@
    /* ── TOUT dans DOMContentLoaded pour garantir que le DOM est prêt ── */
    document.addEventListener('DOMContentLoaded', function() {
    
-     /* ── CURSOR ────────────────────────────────────────────────────── */
+     /* ── CURSOR avec traînée de particules ─────────────────────────── */
      (function initCursor() {
-       const c = $('#cursor'), d = $('#cursorDot');
-       // Only activate on true pointer:fine devices (no touch)
-       if (!c || !d) return;
-       if (!window.matchMedia('(pointer:fine)').matches) return;
-       if (window.matchMedia('(pointer:coarse)').matches) return;
+       // Seulement sur vrais appareils pointer:fine (souris)
+       if (!window.matchMedia('(pointer:fine) and (hover:hover)').matches) return;
    
-       // Activate cursor
+       const ring    = document.getElementById('cursor-ring');
+       const dot     = document.getElementById('cursor-dot');
+       const canvas  = document.getElementById('cursor-canvas');
+       if (!ring || !dot || !canvas) return;
+   
        document.body.classList.add('custom-cursor');
-       c.style.display = 'block';
-       d.style.display = 'block';
+       ring.style.opacity = '0';
+       dot.style.opacity  = '0';
    
-       let mx=0, my=0, cx=0, cy=0, active=false;
+       // Canvas setup
+       const ctx = canvas.getContext('2d');
+       function resizeCanvas() {
+         canvas.width  = window.innerWidth;
+         canvas.height = window.innerHeight;
+       }
+       resizeCanvas();
+       window.addEventListener('resize', resizeCanvas, {passive:true});
    
+       let mx=0, my=0, rx=0, ry=0;
+       let entered = false;
+       const ACCENT = '#00e5ff';
+   
+       // Particle pool
+       const particles = [];
+       const MAX_P = 28;
+   
+       function spawnParticle(x, y) {
+         const angle  = Math.random() * Math.PI * 2;
+         const speed  = Math.random() * 1.2 + 0.3;
+         const size   = Math.random() * 3 + 1;
+         particles.push({
+           x, y,
+           vx: Math.cos(angle) * speed,
+           vy: Math.sin(angle) * speed,
+           life: 1,
+           decay: Math.random() * 0.04 + 0.03,
+           size,
+           hue: Math.random() > 0.7 ? 280 : 185, // cyan ou violet
+         });
+         if (particles.length > MAX_P) particles.shift();
+       }
+   
+       let frameCount = 0;
+       function render() {
+         requestAnimationFrame(render);
+         ctx.clearRect(0, 0, canvas.width, canvas.height);
+   
+         // Lag sur l'anneau
+         rx += (mx - rx) * 0.1;
+         ry += (my - ry) * 0.1;
+         ring.style.left = rx + 'px';
+         ring.style.top  = ry + 'px';
+   
+         // Dot instantané
+         dot.style.left = mx + 'px';
+         dot.style.top  = my + 'px';
+   
+         // Spawn particule toutes les 2 frames si souris bouge
+         frameCount++;
+         if (frameCount % 2 === 0 && entered) spawnParticle(mx, my);
+   
+         // Draw & update particles
+         for (let i = particles.length - 1; i >= 0; i--) {
+           const p = particles[i];
+           p.x  += p.vx;
+           p.y  += p.vy;
+           p.vx *= 0.94;
+           p.vy *= 0.94;
+           p.life -= p.decay;
+           if (p.life <= 0) { particles.splice(i, 1); continue; }
+   
+           ctx.beginPath();
+           ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+           ctx.fillStyle = p.hue === 185
+             ? 'rgba(0,229,255,' + (p.life * 0.6) + ')'
+             : 'rgba(124,58,237,' + (p.life * 0.5) + ')';
+           ctx.fill();
+         }
+       }
+       render();
+   
+       // Mouse events
        document.addEventListener('mousemove', e => {
-         mx=e.clientX; my=e.clientY;
-         d.style.left=mx+'px'; d.style.top=my+'px';
-         if(!active){ active=true; c.style.opacity='1'; d.style.opacity='1'; }
+         mx = e.clientX; my = e.clientY;
+         if (!entered) {
+           entered = true;
+           ring.style.opacity = '1';
+           dot.style.opacity  = '1';
+           // Téléporte l'anneau au premier mouvement pour éviter l'animation depuis (0,0)
+           rx = mx; ry = my;
+         }
        });
-       document.addEventListener('mouseleave', ()=>{ c.style.opacity='0'; d.style.opacity='0'; active=false; });
    
-       (function loop(){
-         cx+=(mx-cx)*.12; cy+=(my-cy)*.12;
-         c.style.left=cx+'px'; c.style.top=cy+'px';
-         requestAnimationFrame(loop);
-       })();
+       document.addEventListener('mouseleave', () => {
+         entered = false;
+         ring.style.opacity = '0';
+         dot.style.opacity  = '0';
+       });
    
-       // Use event delegation so cursor works on ALL elements, including dynamically added ones
+       document.addEventListener('mousedown', () => ring.classList.add('clicking'));
+       document.addEventListener('mouseup',   () => ring.classList.remove('clicking'));
+   
+       // Hover sur éléments interactifs — event delegation
+       const HOVER_SEL = 'a,button,.proj-card,.skill-cat,.game-card,.filter-btn,.cert-card,.tl-body';
        document.addEventListener('mouseover', e => {
-         const el = e.target.closest('a,button,.proj-card,.skill-cat,.game-card,.filter-btn,.game-card');
-         if(el) c.classList.add('hover'); else c.classList.remove('hover');
+         if (e.target.closest(HOVER_SEL)) ring.classList.add('hover');
        });
        document.addEventListener('mouseout', e => {
-         const el = e.target.closest('a,button,.proj-card,.skill-cat,.game-card,.filter-btn,.game-card');
-         if(el) c.classList.remove('hover');
+         if (e.target.closest(HOVER_SEL)) ring.classList.remove('hover');
        });
      })();
    

@@ -60,24 +60,40 @@ body{
 }
 
 /* ── CURSOR ─────────────────────────────────────────────────────── */
-.cursor,.cursor-dot{
-  display:none;position:fixed;pointer-events:none;z-index:9998;
+body.custom-cursor,
+body.custom-cursor *{cursor:none !important}
+
+#cursor-ring{
+  position:fixed;pointer-events:none;z-index:9997;
+  width:36px;height:36px;
+  border:1.5px solid var(--accent);
+  border-radius:50%;
   transform:translate(-50%,-50%);
+  transition:width .18s ease,height .18s ease,border-color .2s,background .2s,opacity .15s;
+  opacity:0;
 }
-body.custom-cursor{cursor:none}
-body.custom-cursor *{cursor:none}
-@media(pointer:fine){
-  .cursor{
-    display:block;width:32px;height:32px;
-    border:1.5px solid var(--accent);border-radius:50%;
-    transition:transform .12s ease,opacity .2s;
-    mix-blend-mode:difference;
-  }
-  .cursor.hover{transform:translate(-50%,-50%) scale(1.7);opacity:.5}
-  .cursor-dot{
-    display:block;width:5px;height:5px;
-    background:var(--accent);border-radius:50%;
-  }
+#cursor-dot{
+  position:fixed;pointer-events:none;z-index:9998;
+  width:5px;height:5px;
+  background:var(--accent);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  opacity:0;
+  transition:opacity .15s;
+}
+#cursor-ring.hover{
+  width:54px;height:54px;
+  border-color:rgba(0,229,255,.45);
+  background:rgba(0,229,255,.05);
+}
+#cursor-ring.clicking{
+  width:22px;height:22px;
+  background:rgba(0,229,255,.2);
+}
+#cursor-canvas{
+  position:fixed;inset:0;
+  pointer-events:none;
+  z-index:9996;
 }
 
 /* ── SKIP LINK ──────────────────────────────────────────────────── */
