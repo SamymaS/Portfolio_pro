@@ -13,20 +13,39 @@
      /* ── CURSOR ────────────────────────────────────────────────────── */
      (function initCursor() {
        const c = $('#cursor'), d = $('#cursorDot');
-       if (!c || !d || touch()) return;
-       let mx=0,my=0,cx=0,cy=0;
+       // Only activate on true pointer:fine devices (no touch)
+       if (!c || !d) return;
+       if (!window.matchMedia('(pointer:fine)').matches) return;
+       if (window.matchMedia('(pointer:coarse)').matches) return;
+   
+       // Activate cursor
+       document.body.classList.add('custom-cursor');
+       c.style.display = 'block';
+       d.style.display = 'block';
+   
+       let mx=0, my=0, cx=0, cy=0, active=false;
+   
        document.addEventListener('mousemove', e => {
          mx=e.clientX; my=e.clientY;
          d.style.left=mx+'px'; d.style.top=my+'px';
+         if(!active){ active=true; c.style.opacity='1'; d.style.opacity='1'; }
        });
+       document.addEventListener('mouseleave', ()=>{ c.style.opacity='0'; d.style.opacity='0'; active=false; });
+   
        (function loop(){
          cx+=(mx-cx)*.12; cy+=(my-cy)*.12;
          c.style.left=cx+'px'; c.style.top=cy+'px';
          requestAnimationFrame(loop);
        })();
-       $$('a,button,.proj-card,.skill-cat,.game-card').forEach(el=>{
-         el.addEventListener('mouseenter',()=>c.classList.add('hover'));
-         el.addEventListener('mouseleave',()=>c.classList.remove('hover'));
+   
+       // Use event delegation so cursor works on ALL elements, including dynamically added ones
+       document.addEventListener('mouseover', e => {
+         const el = e.target.closest('a,button,.proj-card,.skill-cat,.game-card,.filter-btn,.game-card');
+         if(el) c.classList.add('hover'); else c.classList.remove('hover');
+       });
+       document.addEventListener('mouseout', e => {
+         const el = e.target.closest('a,button,.proj-card,.skill-cat,.game-card,.filter-btn,.game-card');
+         if(el) c.classList.remove('hover');
        });
      })();
    
