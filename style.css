@@ -212,7 +212,7 @@ body{
   color:var(--accent);text-transform:uppercase;letter-spacing:.14em;
   margin-bottom:1rem;
 }
-body.js-ready .hero-tag{opacity:0;transform:translateY(16px)}
+.hero-tag.will-animate{opacity:0;transform:translateY(16px)}
 .hero-title{
   font-size:clamp(2.4rem,11vw,9rem);
   font-weight:800;line-height:.92;
@@ -220,7 +220,7 @@ body.js-ready .hero-tag{opacity:0;transform:translateY(16px)}
   overflow:hidden;
 }
 .hero-title .line{display:block}
-body.js-ready .hero-title .line{opacity:0;transform:translateY(64px)}
+.hero-title .line.will-animate{opacity:0;transform:translateY(64px)}
 .hero-title .line:last-child{
   background:linear-gradient(130deg,var(--accent),var(--accent2));
   -webkit-background-clip:text;background-clip:text;
@@ -230,14 +230,14 @@ body.js-ready .hero-title .line{opacity:0;transform:translateY(64px)}
   font-family:var(--fm);font-size:clamp(.72rem,3vw,1rem);
   color:var(--dim);line-height:1.65;margin-bottom:2rem;
 }
-body.js-ready .hero-sub{opacity:0;transform:translateY(16px)}
+.hero-sub.will-animate{opacity:0;transform:translateY(16px)}
 .hero-ctas{
   display:flex;flex-direction:column;gap:.75rem;
   margin-bottom:2rem;
 }
-body.js-ready .hero-ctas{opacity:0;transform:translateY(16px)}
+.hero-ctas.will-animate{opacity:0;transform:translateY(16px)}
 .hero-socials{display:flex;flex-wrap:wrap;gap:1.2rem}
-body.js-ready .hero-socials{opacity:0;transform:translateY(16px)}
+.hero-socials.will-animate{opacity:0;transform:translateY(16px)}
 .social-link{
   display:flex;align-items:center;gap:.4rem;
   font-family:var(--fm);font-size:.68rem;
@@ -323,10 +323,9 @@ body.js-ready .hero-socials{opacity:0;transform:translateY(16px)}
 }
 
 /* ── REVEAL ─────────────────────────────────────────────────────── */
-/* Reveal: visible by default, animated only when JS is running */
 .reveal{transition:opacity .65s ease,transform .65s ease}
-body.js-ready .reveal{opacity:0;transform:translateY(22px)}
-body.js-ready .reveal.visible{opacity:1;transform:none}
+.reveal.will-animate{opacity:0;transform:translateY(22px)}
+.reveal.visible{opacity:1;transform:none}
 .reveal.d1{transition-delay:.1s}
 .reveal.d2{transition-delay:.2s}
 .reveal.d3{transition-delay:.3s}
