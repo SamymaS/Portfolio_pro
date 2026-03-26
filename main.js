@@ -388,33 +388,36 @@
          btn.disabled = true;
          btn.textContent = 'Envoi en cours…';
          try {
-           // EmailJS v4 — send via object params (more reliable than sendForm)
+           if(typeof emailjs === 'undefined') throw new Error('EmailJS not loaded');
+   
+           // Params matching the default EmailJS template variables
            const params = {
-             name:    getVal('name'),
-             email:   getVal('email'),
-             message: getVal('message'),
-             // also pass as template vars used by default template
-             from_name:  getVal('name'),
-             from_email: getVal('email'),
+             name:       getVal('name'),
+             email:      getVal('email'),
+             message:    getVal('message'),
              reply_to:   getVal('email'),
+             to_name:    'Samy Boudaoud',
+             time:       new Date().toLocaleString('fr-FR'),
            };
-           if(typeof emailjs !== 'undefined'){
-             await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, params);
-           } else {
-             // Fallback demo mode
-             await new Promise(r=>setTimeout(r,900));
-           }
+   
+           const result = await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, params);
+           console.log('EmailJS success:', result);
+   
            btn.textContent = '✓ Message envoyé !';
            btn.style.background = '#22c55e';
+           btn.style.color = '#000';
            form.reset();
            form.querySelectorAll('.form-input').forEach(i=>i.classList.remove('is-ok','is-err'));
            setTimeout(()=>{
              btn.disabled = false;
              btn.textContent = orig;
              btn.style.background = '';
+             btn.style.color = '';
            }, 4000);
+   
          } catch(err) {
-           console.error('EmailJS error:', err);
+           // Log full error so we can debug
+           console.error('EmailJS error — status:', err?.status, '— text:', err?.text, '— full:', err);
            btn.textContent = '✗ Erreur — réessayez';
            btn.style.background = '#f87171';
            btn.style.color = '#000';
