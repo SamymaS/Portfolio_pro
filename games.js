@@ -1,5 +1,6 @@
 /* ================================================================
    games.js — 8 mini-games (responsive, mobile-friendly)
+   + Achievement hooks
    ================================================================ */
    'use strict';
 
@@ -113,7 +114,7 @@
        const col=Math.floor((px-rect.left)*sx/cw);
        if(col<0||col>=COLS||board[0][col])return;
        drop(col);draw();
-       if(win(board,1)){status.textContent='🎉 Vous gagnez !';over=true;return;}
+       if(win(board,1)){status.textContent='🎉 Vous gagnez !';over=true;if(window.achievements) window.achievements.unlock('champion');return;}
        if(full(board)){status.textContent='Match nul !';over=true;return;}
        player=2;aiMove();
      }
@@ -168,7 +169,7 @@
        const h={x:snake[0].x+dir[0],y:snake[0].y+dir[1]};
        if(h.x<0||h.x>=COLS||h.y<0||h.y>=ROWS||snake.some(s=>s.x===h.x&&s.y===h.y)){running=false;statusEl.textContent='💀 Game Over!';clearInterval(window._gInt);return;}
        snake.unshift(h);
-       if(h.x===food.x&&h.y===food.y){score+=10;scoreEl.textContent='Score: '+score;food=rFood();}else snake.pop();
+       if(h.x===food.x&&h.y===food.y){score+=10;scoreEl.textContent='Score: '+score;food=rFood();if(score>=50 && window.achievements) window.achievements.unlock('snake_50');}else snake.pop();
        draw();
      }
      function draw(){
@@ -280,8 +281,9 @@
        });
      }
      function finish(){
-       wrap.innerHTML='';
        const pct=Math.round(score/QS.length*100);
+       if(score===QS.length && window.achievements) window.achievements.unlock('quiz_master');
+       wrap.innerHTML='';
        const msg=document.createElement('div');msg.style.cssText='text-align:center;display:flex;flex-direction:column;align-items:center;gap:1rem';
        msg.innerHTML=`<div style="font-size:2.8rem">${pct>=80?'🏆':pct>=50?'👍':'📚'}</div><div style="font-size:1.4rem;font-weight:800">Score: ${score}/${QS.length}</div><div style="font-family:var(--fm);font-size:.76rem;color:var(--muted)">${pct}% — ${pct>=80?'Excellent !':pct>=50?'Bon score !':'Continue à apprendre'}</div>`;
        const rb=mkBtn('↺ Rejouer');rb.addEventListener('click',()=>{idx=0;score=0;wrap.innerHTML='';wrap.append(progress,qEl,ansEl,fb,nextBtn);show();});
@@ -371,6 +373,7 @@
                  const win = document.createElement('div');
                  win.style.cssText = 'text-align:center;padding:1rem;color:#22c55e;font-size:1.2rem;font-weight:700';
                  win.textContent = '🎉 Gagné en '+moves+' coups !';
+                 if(moves<=20 && window.achievements) window.achievements.unlock('memory_king');
                  board.appendChild(win);
                }, 400);
              }
@@ -536,7 +539,7 @@
              if(!active || board[idx]) return;
              board[idx] = 'X';
              const w = getWinner(board);
-             if(w){ status.textContent='🎉 Vous gagnez !'; active=false; renderBoard(); return; }
+             if(w){ status.textContent='🎉 Vous gagnez !'; active=false; if(window.achievements) window.achievements.unlock('tictac_master'); renderBoard(); return; }
              if(board.every(v=>v)){ status.textContent='🤝 Match nul !'; active=false; renderBoard(); return; }
              aiMove();
              const w2 = getWinner(board);
