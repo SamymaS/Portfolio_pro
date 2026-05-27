@@ -31,6 +31,16 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;o
 
 /* header */
 .page-head{max-width:1340px;margin:0 auto;padding:54px 28px 6px;position:relative}
+.back-home{
+  position:fixed;top:16px;left:16px;z-index:10001;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 14px;border-radius:12px;
+  font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--txt);background:rgba(14,17,38,.78);
+  border:1px solid var(--line2);backdrop-filter:blur(6px);
+  box-shadow:0 10px 22px -12px rgba(0,0,0,.75);
+}
+.back-home:hover{border-color:var(--teal);color:var(--teal)}
 .kicker{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
   color:#06201d;background:var(--teal);padding:6px 13px;border-radius:7px;box-shadow:0 6px 20px -6px rgba(79,216,198,.6)}
 .page-head .wm{height:84px;margin:20px 0 4px;filter:drop-shadow(0 10px 24px rgba(138,99,224,.4))}
@@ -224,6 +234,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;o
 </style>
 </head>
 <body>
+<a class="back-home" href="index.html" aria-label="Retour au portfolio">← Retour portfolio</a>
 
 <header class="page-head">
   <span class="kicker">● Mockup V2 — vrais assets</span><br>
