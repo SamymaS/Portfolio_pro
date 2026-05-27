@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Actualité et refonte DA du projet Sameva">
+  <title>Sameva — Actualité Projet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#0A0B0D; --ink2:#101217; --panel:#15171D;
+      --line:rgba(255,255,255,.08); --paper:#F2EEE2; --txt:#ECEAE3; --muted:#8C93A0;
+      --acid:#2BF58A; --hot:#FF3E81; --volt:#8169FF;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Archivo',sans-serif;
+      color:var(--txt);
+      background:var(--ink);
+      background-image:
+        radial-gradient(900px 600px at 12% -5%, rgba(129,105,255,.16), transparent 60%),
+        radial-gradient(800px 600px at 95% 8%, rgba(43,245,138,.12), transparent 55%),
+        radial-gradient(700px 700px at 80% 100%, rgba(255,62,129,.1), transparent 55%);
+      min-height:100vh;
+    }
+    .wrap{max-width:1320px;margin:0 auto;padding:48px 24px 80px}
+    .back{
+      display:inline-flex;align-items:center;gap:8px;
+      color:var(--paper);border:1px solid var(--line);padding:9px 14px;border-radius:10px;
+      font-weight:700;font-size:13px;text-decoration:none;
+      background:rgba(255,255,255,.03);
+    }
+    .kicker{
+      margin-top:18px;display:inline-block;font-weight:900;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+      color:#06140d;background:var(--acid);padding:7px 12px;border-radius:6px;transform:rotate(-1deg);
+    }
+    h1{
+      margin-top:18px;
+      font-family:'Bangers',cursive;
+      font-size:clamp(54px,10vw,122px);
+      line-height:.85;
+      letter-spacing:.02em;
+      text-shadow:6px 6px 0 var(--hot), 12px 12px 0 rgba(0,0,0,.55);
+    }
+    h1 em{font-style:normal;color:var(--acid);text-shadow:6px 6px 0 var(--volt), 12px 12px 0 rgba(0,0,0,.55)}
+    .sub{margin-top:16px;color:var(--muted);max-width:760px;line-height:1.7}
+    .sub b{color:var(--txt)}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+    .chip{font-size:12px;font-weight:700;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+
+    .gallery{
+      margin-top:36px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:16px;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      min-height:250px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+    }
+    .card:hover{transform:translateY(-4px);border-color:rgba(43,245,138,.3);box-shadow:0 22px 42px -28px rgba(0,0,0,.9)}
+    .tag{font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--acid)}
+    .title{font-family:'Bangers',cursive;font-size:34px;line-height:.9;color:var(--paper)}
+    .desc{font-size:13px;color:var(--muted);line-height:1.6}
+    .preview{
+      margin-top:auto;
+      border-radius:14px;
+      border:1px solid var(--line);
+      height:120px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(43,245,138,.26), transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(129,105,255,.2), transparent 45%),
+        linear-gradient(145deg,#0f1218,#191d26);
+      display:grid;
+      place-items:center;
+      font-family:'Bangers',cursive;
+      font-size:26px;
+      color:var(--paper);
+      letter-spacing:.03em;
+    }
+    .foot{margin-top:26px;color:#7a808d;font-size:13px;line-height:1.7}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="back" href="index.html">← Retour au portfolio</a>
+    <span class="kicker">Refonte DA — Proposition V2</span>
+    <h1>SAM<em>EVA</em></h1>
+    <p class="sub">
+      Nouvelle direction artistique <b>street art / stencil</b>, centrée sur <b>Paco</b> comme mascotte.
+      Le projet évolue avec une identité plus marquée (vert Paco, rose graffiti, violet électrique)
+      et une UX inspirée des mécaniques RPG.
+    </p>
+    <div class="chips">
+      <span class="chip">Vert Paco</span>
+      <span class="chip">Rose Graffiti</span>
+      <span class="chip">Violet RPG</span>
+      <span class="chip">Typo Bangers + Archivo</span>
+    </div>
+
+    <section class="gallery" aria-label="Ecrans Sameva">
+      <article class="card">
+        <span class="tag">01 · Connexion</span>
+        <h2 class="title">Identité Paco</h2>
+        <p class="desc">Écran d'entrée orienté branding : avatar Paco, style stencil et tonalité gaming assumée.</p>
+        <div class="preview">Login UI</div>
+      </article>
+      <article class="card">
+        <span class="tag">02 · Mes Quêtes</span>
+        <h2 class="title">HUD RPG</h2>
+        <p class="desc">Progression niveau/XP, quêtes actives, rewards et feedbacks visuels pour renforcer l'engagement.</p>
+        <div class="preview">Quest Board</div>
+      </article>
+      <article class="card">
+        <span class="tag">03 · Validation IA</span>
+        <h2 class="title">MougiBot</h2>
+        <p class="desc">Validation photo intelligente avec score et fallback manuel, pour ne jamais bloquer l'utilisateur.</p>
+        <div class="preview">AI Check</div>
+      </article>
+      <article class="card">
+        <span class="tag">04 · Ecosystème</span>
+        <h2 class="title">Sanctuaire + Loot</h2>
+        <p class="desc">Companions, invocations, inventaire et classement: la logique productivité devient progression de jeu.</p>
+        <div class="preview">RPG Meta</div>
+      </article>
+    </section>
+
+    <p class="foot">
+      Cette page reprend l'esprit du concept fourni (palette, typo, ambiance et storytelling visuel),
+      en version légère et intégrable immédiatement dans ton portfolio.
+    </p>
+  </main>
+</body>
+</html>

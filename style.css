@@ -503,6 +503,134 @@ body.custom-cursor *{cursor:none !important}
   border:1px solid rgba(251,191,36,.2);
 }
 
+/* ── SAMEVA SPOTLIGHT ───────────────────────────────────────────── */
+.sameva-spotlight{
+  background:
+    radial-gradient(500px 300px at 15% -10%, rgba(124,58,237,.22), transparent 65%),
+    radial-gradient(520px 300px at 100% 0%, rgba(0,229,255,.16), transparent 60%),
+    var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:1.4rem;
+  position:relative;
+  overflow:hidden;
+}
+.sameva-spotlight::after{
+  content:'';
+  position:absolute;
+  inset:auto -10% -60% auto;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  background:rgba(249,115,22,.08);
+  filter:blur(8px);
+  pointer-events:none;
+}
+.sameva-lead{
+  font-size:1rem;
+  line-height:1.75;
+  color:var(--text);
+  max-width:760px;
+}
+.sameva-sub{
+  margin-top:.75rem;
+  color:var(--dim);
+  line-height:1.7;
+  font-size:.88rem;
+  max-width:760px;
+}
+.sameva-btn{
+  margin-top:1.25rem;
+  display:inline-flex;
+  flex-direction:column;
+  gap:.18rem;
+  align-items:center;
+  justify-content:center;
+  min-height:110px;
+  width:min(100%, 760px);
+  padding:1rem 1.7rem;
+  border-radius:16px;
+  font-family:var(--ff);
+  font-weight:800;
+  font-size:clamp(1.15rem,3.4vw,1.85rem);
+  letter-spacing:.02em;
+  color:#041017;
+  text-transform:uppercase;
+  background:
+    linear-gradient(115deg, #2bf58a 0%, #00e5ff 42%, #7c3aed 100%);
+  box-shadow:
+    0 18px 34px rgba(0,229,255,.28),
+    0 0 0 2px rgba(255,255,255,.15) inset,
+    0 0 34px rgba(124,58,237,.28);
+  border:1px solid rgba(255,255,255,.28);
+  transition:transform .22s ease, box-shadow .22s ease, filter .22s ease;
+  position:relative;
+  overflow:hidden;
+  animation:samevaPulse 2.4s ease-in-out infinite;
+}
+.sameva-btn::before{
+  content:'';
+  position:absolute;
+  top:-40%;
+  left:-120%;
+  width:52%;
+  height:180%;
+  transform:rotate(18deg);
+  background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.48) 45%, rgba(255,255,255,0) 100%);
+  animation:samevaShine 2.8s linear infinite;
+}
+.sameva-btn-kicker{
+  font-family:var(--fm);
+  font-size:.58rem;
+  letter-spacing:.18em;
+  border:1px solid rgba(0,0,0,.2);
+  border-radius:999px;
+  padding:.18rem .55rem;
+  color:#071811;
+  background:rgba(255,255,255,.46);
+}
+.sameva-btn-text{
+  font-family:'Bangers',cursive;
+  font-size:clamp(1.5rem,4.2vw,2.25rem);
+  letter-spacing:.03em;
+  line-height:1.08;
+  text-align:center;
+  text-shadow:
+    2px 2px 0 rgba(255,62,129,.45),
+    4px 4px 0 rgba(129,105,255,.32);
+  -webkit-text-stroke:.4px rgba(0,0,0,.2);
+}
+.sameva-btn:hover{
+  transform:translateY(-3px) scale(1.015);
+  box-shadow:
+    0 26px 40px rgba(0,229,255,.34),
+    0 0 0 2px rgba(255,255,255,.22) inset,
+    0 0 46px rgba(124,58,237,.38);
+  filter:brightness(1.05);
+}
+@keyframes samevaPulse{
+  0%,100%{
+    box-shadow:
+      0 18px 34px rgba(0,229,255,.28),
+      0 0 0 2px rgba(255,255,255,.15) inset,
+      0 0 34px rgba(124,58,237,.28);
+  }
+  50%{
+    box-shadow:
+      0 24px 40px rgba(0,229,255,.36),
+      0 0 0 2px rgba(255,255,255,.2) inset,
+      0 0 44px rgba(124,58,237,.36);
+  }
+}
+@keyframes samevaShine{
+  0%{left:-120%}
+  35%{left:135%}
+  100%{left:135%}
+}
+@media (prefers-reduced-motion:reduce){
+  .sameva-btn,.sameva-btn::before{animation:none}
+}
+
 /* ── GAMES ──────────────────────────────────────────────────────── */
 .games-intro{font-size:.88rem;color:var(--dim);line-height:1.65;margin-bottom:2rem}
 .games-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
@@ -553,7 +681,7 @@ body.custom-cursor *{cursor:none !important}
   border-radius:var(--r-sm);
   color:var(--text);font-size:.88rem;
   outline:none;transition:border-color .2s,box-shadow .2s;
-  resize:none;-webkit-appearance:none;
+  resize:none;-webkit-appearance:none;appearance:none;
 }
 .form-input::placeholder{color:var(--muted);opacity:.7}
 .form-input:hover{border-color:rgba(0,229,255,.3)}
