@@ -1,90 +1,187 @@
 ﻿<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sameva - preview V4 des ecrans de l'application">
-  <title>Sameva - Preview V4</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Saira+Condensed:wght@700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#10173a;
-      --bg-2:#1a2a57;
-      --line:rgba(255,255,255,.14);
-      --txt:#edf3ff;
-      --muted:#afc0ed;
-      --teal:#4fd8c6;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family:'Archivo',sans-serif;
-      color:var(--txt);
-      min-height:100vh;
-      background:
-        radial-gradient(900px 500px at 10% -10%, rgba(138,99,224,.32), transparent 62%),
-        radial-gradient(900px 500px at 90% 0%, rgba(79,216,198,.18), transparent 56%),
-        linear-gradient(160deg,var(--bg),var(--bg-2));
-    }
-    .back{
-      position:fixed;top:14px;left:14px;z-index:10;
-      display:inline-flex;align-items:center;gap:8px;
-      padding:10px 14px;border-radius:12px;border:1px solid var(--line);
-      color:var(--txt);text-decoration:none;background:rgba(9,14,30,.75);
-      font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
-      backdrop-filter:blur(8px);
-      transition:.25s ease;
-    }
-    .back:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-2px)}
-    .wrap{max-width:1220px;margin:0 auto;padding:64px 20px 44px}
-    .head{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
-    .kicker{
-      color:#062522;background:var(--teal);border-radius:999px;
-      width:max-content;padding:6px 12px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
-    }
-    h1{
-      font-family:'Saira Condensed',sans-serif;
-      font-size:clamp(2rem,5vw,3.8rem);
-      text-transform:uppercase;
-      letter-spacing:.04em;
-      line-height:.92;
-    }
-    .sub{color:var(--muted);font-size:14px;line-height:1.6;max-width:840px}
-    .preview{
-      margin-top:18px;
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:14px;
-      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-      box-shadow:0 24px 48px -30px rgba(0,0,0,.8);
-    }
-    .preview img{
-      width:100%;
-      height:auto;
-      display:block;
-      border-radius:14px;
-    }
-    .foot{
-      margin-top:14px;
-      color:var(--muted);
-      font-size:12px;
-      text-align:center;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sameva — Refonte produit & direction artistique · Samy Boudaoud</title>
+<meta name="description" content="Sameva : application mobile de productivité gamifiée. Refonte de la direction artistique, mascotte Paco, validation des quêtes par IA (MougiBot) et nouveaux écrans produit.">
+<meta name="theme-color" content="#080b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── Page Sameva : styles locaux, basés sur les tokens du portfolio ── */
+.sv-hero{
+  padding:calc(var(--nav-h) + 3rem) 0 2.5rem;
+  background:
+    radial-gradient(700px 380px at 12% -10%, rgba(124,58,237,.18), transparent 60%),
+    radial-gradient(620px 360px at 95% 0%, rgba(0,229,255,.12), transparent 55%);
+}
+.sv-back{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-family:var(--fm);font-size:.72rem;color:var(--muted);
+  margin-bottom:1.6rem;transition:color .2s;
+}
+.sv-back:hover{color:var(--accent)}
+.sv-kicker{
+  display:inline-block;font-family:var(--fm);font-size:.66rem;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:#000;background:var(--accent);
+  padding:.35rem .75rem;border-radius:var(--r-sm);
+}
+.sv-h1{font-size:clamp(2rem,7vw,3.6rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:1.1rem 0 .8rem}
+.sv-h1 em{font-style:normal;color:var(--accent2)}
+.sv-lead{max-width:680px;color:var(--dim);font-size:1.05rem;line-height:1.6}
+.sv-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
+.sv-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
+ 
+/* concept cards */
+.sv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:.5rem}
+.sv-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:1.4rem;transition:border-color .25s,transform .25s;
+}
+.sv-card:hover{border-color:rgba(0,229,255,.3);transform:translateY(-3px)}
+.sv-card h3{font-size:1.05rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:.55rem}
+.sv-card p{color:var(--muted);font-size:.92rem;line-height:1.55}
+.sv-ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2)}
+.sv-ic svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2}
+ 
+/* DA palette */
+.sv-palette{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.2rem}
+.sw{display:flex;align-items:center;gap:.55rem;font-family:var(--fm);font-size:.72rem;color:var(--dim);
+  background:var(--surface);border:1px solid var(--border);padding:.5rem .8rem;border-radius:99px}
+.sw .chip{width:16px;height:16px;border-radius:5px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.1) inset}
+ 
+/* preview */
+.sv-figure{margin-top:1.4rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg2)}
+.sv-figure img{width:100%;height:auto;display:block}
+.sv-cap{font-family:var(--fm);font-size:.72rem;color:var(--muted);padding:.9rem 1.1rem;border-top:1px solid var(--border);text-align:center}
+ 
+/* screen legend */
+.sv-screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem;margin-top:1.2rem}
+.sv-screen{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem}
+.sv-screen .n{font-family:var(--fm);font-size:.66rem;color:var(--accent);letter-spacing:.1em}
+.sv-screen h4{font-size:.95rem;font-weight:700;margin:.25rem 0 .35rem}
+.sv-screen p{color:var(--muted);font-size:.85rem;line-height:1.5}
+ 
+.sv-note{margin-top:1.4rem;font-size:.85rem;color:var(--muted);font-style:italic}
+</style>
 </head>
 <body>
-  <a class="back" href="index.html" aria-label="Retour au portfolio">← Retour portfolio</a>
-  <main class="wrap">
-    <header class="head">
-      <span class="kicker">Nouvelle actualite Sameva</span>
-      <h1>Futures pages de l'application</h1>
-      <p class="sub">Version alignee a la preview V4 avec la planche complete des ecrans et le rendu visuel attendu.</p>
-    </header>
-    <section class="preview" aria-label="Preview Sameva V4">
-      <img src="assets/v4_preview.png" alt="Preview V4 des ecrans Sameva">
-    </section>
-    <p class="foot">Sameva V4 - rendu de reference pour la presentation jury.</p>
-  </main>
+ 
+<a class="skip-link" href="#sv-content">Aller au contenu</a>
+ 
+<!-- HERO -->
+<header class="sv-hero">
+  <div class="container" id="sv-content">
+    <a class="sv-back" href="index.html#sameva">← Retour au portfolio</a>
+    <span class="sv-kicker">● Actualité projet</span>
+    <h1 class="sv-h1">Sam<em>eva</em> — refonte produit & direction artistique</h1>
+    <p class="sv-lead">
+      <strong>Sameva</strong> transforme les habitudes du quotidien en quêtes RPG, validées par une IA de
+      reconnaissance visuelle. Cette page présente la <strong>nouvelle direction artistique</strong> (univers
+      street-art, mascotte Paco) et les <strong>écrans produit</strong> issus de la dernière itération de conception.
+    </p>
+    <div class="sv-meta">
+      <span class="tag main">Flutter · Dart</span>
+      <span class="tag">Supabase</span>
+      <span class="tag">Claude Vision (IA)</span>
+      <span class="tag">MVVM · offline-first</span>
+      <span class="tag">Projet certification RNCP 39583</span>
+    </div>
+    <div class="sv-actions">
+      <a class="btn btn-primary" href="https://github.com/SamymaS/Sameva" target="_blank" rel="noopener">Voir le code GitHub</a>
+      <a class="btn btn-secondary" href="#sv-ecrans">Voir les écrans</a>
+    </div>
+  </div>
+</header>
+ 
+<!-- CONCEPT -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">01</span><h2 class="section-title">Le concept</h2></div>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Des habitudes en quêtes</h3>
+        <p>L'utilisateur crée ses propres quêtes (étudier, ranger, faire du sport…) et gagne de l'XP, de l'or et du loot en les accomplissant. Progression RPG, niveaux et série de jours consécutifs.</p>
+      </div>
+      <div class="sv-card">
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg></span>Validation par IA — MougiBot</h3>
+        <p>Pour les quêtes à preuve visuelle, une photo est analysée par une IA de vision (MougiBot) qui attribue un score sur 100. Au-delà du seuil, la récompense est pleine.</p>
+      </div>
+      <div class="sv-card">
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M12 3c-2 4-7 4-7 9a7 7 0 0 0 14 0c0-5-5-5-7-9z"/></svg></span>Jamais bloqué</h3>
+        <p>Principe produit non négociable : si l'IA refuse, l'utilisateur peut toujours valider manuellement (récompense réduite). L'app n'enferme jamais quelqu'un dans un échec.</p>
+      </div>
+      <div class="sv-card">
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2 6 6 .5-4.5 4 1.5 6L12 15l-5 3.5 1.5-6L4 8.5 10 8z"/></svg></span>Companions & collection</h3>
+        <p>Un sanctuaire de companions (les « Mougis »), un système d'invocation, une garde-robe d'objets streetwear et un classement entre joueurs nourrissent la rétention.</p>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- DIRECTION ARTISTIQUE -->
+<section class="section dark-section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Direction artistique</h2></div>
+    <p class="sv-lead">
+      La nouvelle DA s'articule autour de <strong>Paco</strong>, un chat tuxedo qui sert de mascotte, d'avatar joueur
+      et d'identité visuelle. Style cartoon-mascotte assumé, univers urbain, et une déclinaison « bot » de Paco pour
+      l'assistant IA. La palette repose sur un fond indigo, un teal signature (le cristal) et un violet électrique.
+    </p>
+    <div class="sv-palette">
+      <span class="sw"><span class="chip" style="background:#4FD8C6"></span>Teal #4FD8C6 — signature</span>
+      <span class="sw"><span class="chip" style="background:#8A63E0"></span>Violet #8A63E0 — RPG / niveau</span>
+      <span class="sw"><span class="chip" style="background:#F5C451"></span>Or #F5C451 — monnaie</span>
+      <span class="sw"><span class="chip" style="background:linear-gradient(135deg,#2C2A52,#10182B)"></span>Indigo → Navy — fond</span>
+    </div>
+  </div>
+</section>
+ 
+<!-- ÉCRANS -->
+<section class="section" id="sv-ecrans">
+  <div class="container">
+    <div class="section-header"><span class="section-num">03</span><h2 class="section-title">Les écrans</h2></div>
+    <p class="sv-lead">Planche complète de la dernière itération de conception : le parcours principal (connexion → quêtes → création → validation → récompense) et les écrans de méta-jeu (sanctuaire, invocation, garde-robe, profil, classement).</p>
+    <figure class="sv-figure">
+      <img src="assets/v4_preview.png" alt="Planche des écrans de l'application Sameva : connexion, liste des quêtes, création de quête, validation par IA, récompense, sanctuaire des companions, invocation, garde-robe, profil et classement." loading="lazy">
+      <figcaption class="sv-cap">10 écrans — parcours utilisateur complet et écrans de méta-jeu</figcaption>
+    </figure>
+ 
+    <div class="sv-screens">
+      <div class="sv-screen"><span class="n">01</span><h4>Connexion</h4><p>Splash avec Paco et le wordmark de la marque.</p></div>
+      <div class="sv-screen"><span class="n">02</span><h4>Mes quêtes</h4><p>Accueil : HUD RPG (niveau, XP, or, série) et liste des quêtes.</p></div>
+      <div class="sv-screen"><span class="n">03</span><h4>Nouvelle quête</h4><p>Création : catégorie, type de validation, difficulté.</p></div>
+      <div class="sv-screen"><span class="n">04</span><h4>Validation</h4><p>MougiBot analyse la preuve photo et rend un score sur 100.</p></div>
+      <div class="sv-screen"><span class="n">05</span><h4>Récompense</h4><p>Gain d'XP, d'or et drop d'objet ; progression de niveau.</p></div>
+      <div class="sv-screen"><span class="n">06</span><h4>Sanctuaire</h4><p>Collection de companions, classés par rareté.</p></div>
+      <div class="sv-screen"><span class="n">07</span><h4>Invocation</h4><p>Système d'invocation avec taux par rareté.</p></div>
+      <div class="sv-screen"><span class="n">08</span><h4>Garde-robe</h4><p>Inventaire d'objets streetwear à équiper.</p></div>
+      <div class="sv-screen"><span class="n">09</span><h4>Profil</h4><p>Statistiques, succès et historique des quêtes.</p></div>
+      <div class="sv-screen"><span class="n">10</span><h4>Classement</h4><p>Podium et rang du joueur parmi les autres.</p></div>
+    </div>
+    <p class="sv-note">Maquettes de conception — le rendu final en application peut varier. Illustrations originales réalisées pour le projet.</p>
+  </div>
+</section>
+ 
+<!-- STACK -->
+<section class="section dark-section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">Stack technique</h2></div>
+    <div class="sv-grid">
+      <div class="sv-card"><h3>Front mobile</h3><p>Flutter 3 / Dart, architecture MVVM en couches, gestion d'état via Provider, stockage local offline-first (Hive).</p><div class="tags" style="margin-top:.8rem"><span class="tag">Flutter</span><span class="tag">Dart</span><span class="tag">Provider</span><span class="tag">Hive</span></div></div>
+      <div class="sv-card"><h3>Backend</h3><p>Supabase : PostgreSQL, authentification, row-level security et Edge Functions pour l'appel à l'IA de vision.</p><div class="tags" style="margin-top:.8rem"><span class="tag">Supabase</span><span class="tag">PostgreSQL</span><span class="tag">RLS</span><span class="tag">Edge Functions</span></div></div>
+      <div class="sv-card"><h3>IA & qualité</h3><p>Validation des preuves par modèle de vision via une Edge Function ; CI/CD GitHub Actions, suite de tests et analyse statique.</p><div class="tags" style="margin-top:.8rem"><span class="tag">Claude Vision</span><span class="tag">CI/CD</span><span class="tag">Tests</span></div></div>
+    </div>
+    <div class="sv-actions" style="margin-top:2rem">
+      <a class="btn btn-primary" href="https://github.com/SamymaS/Sameva" target="_blank" rel="noopener">Dépôt GitHub</a>
+      <a class="btn btn-secondary" href="index.html#sameva">← Retour au portfolio</a>
+    </div>
+  </div>
+</section>
+ 
 </body>
 </html>
