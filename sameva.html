@@ -3,79 +3,88 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sameva - presentation des futures pages de l'application mobile">
-  <title>Sameva - Futures pages application</title>
+  <meta name="description" content="Sameva - preview V4 des ecrans de l'application">
+  <title>Sameva - Preview V4</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Saira+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Saira+Condensed:wght@700;800&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#0d132b;--line:rgba(255,255,255,.12);--txt:#ebf1ff;--muted:#a8b5da;--teal:#4fd8c6;--violet:#8a63e0;--gold:#f5c451;--ok:#67f0b7}
+    :root{
+      --bg:#10173a;
+      --bg-2:#1a2a57;
+      --line:rgba(255,255,255,.14);
+      --txt:#edf3ff;
+      --muted:#afc0ed;
+      --teal:#4fd8c6;
+    }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Archivo',sans-serif;color:var(--txt);min-height:100vh;background:radial-gradient(1000px 480px at 8% -6%, rgba(138,99,224,.32), transparent 62%),radial-gradient(920px 460px at 90% 2%, rgba(79,216,198,.18), transparent 58%),linear-gradient(160deg,var(--bg),#0f1834 52%,#0b1228)}
-    .bg-orb{position:fixed;pointer-events:none;z-index:0;border-radius:50%;filter:blur(30px);opacity:.22;animation:orbFloat 11s ease-in-out infinite alternate}
-    .orb-a{width:240px;height:240px;left:-40px;top:120px;background:var(--violet)}.orb-b{width:220px;height:220px;right:-20px;top:240px;background:var(--teal);animation-delay:-3s}.orb-c{width:180px;height:180px;left:48%;bottom:40px;background:var(--gold);animation-delay:-5s}
-    @keyframes orbFloat{from{transform:translateY(-10px) translateX(0)}to{transform:translateY(12px) translateX(8px)}}
-    .back{position:fixed;top:14px;left:14px;z-index:20;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(9,14,30,.76);color:var(--txt);text-decoration:none;font-weight:800;font-size:12px;letter-spacing:.05em;text-transform:uppercase;backdrop-filter:blur(8px);box-shadow:0 12px 30px -18px rgba(0,0,0,.8);transition:border-color .25s ease,color .25s ease,transform .25s ease}
+    body{
+      font-family:'Archivo',sans-serif;
+      color:var(--txt);
+      min-height:100vh;
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(138,99,224,.32), transparent 62%),
+        radial-gradient(900px 500px at 90% 0%, rgba(79,216,198,.18), transparent 56%),
+        linear-gradient(160deg,var(--bg),var(--bg-2));
+    }
+    .back{
+      position:fixed;top:14px;left:14px;z-index:10;
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 14px;border-radius:12px;border:1px solid var(--line);
+      color:var(--txt);text-decoration:none;background:rgba(9,14,30,.75);
+      font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+      backdrop-filter:blur(8px);
+      transition:.25s ease;
+    }
     .back:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-2px)}
-    .wrap{position:relative;z-index:2;max-width:1360px;margin:0 auto;padding:56px 24px 72px}
-    .kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border-radius:999px;background:var(--teal);color:#052620;font-size:11px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;box-shadow:0 10px 24px -12px rgba(79,216,198,.7);animation:kickerPulse 2.8s ease-in-out infinite}
-    @keyframes kickerPulse{0%,100%{transform:translateY(0);box-shadow:0 10px 24px -12px rgba(79,216,198,.7)}50%{transform:translateY(-1px);box-shadow:0 16px 30px -14px rgba(79,216,198,.9)}}
-    .head{margin-top:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
-    .head h1{font-family:'Saira Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em;font-size:clamp(2rem,6vw,4.4rem);line-height:.95;animation:titleIn .8s cubic-bezier(.2,.8,.2,1)}
-    @keyframes titleIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-    .wm{height:56px;filter:drop-shadow(0 12px 18px rgba(138,99,224,.35))}
-    .sub{margin-top:10px;max-width:920px;color:var(--muted);line-height:1.65;font-size:15px}
-    .legend{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}.chip{border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:12px;color:var(--muted);background:rgba(255,255,255,.03)}
-    .gallery{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:18px}
-    .frame{border:1px solid var(--line);border-radius:20px;padding:14px;background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));box-shadow:0 22px 40px -28px rgba(0,0,0,.7);transform:translateY(18px);opacity:0;animation:frameIn .7s cubic-bezier(.2,.8,.2,1) forwards;transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
-    .frame:nth-child(1){animation-delay:.05s}.frame:nth-child(2){animation-delay:.1s}.frame:nth-child(3){animation-delay:.15s}.frame:nth-child(4){animation-delay:.2s}.frame:nth-child(5){animation-delay:.25s}.frame:nth-child(6){animation-delay:.3s}.frame:nth-child(7){animation-delay:.35s}.frame:nth-child(8){animation-delay:.4s}.frame:nth-child(9){animation-delay:.45s}.frame:nth-child(10){animation-delay:.5s}
-    @keyframes frameIn{to{transform:none;opacity:1}}
-    .frame:hover{transform:translateY(-5px);border-color:rgba(79,216,198,.45);box-shadow:0 30px 44px -30px rgba(0,0,0,.9)}
-    .frame-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.frame-head h2{font-family:'Saira Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:22px;line-height:1}
-    .badge{font-size:11px;font-weight:700;color:var(--ok);border:1px solid rgba(103,240,183,.45);background:rgba(103,240,183,.12);border-radius:999px;padding:4px 8px;flex-shrink:0}
-    .phone{max-width:270px;margin:0 auto;border-radius:30px;padding:8px;border:1px solid rgba(255,255,255,.25);background:#060b19;box-shadow:0 22px 40px -18px rgba(0,0,0,.75)}
-    .screen{min-height:560px;border-radius:22px;border:1px solid rgba(255,255,255,.12);overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(180deg,#1f2a56,#111b39 58%,#0d1530)}
-    .top{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.1);color:#c9d6ff;font-size:12px;font-weight:700}
-    .hero{margin:10px;border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px;background:linear-gradient(145deg, rgba(138,99,224,.36), rgba(79,216,198,.13));position:relative;overflow:hidden}
-    .hero::after{content:"";position:absolute;top:-40%;left:-140%;width:48%;height:190%;background:linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);transform:rotate(16deg);animation:heroShine 3.2s linear infinite}
-    @keyframes heroShine{0%{left:-140%}38%{left:140%}100%{left:140%}}
-    .hero h3{font-family:'Saira Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em;font-size:19px}.hero p{margin-top:4px;color:#d8e1ff;font-size:12px;line-height:1.4}
-    .paco{width:92px;height:92px;object-fit:cover;border-radius:50%;border:2px solid rgba(79,216,198,.65);box-shadow:0 8px 18px -10px rgba(79,216,198,.6);margin-bottom:8px;background:#0c1330;animation:floaty 3.8s ease-in-out infinite}
-    @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-    .avatar-row{display:flex;align-items:center;gap:10px}.avatar-row .paco{margin-bottom:0}
-    .list{display:grid;gap:8px;padding:0 10px 10px}.item{border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:9px;background:rgba(255,255,255,.045);font-size:12px;color:#dce5ff}.item b{display:block;margin-bottom:2px;color:#f3f6ff}
-    .mini{display:flex;align-items:center;gap:7px}.icon{width:24px;height:24px;border-radius:7px;object-fit:contain;background:rgba(255,255,255,.07);padding:3px;border:1px solid rgba(255,255,255,.12);flex-shrink:0}
-    .progress{margin-top:7px;height:6px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--violet),var(--gold));animation:barPulse 2.4s ease-in-out infinite}
-    @keyframes barPulse{0%,100%{filter:saturate(1)}50%{filter:saturate(1.35)}}
-    .nav{margin-top:auto;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-around;padding:8px 4px}.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.28)}.dot.on{background:var(--teal);box-shadow:0 0 8px rgba(79,216,198,.85);animation:dotBlink 1.8s ease-in-out infinite}
-    @keyframes dotBlink{0%,100%{opacity:1}50%{opacity:.65}}
-    .foot{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);line-height:1.6;font-size:13px}
-    @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+    .wrap{max-width:1220px;margin:0 auto;padding:64px 20px 44px}
+    .head{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+    .kicker{
+      color:#062522;background:var(--teal);border-radius:999px;
+      width:max-content;padding:6px 12px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    }
+    h1{
+      font-family:'Saira Condensed',sans-serif;
+      font-size:clamp(2rem,5vw,3.8rem);
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      line-height:.92;
+    }
+    .sub{color:var(--muted);font-size:14px;line-height:1.6;max-width:840px}
+    .preview{
+      margin-top:18px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      box-shadow:0 24px 48px -30px rgba(0,0,0,.8);
+    }
+    .preview img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:14px;
+    }
+    .foot{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
   </style>
 </head>
 <body>
-  <div class="bg-orb orb-a" aria-hidden="true"></div>
-  <div class="bg-orb orb-b" aria-hidden="true"></div>
-  <div class="bg-orb orb-c" aria-hidden="true"></div>
   <a class="back" href="index.html" aria-label="Retour au portfolio">← Retour portfolio</a>
   <main class="wrap">
-    <span class="kicker">Nouvelle actualite Sameva</span>
-    <div class="head"><h1>Futures pages de l'application</h1><img class="wm" src="assets/sameva_assets_detoures/wordmark.webp" alt="Sameva"></div>
-    <p class="sub">Presentation jury de la V2 : ecrans mobiles, progression gamifiee, validation IA, recompenses et univers visuel Paco.</p>
-    <div class="legend"><span class="chip">Teal #4FD8C6</span><span class="chip">Violet #8A63E0</span><span class="chip">Or #F5C451</span><span class="chip">Mood RPG + Productivite</span></div>
-    <section class="gallery" aria-label="Mockups ecrans Sameva">
-      <article class="frame"><div class="frame-head"><h2>01 · Connexion</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>09:41</span><span>5G 93%</span></div><div class="hero"><img class="paco" src="assets/sameva_assets_detoures/face.webp" alt=""><h3>Bienvenue Paco</h3><p>Onboarding clair + entree visuelle forte.</p></div><div class="list"><div class="item"><b>Email</b>Adresse et mot de passe</div><div class="item"><b>Connexion rapide</b>Compte campus / SSO</div><div class="item"><b>Call to action</b>Bouton principal "Demarrer"</div></div><div class="nav"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>02 · Dashboard</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Niveau 12</span><span>+120 XP</span></div><div class="hero"><div class="avatar-row"><img class="paco" src="assets/sameva_assets_detoures/waving.webp" alt=""><div><h3>Tableau de bord</h3><p>Vue synthese des objectifs du jour.</p></div></div></div><div class="list"><div class="item"><b>Serie active</b>8 jours consecutifs</div><div class="item"><b>Objectif semaine</b>6 / 10 quetes finalisees<div class="progress"><span style="width:60%"></span></div></div><div class="item"><b>Gemmes</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/crystal.webp" alt=""> 320</span></div></div><div class="nav"><span class="dot"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>03 · Mes quetes</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Mes quetes</span><span>3 actives</span></div><div class="hero"><h3>Progression journaliere</h3><p>Missions courtes, impact direct sur XP.</p></div><div class="list"><div class="item"><b>Hydratation</b>Boire 2L d'eau<div class="progress"><span style="width:72%"></span></div></div><div class="item"><b>Sport</b>20 min d'activite<div class="progress"><span style="width:35%"></span></div></div><div class="item"><b>Sommeil</b>Coucher avant 23h<div class="progress"><span style="width:15%"></span></div></div></div><div class="nav"><span class="dot"></span><span class="dot"></span><span class="dot on"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>04 · Validation IA</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Validation</span><span>MougiBot</span></div><div class="hero"><div class="avatar-row"><img class="paco" src="assets/sameva_assets_detoures/mougibot_head.webp" alt=""><div><h3>Preuve photo</h3><p>Analyse auto + fallback manuel.</p></div></div></div><div class="list"><div class="item"><b>Score IA</b>92% confiance</div><div class="item"><b>Statut</b>Validation recommandee</div><div class="item"><b>Action</b>Valider / Reprendre la capture</div></div><div class="nav"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>05 · Recompenses</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Recompense</span><span>+45 gemmes</span></div><div class="hero"><div class="avatar-row"><img class="paco" src="assets/sameva_assets_detoures/celebrate.webp" alt=""><div><h3>Coffre debloque</h3><p>Feedback visuel celebratoire.</p></div></div></div><div class="list"><div class="item"><b>Loot obtenu</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/hoodie.webp" alt=""> Hoodie Epic</span></div><div class="item"><b>Bonus</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/crystal.webp" alt=""> x2 XP pendant 24h</span></div><div class="item"><b>Progression</b>Pass saison +1 niveau</div></div><div class="nav"><span class="dot"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>06 · Sanctuaire</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Sanctuaire</span><span>Niv. 4</span></div><div class="hero"><div class="avatar-row"><img class="paco" src="assets/sameva_assets_detoures/paco_full.webp" alt=""><div><h3>Zone compagnon</h3><p>Boost passif et progression meta.</p></div></div></div><div class="list"><div class="item"><b>Paco</b>+5% motivation journaliere</div><div class="item"><b>MougiBot</b>+10% precision validation</div><div class="item"><b>Aura active</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/chain.webp" alt=""> Focus chain</span></div></div><div class="nav"><span class="dot"></span><span class="dot"></span><span class="dot on"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>07 · Invocation</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Invocation</span><span>300 shards</span></div><div class="hero"><h3>Portail mystique</h3><p>Tirages cosmetiques et boosts.</p></div><div class="list"><div class="item"><b>Tirage x1</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/crystal.webp" alt=""> 50 shards</span></div><div class="item"><b>Tirage x10</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/crystal.webp" alt=""> 450 shards</span></div><div class="item"><b>Skin preview</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/cap.webp" alt=""> Cap Neon</span></div></div><div class="nav"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>08 · Garde-robe</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Skins</span><span>12 possedes</span></div><div class="hero"><h3>Personnalisation Paco</h3><p>Looks, rarete et collection.</p></div><div class="list"><div class="item"><b>Street Violet</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/var_violet.webp" alt=""> Epique</span></div><div class="item"><b>Teal Core</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/var_teal.webp" alt=""> Rare</span></div><div class="item"><b>Gold Hero</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/var_gold.webp" alt=""> Legendaire</span></div></div><div class="nav"><span class="dot"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>09 · Profil</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Profil</span><span>@sameva_user</span></div><div class="hero"><div class="avatar-row"><img class="paco" src="assets/sameva_assets_detoures/running.webp" alt=""><div><h3>Stats globales</h3><p>Niveau, temps, badges, historique.</p></div></div></div><div class="list"><div class="item"><b>Temps total</b>24h 12m</div><div class="item"><b>Badges</b>22 debloques</div><div class="item"><b>Equipement</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/sneakers.webp" alt=""> Sneakers V2</span></div></div><div class="nav"><span class="dot"></span><span class="dot"></span><span class="dot on"></span><span class="dot"></span></div></div></div></article>
-      <article class="frame"><div class="frame-head"><h2>10 · Classement</h2><span class="badge">Pret jury</span></div><div class="phone"><div class="screen"><div class="top"><span>Classement</span><span>Semaine 21</span></div><div class="hero"><div class="avatar-row"><img class="paco" src="assets/sameva_assets_detoures/mougibot.webp" alt=""><div><h3>Top joueurs</h3><p>Competition saine et engagement.</p></div></div></div><div class="list"><div class="item"><b>#1 Alex</b>14 200 XP</div><div class="item"><b>#2 Sam</b>13 760 XP</div><div class="item"><b>#3 Toi</b>13 220 XP</div><div class="item"><b>Ton skin affiche</b><span class="mini"><img class="icon" src="assets/sameva_assets_detoures/var_grey.webp" alt=""> Grey variant</span></div></div><div class="nav"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
+    <header class="head">
+      <span class="kicker">Nouvelle actualite Sameva</span>
+      <h1>Futures pages de l'application</h1>
+      <p class="sub">Version alignee a la preview V4 avec la planche complete des ecrans et le rendu visuel attendu.</p>
+    </header>
+    <section class="preview" aria-label="Preview Sameva V4">
+      <img src="assets/v4_preview.png" alt="Preview V4 des ecrans Sameva">
     </section>
-    <p class="foot">Version de presentation pour jury : structure narrative claire (connexion -> progression -> validation -> recompenses -> meta-game), design harmonise, assets detoures reels et micro-animations pour appuyer la demo.</p>
+    <p class="foot">Sameva V4 - rendu de reference pour la presentation jury.</p>
   </main>
 </body>
 </html>
