@@ -483,5 +483,9 @@
    
      /* ── I18N ──────────────────────────────────────────────────────── */
      if(window.i18n) window.i18n.init();
+
+    /* ── FOOTER YEAR ──────────────────────────────────────────────── */
+    const currentYear = document.getElementById('currentYear');
+    if (currentYear) currentYear.textContent = String(new Date().getFullYear());
    
    }); // end DOMContentLoaded

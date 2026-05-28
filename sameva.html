@@ -1,6 +1,186 @@
 <!doctype html>
 <html lang="fr">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Actualité du projet Sameva : mockups des futures pages de l'application">
+  <title>Sameva — Actualité Projet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=Saira+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1127;
+      --bg2:#101935;
+      --panel:#172346;
+      --line:rgba(255,255,255,.13);
+      --txt:#e8eeff;
+      --muted:#9fb0d8;
+      --teal:#4fd8c6;
+      --violet:#8a63e0;
+      --gold:#f5c451;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Archivo',sans-serif;
+      color:var(--txt);
+      background:
+        radial-gradient(900px 450px at 8% -8%, rgba(138,99,224,.3), transparent 60%),
+        radial-gradient(800px 400px at 92% 6%, rgba(79,216,198,.15), transparent 55%),
+        linear-gradient(160deg,var(--bg),var(--bg2));
+      min-height:100vh;
+    }
+    .back-home{
+      position:fixed;top:14px;left:14px;z-index:20;
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 14px;border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(9,14,30,.75);
+      color:var(--txt);text-decoration:none;
+      font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+      backdrop-filter:blur(6px);
+    }
+    .back-home:hover{border-color:var(--teal);color:var(--teal)}
+    .wrap{max-width:1240px;margin:0 auto;padding:72px 20px 70px}
+    .kicker{
+      display:inline-block;
+      background:var(--teal);color:#06201d;
+      padding:6px 12px;border-radius:999px;
+      font-weight:800;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    }
+    h1{
+      margin-top:14px;
+      font-family:'Saira Condensed',sans-serif;
+      font-size:clamp(2rem,6vw,4rem);
+      text-transform:uppercase;letter-spacing:.04em;
+    }
+    .sub{margin-top:10px;color:var(--muted);line-height:1.65;max-width:760px}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .chip{border:1px solid var(--line);border-radius:999px;padding:7px 11px;font-size:12px;color:var(--muted)}
+    .gallery{
+      margin-top:24px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:14px;
+    }
+    .frame{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+    }
+    .frame-head{
+      display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:10px;
+    }
+    .frame-title{
+      font-family:'Saira Condensed',sans-serif;
+      text-transform:uppercase;letter-spacing:.06em;
+    }
+    .badge{
+      font-size:11px;
+      color:var(--teal);
+      border:1px solid rgba(79,216,198,.5);
+      background:rgba(79,216,198,.12);
+      border-radius:999px;
+      padding:3px 8px;
+      font-weight:700;
+    }
+    .phone{
+      max-width:260px;
+      margin:0 auto;
+      border-radius:28px;
+      padding:8px;
+      border:1px solid rgba(255,255,255,.24);
+      background:#070b18;
+      box-shadow:0 14px 36px rgba(0,0,0,.45);
+    }
+    .screen{
+      border-radius:21px;
+      min-height:430px;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg,#1a2850,#101936);
+      display:flex;flex-direction:column;
+      overflow:hidden;
+    }
+    .top{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      display:flex;justify-content:space-between;
+      font-size:12px;color:#c6d5ff;
+    }
+    .hero{
+      margin:10px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:12px;
+      padding:10px;
+      background:linear-gradient(140deg, rgba(138,99,224,.35), rgba(79,216,198,.14));
+    }
+    .hero h3{font-family:'Saira Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em}
+    .hero p{font-size:12px;color:#d4ddff;margin-top:4px}
+    .list{display:grid;gap:8px;padding:0 10px 10px}
+    .item{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:10px;
+      padding:9px;
+      background:rgba(255,255,255,.05);
+      font-size:12px;color:#d8e2ff;
+    }
+    .item b{display:block;margin-bottom:2px}
+    .progress{height:6px;border-radius:999px;background:rgba(255,255,255,.13);overflow:hidden;margin-top:7px}
+    .progress span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--violet),var(--gold))}
+    .nav{
+      margin-top:auto;
+      border-top:1px solid rgba(255,255,255,.12);
+      display:flex;justify-content:space-around;padding:8px 0;
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.28)}
+    .dot.on{background:var(--teal);box-shadow:0 0 8px rgba(79,216,198,.85)}
+    .foot{
+      margin-top:18px;
+      color:var(--muted);
+      border-top:1px solid var(--line);
+      padding-top:14px;
+      line-height:1.6;
+      font-size:13px;
+    }
+  </style>
+</head>
+<body>
+  <a class="back-home" href="index.html" aria-label="Retour au portfolio">← Retour portfolio</a>
+  <main class="wrap">
+    <span class="kicker">Nouvelle actualité Sameva</span>
+    <h1>Mockups des futures pages</h1>
+    <p class="sub">
+      Cette version est volontairement optimisée pour un chargement rapide et fiable. Les mockups restent
+      scrollables et lisibles, sans assets inline lourds.
+    </p>
+    <div class="legend">
+      <span class="chip">Teal #4FD8C6</span>
+      <span class="chip">Violet #8A63E0</span>
+      <span class="chip">Or #F5C451</span>
+      <span class="chip">Mobile first</span>
+    </div>
+
+    <section class="gallery" aria-label="Ecrans Sameva">
+      <article class="frame"><div class="frame-head"><h2 class="frame-title">01 · Connexion</h2><span class="badge">Concept</span></div><div class="phone"><div class="screen"><div class="top"><span>09:41</span><span>5G 92%</span></div><div class="hero"><h3>Bienvenue Paco</h3><p>Connexion email, SSO et onboarding.</p></div><div class="list"><div class="item"><b>Email</b>Adresse + mot de passe</div><div class="item"><b>SSO Campus</b>Acces rapide en un clic</div></div><div class="nav"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
+      <article class="frame"><div class="frame-head"><h2 class="frame-title">02 · Dashboard</h2><span class="badge">Concept</span></div><div class="phone"><div class="screen"><div class="top"><span>Niveau 12</span><span>+120 XP</span></div><div class="hero"><h3>Tableau de bord</h3><p>Objectifs, serie et progression globale.</p></div><div class="list"><div class="item"><b>Serie active</b>8 jours consecutifs</div><div class="item"><b>Quetes semaine</b>6 / 10 finalisees</div></div><div class="nav"><span class="dot"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
+      <article class="frame"><div class="frame-head"><h2 class="frame-title">03 · Quetes</h2><span class="badge">Concept</span></div><div class="phone"><div class="screen"><div class="top"><span>Mes quetes</span><span>3 actives</span></div><div class="hero"><h3>Progression journee</h3><p>Missions courtes avec validation.</p></div><div class="list"><div class="item"><b>Hydratation</b>2L d'eau<div class="progress"><span style="width:70%"></span></div></div><div class="item"><b>Sport</b>20 minutes<div class="progress"><span style="width:35%"></span></div></div></div><div class="nav"><span class="dot"></span><span class="dot"></span><span class="dot on"></span><span class="dot"></span></div></div></div></article>
+      <article class="frame"><div class="frame-head"><h2 class="frame-title">04 · Validation IA</h2><span class="badge">Concept</span></div><div class="phone"><div class="screen"><div class="top"><span>MougiBot</span><span>Analyse</span></div><div class="hero"><h3>Preuve photo</h3><p>Score IA + validation manuelle si besoin.</p></div><div class="list"><div class="item"><b>Confiance</b>92%</div><div class="item"><b>Decision</b>Valider ou refaire la capture</div></div><div class="nav"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
+      <article class="frame"><div class="frame-head"><h2 class="frame-title">05 · Recompenses</h2><span class="badge">Concept</span></div><div class="phone"><div class="screen"><div class="top"><span>Coffre</span><span>+45 gemmes</span></div><div class="hero"><h3>Loot debloque</h3><p>Skins, boost XP, feedback celebratoire.</p></div><div class="list"><div class="item"><b>Skin rare</b>Neo Paco</div><div class="item"><b>Boost</b>x2 XP pendant 24h</div></div><div class="nav"><span class="dot"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div></div></div></article>
+      <article class="frame"><div class="frame-head"><h2 class="frame-title">06 · Classement</h2><span class="badge">Concept</span></div><div class="phone"><div class="screen"><div class="top"><span>Classement</span><span>Semaine 21</span></div><div class="hero"><h3>Top joueurs</h3><p>Competition saine entre etudiants.</p></div><div class="list"><div class="item"><b>#1 Alex</b>14 200 XP</div><div class="item"><b>#2 Sam</b>13 760 XP</div><div class="item"><b>#3 Toi</b>13 220 XP</div></div><div class="nav"><span class="dot"></span><span class="dot"></span><span class="dot on"></span><span class="dot"></span></div></div></div></article>
+    </section>
+
+    <p class="foot">
+      Si tu ajoutes ensuite des fichiers `.webp` dans `assets/sameva/`, je peux les brancher ici
+      proprement (sans base64) pour garder une page rapide et stable en production.
+    </p>
+  </main>
+</body>
+</html>
+<!doctype html>
+<html lang="fr">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sameva — Mockup V2 (vrais assets)</title>
