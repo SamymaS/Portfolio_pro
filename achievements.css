@@ -1,0 +1,79 @@
+/* ================================================================
+   achievements.css — Notifications de succès (toasts)
+   ================================================================ */
+.ach-toasts{
+  position:fixed;
+  right:1rem;
+  bottom:1rem;
+  z-index:10000;
+  display:flex;
+  flex-direction:column;
+  gap:.6rem;
+  pointer-events:none;
+  max-width:min(340px,calc(100vw - 2rem));
+}
+
+.ach-toast{
+  pointer-events:auto;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.85rem;
+  padding:.8rem 1rem;
+  border-radius:var(--r,10px);
+  background:linear-gradient(135deg,rgba(17,24,33,.96),rgba(13,17,23,.96));
+  border:1px solid var(--accent,#00e5ff);
+  box-shadow:0 8px 30px rgba(0,0,0,.45),0 0 0 1px rgba(0,229,255,.12);
+  color:var(--text,#e2e8f0);
+  transform:translateX(120%);
+  opacity:0;
+  transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .45s ease;
+  backdrop-filter:blur(8px);
+}
+.ach-toast.show{
+  transform:translateX(0);
+  opacity:1;
+}
+
+.ach-toast-icon{
+  font-size:1.7rem;
+  line-height:1;
+  flex-shrink:0;
+  filter:drop-shadow(0 0 6px rgba(0,229,255,.5));
+}
+
+.ach-toast-body{
+  display:flex;
+  flex-direction:column;
+  gap:.1rem;
+  min-width:0;
+}
+
+.ach-toast-label{
+  font-family:var(--fm,'Space Mono',monospace);
+  font-size:.58rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--accent,#00e5ff);
+}
+
+.ach-toast-title{
+  font-family:var(--ff,'Syne',sans-serif);
+  font-weight:800;
+  font-size:.92rem;
+  line-height:1.2;
+}
+
+.ach-toast-desc{
+  font-family:var(--fm,'Space Mono',monospace);
+  font-size:.66rem;
+  color:var(--muted,#8892a4);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .ach-toast{transition:opacity .2s ease}
+  .ach-toast,.ach-toast.show{transform:none}
+}

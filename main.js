@@ -6,6 +6,32 @@
    const $ = s => document.querySelector(s);
    const $$ = s => [...document.querySelectorAll(s)];
    const touch = () => window.matchMedia('(pointer:coarse)').matches;
+   const reduceMotion = () => window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+   /* ── FOCUS TRAP réutilisable (accessibilité des modales) ─────────── */
+   // Piège le focus clavier dans un conteneur. Retourne une fonction de libération.
+   window.focusTrap = function focusTrap(container){
+     if(!container) return function(){};
+     const SEL='a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
+     const prevFocus=document.activeElement;
+     function onKey(e){
+       if(e.key!=='Tab') return;
+       const items=[...container.querySelectorAll(SEL)].filter(el=>el.offsetParent!==null||el===document.activeElement);
+       if(!items.length){ e.preventDefault(); return; }
+       const first=items[0], last=items[items.length-1];
+       if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+       else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+       else if(!container.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+     }
+     document.addEventListener('keydown', onKey, true);
+     // Focus initial sur le premier élément focusable
+     const firstItem=container.querySelector(SEL);
+     if(firstItem) requestAnimationFrame(()=>firstItem.focus());
+     return function release(){
+       document.removeEventListener('keydown', onKey, true);
+       if(prevFocus && typeof prevFocus.focus==='function') prevFocus.focus();
+     };
+   };
    
    /* ── TOUT dans DOMContentLoaded pour garantir que le DOM est prêt ── */
    document.addEventListener('DOMContentLoaded', function() {
@@ -150,6 +176,8 @@
      (function initThree(){
        const canvas=$('#threeCanvas');
        if(!canvas||typeof THREE==='undefined') return;
+       // Respecte prefers-reduced-motion : pas d'animation 3D
+       if(reduceMotion()){ canvas.style.display='none'; return; }
        const scene=new THREE.Scene();
        const cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,1000);
        cam.position.z=30;
@@ -395,20 +423,22 @@
      (function initEE(){
        const wrap=$('.ee-wrap'), body=$('#eeBody'), input=$('#eeInput'), close=$('#eeClose');
        if(!wrap) return;
-       let kbuf='';
+       let kbuf='', trapRelease=null;
+       function closeEE(){ wrap.classList.add('hidden'); if(trapRelease){ trapRelease(); trapRelease=null; } }
        document.addEventListener('keydown',e=>{
          if(['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
-         if(e.key==='Escape'){wrap.classList.add('hidden');return;}
+         if(e.key==='Escape'){closeEE();return;}
          kbuf=(kbuf+e.key.toLowerCase()).slice(-2);
          if(kbuf==='sb') openEE();
        });
-       if(close) close.addEventListener('click',()=>wrap.classList.add('hidden'));
+       if(close) close.addEventListener('click',closeEE);
        function openEE(){
          wrap.classList.remove('hidden');
          if(body) body.innerHTML='';
          print('Bienvenue dans le terminal de Samy ! 👾','a');
          print('─────────────────────────────');
          print("Tape 'help' pour les commandes.",'ok');
+         if(window.focusTrap) trapRelease=window.focusTrap(wrap);
          if(input) input.focus();
        }
        function print(text,cls){
@@ -425,11 +455,11 @@
          stack:()=>{ print('Backend  → Java, Kotlin, Python, Spring, Flask','a'); print('Mobile   → Flutter, Dart, React Native'); print('IoT      → ESP32, Raspberry Pi, MQTT, BLE'); print('Devops   → Git, Docker, CI/CD, Ansible'); },
          github:()=>{ print('→ https://github.com/SamymaS','ok'); window.open('https://github.com/SamymaS','_blank'); },
          linkedin:()=>{ print('→ https://linkedin.com/in/samy-boudaoud','ok'); window.open('https://www.linkedin.com/in/samy-boudaoud','_blank'); },
-         contact:()=>{ print('✉  samyboudaoud95@gmail.com','ok'); print('✆  06 67 72 14 76'); },
+         contact:()=>{ print('✉  samyboudaoud95@gmail.com','ok'); },
          joke:()=>{ const j=['Pourquoi les devs Java portent des lunettes ? Ils ne voient pas C#.','Un null pointer entre dans un bar... Segfault.','git push --force: solution aux conflits selon les juniors.','Il y a 10 types de personnes: ceux qui comprennent le binaire, et les autres.','Mon code compile. Je ne sais pas pourquoi. Je ne touche plus rien.']; print(j[Math.floor(Math.random()*j.length)],'ok'); },
          matrix:()=>{ print('Initializing matrix…','a'); const chars='日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｪｩｨ01'; let i=0; const iv=setInterval(()=>{ let l=''; for(let j=0;j<26;j++) l+=chars[Math.floor(Math.random()*chars.length)]; print(l,'a'); if(++i>10) clearInterval(iv); },80); },
          clear:()=>{ if(body) body.innerHTML=''; },
-         exit:()=>wrap.classList.add('hidden'),
+         exit:()=>closeEE(),
        };
        if(input) input.addEventListener('keydown',e=>{
          if(e.key!=='Enter') return;

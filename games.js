@@ -32,6 +32,8 @@
        reflex:initReflex,minesweeper:initMinesweeper,
        tetris:initTetris,whack:initWhack,
        taquin:initTaquin,rps:initRPS}[name]||function(){})();
+     // Piège le focus clavier dans la modale (accessibilité)
+     if(window.focusTrap){ window._gTrapRelease = window.focusTrap(gameModal); }
    }
    // Enregistre un écouteur clavier propre au jeu courant (nettoyé à la fermeture)
    window._gKeyHandlers = window._gKeyHandlers || [];
@@ -47,6 +49,8 @@
      clearInterval(window._gInt);
      clearInterval(window._whInt);
      if(window._gTO){clearTimeout(window._gTO);window._gTO=null;}
+     // Libère le focus trap et rend le focus à l'élément précédent
+     if(window._gTrapRelease){ window._gTrapRelease(); window._gTrapRelease=null; }
      // Retire les écouteurs clavier des jeux pour éviter leur accumulation
      window._gKeyHandlers.forEach(h=>document.removeEventListener('keydown',h));
      window._gKeyHandlers=[];
