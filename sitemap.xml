@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://samy-boudaoud.com/</loc>
     <changefreq>monthly</changefreq>
@@ -7,6 +8,17 @@
   </url>
   <url>
     <loc>https://samy-boudaoud.com/sameva.html</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://samy-boudaoud.com/sameva.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://samy-boudaoud.com/sameva.en.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://samy-boudaoud.com/sameva.html"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://samy-boudaoud.com/sameva.en.html</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://samy-boudaoud.com/sameva.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://samy-boudaoud.com/sameva.en.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://samy-boudaoud.com/sameva.html"/>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sameva · gamified habit-tracking mobile app · Samy Boudaoud</title>
+<meta name="description" content="Sameva: a Flutter mobile app that turns everyday habits into RPG quests, with photo proof scored by a vision model. v1.0.4 MVP in acceptance testing, MVVM architecture, Supabase, CI/CD. Built for the RNCP 39583 certification.">
+<meta name="theme-color" content="#080b10">
+<link rel="canonical" href="https://samy-boudaoud.com/sameva.en.html">
+<link rel="alternate" hreflang="fr" href="https://samy-boudaoud.com/sameva.html">
+<link rel="alternate" hreflang="en" href="https://samy-boudaoud.com/sameva.en.html">
+<link rel="alternate" hreflang="x-default" href="https://samy-boudaoud.com/sameva.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Samy Boudaoud">
+<meta property="og:title" content="Sameva: turn your habits into RPG quests">
+<meta property="og:description" content="A Flutter mobile app with proof validation by a vision model. v1.0.4 MVP: 29,000 lines of Dart, 505 tests, offline-first MVVM architecture, Supabase and CI/CD.">
+<meta property="og:url" content="https://samy-boudaoud.com/sameva.en.html">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:image" content="https://samy-boudaoud.com/assets/og_sameva_en.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sameva, a gamified habit-tracking mobile app, with Paco the mascot.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sameva: turn your habits into RPG quests">
+<meta name="twitter:description" content="A Flutter mobile app with proof validation by a vision model. v1.0.4 MVP, offline-first MVVM architecture.">
+<meta name="twitter:image" content="https://samy-boudaoud.com/assets/og_sameva_en.jpg">
+<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("sb-theme")==="light"?"light":"dark");if(localStorage.getItem("sb-lang")==="fr")location.replace("sameva.html");}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Sameva page: local styles, built on the portfolio design tokens */
+.sv-hero{
+  padding:3.2rem 0 2.5rem;
+  background:
+    radial-gradient(700px 380px at 12% -10%, rgba(124,58,237,.18), transparent 60%),
+    radial-gradient(620px 360px at 95% 0%, rgba(0,229,255,.12), transparent 55%);
+}
+.sv-back{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-family:var(--fm);font-size:.72rem;color:var(--muted);
+  margin-bottom:1.6rem;transition:color .2s;
+}
+.sv-back:hover{color:var(--accent)}
+.sv-topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.6rem}
+.sv-topbar .sv-back{margin-bottom:0}
+.sv-lang{font-family:var(--fm);font-size:.68rem;font-weight:700;letter-spacing:.1em;
+  color:var(--muted);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:.35rem .7rem;transition:all .2s;flex-shrink:0}
+.sv-lang:hover{border-color:var(--accent);color:var(--accent)}
+.sv-kicker{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:var(--fm);font-size:.66rem;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:#000;background:var(--accent);
+  padding:.35rem .75rem;border-radius:var(--r-sm);
+}
+.sv-h1{font-size:clamp(1.95rem,6vw,3.2rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:1.1rem 0 .8rem}
+.sv-h1 em{font-style:normal;color:var(--accent2)}
+.sv-lead{max-width:680px;color:var(--dim);font-size:1.05rem;line-height:1.6}
+.sv-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
+.sv-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
+
+/* hero en 2 colonnes */
+.sv-hero-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;align-items:center}
+.sv-hero-art{justify-self:center}
+.sv-hero-art img{width:100%;max-width:150px;margin:0 auto;filter:drop-shadow(0 18px 40px rgba(0,0,0,.55))}
+@media(min-width:900px){
+  .sv-hero-grid{grid-template-columns:1.35fr .65fr;gap:2rem}
+  .sv-hero-art img{max-width:280px}
+}
+
+/* chiffres */
+.sv-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.8rem;margin-bottom:2rem}
+.sv-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.2rem}
+.sv-stat b{display:block;white-space:nowrap;font-size:clamp(1.4rem,3.2vw,1.7rem);font-weight:800;letter-spacing:-.02em;color:var(--accent);line-height:1.1}
+.sv-stat span{display:block;font-family:var(--fm);font-size:.66rem;color:var(--muted);margin-top:.35rem;letter-spacing:.05em}
+.sv-stat-note{font-family:var(--fm);font-size:.68rem;color:var(--muted);margin-top:-1.2rem;margin-bottom:2rem}
+
+/* cartes */
+.sv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:.5rem}
+.sv-grid.cols3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.sv-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:1.4rem;transition:border-color .25s,transform .25s;
+}
+.sv-card:hover{border-color:rgba(0,229,255,.3);transform:translateY(-3px)}
+.sv-card h3{font-size:1.05rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:.55rem}
+.sv-card p{color:var(--muted);font-size:.92rem;line-height:1.55}
+.sv-card p + p{margin-top:.7rem}
+.sv-ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2)}
+.sv-ic svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2}
+
+/* pipeline de validation */
+.sv-flow{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.4rem 0 .4rem}
+.sv-step{
+  flex:1 1 150px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:.85rem .9rem;
+}
+.sv-step .n{font-family:var(--fm);font-size:.62rem;color:var(--accent);letter-spacing:.12em}
+.sv-step p{font-size:.85rem;color:var(--dim);line-height:1.45;margin-top:.3rem}
+
+/* statut livré / prévu */
+.sv-status{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:.5rem}
+.sv-col{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem}
+.sv-col h3{font-family:var(--fm);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1rem}
+.sv-col.done h3{color:var(--ok)}
+.sv-col.wip h3{color:var(--warn)}
+.sv-col.next h3{color:var(--muted)}
+.sv-col li{position:relative;padding-left:1.3rem;font-size:.9rem;color:var(--dim);line-height:1.5;margin-bottom:.65rem}
+.sv-col li::before{position:absolute;left:0;top:0;font-family:var(--fm);font-size:.8rem}
+.sv-col.done li::before{content:"✓";color:var(--ok)}
+.sv-col.wip li::before{content:"◐";color:var(--warn)}
+.sv-col.next li::before{content:"○";color:var(--muted)}
+
+/* palette DA */
+.sv-palette{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.2rem}
+.sw{display:flex;align-items:center;gap:.55rem;font-family:var(--fm);font-size:.72rem;color:var(--dim);
+  background:var(--surface);border:1px solid var(--border);padding:.5rem .8rem;border-radius:99px}
+.sw .chip{width:16px;height:16px;border-radius:5px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.1) inset}
+
+/* vitrine assets */
+.sv-assets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-top:1.6rem}
+.sv-asset{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:1.2rem;text-align:center;transition:border-color .25s}
+.sv-asset:hover{border-color:rgba(0,229,255,.3)}
+.sv-asset img{margin:0 auto .8rem;max-height:130px;width:auto}
+.sv-asset b{display:block;font-size:.9rem;font-weight:700}
+.sv-asset span{display:block;font-family:var(--fm);font-size:.66rem;color:var(--muted);margin-top:.25rem;line-height:1.4}
+.sv-items{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:1.4rem}
+.sv-items img{height:74px;width:auto;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:.6rem}
+
+/* figure */
+.sv-figure{margin-top:1.4rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg2)}
+.sv-figure img{width:100%;height:auto;display:block}
+.sv-cap{font-family:var(--fm);font-size:.72rem;color:var(--muted);padding:.9rem 1.1rem;border-top:1px solid var(--border);text-align:center;line-height:1.6}
+
+/* captures d'écran */
+.sv-shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:1.4rem}
+.sv-shot{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.sv-shot img{width:100%;height:auto;display:block}
+.sv-shot figcaption{font-family:var(--fm);font-size:.68rem;color:var(--muted);padding:.7rem .8rem;border-top:1px solid var(--border)}
+
+/* jalons certification */
+.sv-tl{margin-top:.5rem;border-left:2px solid var(--border);padding-left:1.3rem}
+.sv-tl li{position:relative;padding-bottom:1.3rem}
+.sv-tl li::before{content:"";position:absolute;left:calc(-1.3rem - 6px);top:.35rem;
+  width:10px;height:10px;border-radius:50%;background:var(--bg2);border:2px solid var(--muted)}
+.sv-tl li.ok::before{background:var(--ok);border-color:var(--ok)}
+.sv-tl li.up::before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px rgba(0,229,255,.15)}
+.sv-tl .d{font-family:var(--fm);font-size:.66rem;color:var(--accent);letter-spacing:.08em}
+.sv-tl b{display:block;font-size:.98rem;font-weight:700;margin:.2rem 0 .2rem}
+.sv-tl p{font-size:.88rem;color:var(--muted);line-height:1.5}
+
+.sv-note{margin-top:1.4rem;font-size:.85rem;color:var(--muted);font-style:italic;line-height:1.6}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#sv-content">Skip to content</a>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="sv-hero">
+  <div class="container" id="sv-content">
+    <div class="sv-topbar">
+      <a class="sv-back" href="index.html#sameva">← Back to portfolio</a>
+      <a class="sv-lang" id="svLang" href="sameva.html" hreflang="fr" lang="fr" aria-label="Lire cette page en français">FR</a>
+    </div>
+    <div class="sv-hero-grid">
+      <div>
+        <span class="sv-kicker">v1.0.4 · MVP in acceptance testing</span>
+        <h1 class="sv-h1">Sam<em>eva</em>: habits become RPG quests</h1>
+        <p class="sv-lead">
+          A <strong>Flutter</strong> mobile app that turns everyday habits into RPG quests.
+          The user photographs their proof, a vision model scores it, and the reward lands as XP, gold and items.
+          Designed, built and shipped solo, from architecture to delivery pipeline, as the project behind the
+          <strong>RNCP 39583</strong> certification.
+        </p>
+        <div class="sv-meta">
+          <span class="tag main">Flutter · Dart</span>
+          <span class="tag">Supabase</span>
+          <span class="tag">MVVM · offline-first</span>
+          <span class="tag">Edge Functions</span>
+          <span class="tag">GitHub Actions CI/CD</span>
+          <span class="tag">Stripe</span>
+        </div>
+        <div class="sv-actions">
+          <a class="btn btn-primary" href="https://github.com/SamymaS/Sameva" target="_blank" rel="noopener">View the code on GitHub</a>
+          <a class="btn btn-secondary" href="#sv-technique">Under the hood</a>
+        </div>
+      </div>
+      <div class="sv-hero-art">
+        <img src="assets/paco_hero.webp" alt="Paco, the Sameva mascot: a tuxedo cat in a teal hoodie, grey beanie and purple sneakers, with a turquoise crystal floating above his head." width="576" height="1024" fetchpriority="high">
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ 01 · CONCEPT ═══════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">01</span><h2 class="section-title">The concept</h2></div>
+    <div class="sv-grid">
+
+      <div class="sv-card">
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Habits as quests</h3>
+        <p>Users create their own quests (tidying up, cooking, studying, exercising) grouped into areas of life.
+        Completing them earns experience, gold and items, with level progression and streak tracking.</p>
+      </div>
+
+      <div class="sv-card">
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg></span>Proof, not a checkbox</h3>
+        <p>The weakness of habit apps is self-declared validation: ticking a box proves nothing.
+        Sameva asks for a photo or a short video, analysed by a vision model that returns a score out of 100.
+        Above 70, the reward is paid in full.</p>
+      </div>
+
+      <div class="sv-card">
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M12 3c-2 4-7 4-7 9a7 7 0 0 0 14 0c0-5-5-5-7-9z"/></svg></span>Never stuck</h3>
+        <p>A non-negotiable product principle: if the analysis fails or refuses, the user validates manually for a
+        reduced reward. No network outage and no false negative can ever trap someone in failure.
+        That choice is enforced in code by a systematic fallback service.</p>
+      </div>
+
+      <div class="sv-card">
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2 6 6 .5-4.5 4 1.5 6L12 15l-5 3.5 1.5-6L4 8.5 10 8z"/></svg></span>A reward that means something</h3>
+        <p>The product thesis fits in one sentence: reaching a real goal deserves a real reward.
+        Hence the meta-game layer, with a companion collection, summons, an item inventory and a leaderboard,
+        giving people a reason to come back tomorrow.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 02 · UNDER THE HOOD ═══════════════ -->
+<section class="section dark-section" id="sv-technique">
+  <div class="container">
+    <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Under the hood</h2></div>
+
+    <div class="sv-stats">
+      <div class="sv-stat"><b>29,000</b><span>lines of Dart</span></div>
+      <div class="sv-stat"><b>505</b><span>automated tests</span></div>
+      <div class="sv-stat"><b>48.4%</b><span>code coverage</span></div>
+      <div class="sv-stat"><b>268</b><span>commits</span></div>
+      <div class="sv-stat"><b>3</b><span>CI/CD pipelines</span></div>
+      <div class="sv-stat"><b>5</b><span>Edge Functions</span></div>
+    </div>
+    <p class="sv-stat-note">Figures measured on version 1.0.4, the latest release.</p>
+
+    <div class="sv-grid cols3">
+
+      <div class="sv-card">
+        <h3>Layered architecture</h3>
+        <p>MVVM across four layers (data, domain, presentation, UI), with state handled through Provider and
+        ChangeNotifier. Roughly a hundred files organised by responsibility, which makes every business rule
+        testable independently of the interface.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">Flutter 3</span><span class="tag">Dart</span><span class="tag">MVVM</span><span class="tag">Provider</span></div>
+      </div>
+
+      <div class="sv-card">
+        <h3>Offline-first</h3>
+        <p>Data is written locally first through Hive, then synchronised with the server. The app stays usable
+        without a network: you can create a quest, validate it and watch your progress, and everything syncs
+        back once the connection returns.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">Hive</span><span class="tag">Sync</span></div>
+      </div>
+
+      <div class="sv-card">
+        <h3>Backend and security</h3>
+        <p>Supabase provides PostgreSQL, authentication and storage, with row-level security policies so every
+        user only ever sees their own data. Five Edge Functions written in Deno and TypeScript carry the logic
+        that must not live on the client.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">Supabase</span><span class="tag">PostgreSQL</span><span class="tag">RLS</span><span class="tag">Deno</span></div>
+      </div>
+
+      <div class="sv-card">
+        <h3>Authentication journey</h3>
+        <p>Entry requires no sign-up thanks to an anonymous session: you start playing straight away. Users can
+        then create an account by email or through Google, and their progress carries over via identity linking
+        rather than a brand new account.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">Anonymous session</span><span class="tag">Google Sign-In</span><span class="tag">Identity linking</span></div>
+      </div>
+
+      <div class="sv-card">
+        <h3>Monetisation</h3>
+        <p>A freemium model backed by Stripe, with a monthly subscription. Premium status is resolved server-side
+        and never on the device, so no local tampering can unlock paid features.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">Stripe</span><span class="tag">Webhooks</span><span class="tag">Server-side state</span></div>
+      </div>
+
+      <div class="sv-card">
+        <h3>Continuous integration and delivery</h3>
+        <p>Three GitHub Actions pipelines: static analysis and the full 505-test suite on every push, backend
+        deployment, and signed APK builds on version tags. The shipped package is reproducible and signed with
+        a stable keystore.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">GitHub Actions</span><span class="tag">Tests</span><span class="tag">Static analysis</span><span class="tag">Signed APK</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 03 · AI VALIDATION ═══════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">03</span><h2 class="section-title">AI-based validation</h2></div>
+    <p class="sv-lead">
+      MougiBot is the assistant that judges the proof. Behind the character sits a vision model called from an
+      Edge Function: the API key never leaves the server and the mobile app only ever sees the score.
+    </p>
+
+    <div class="sv-flow">
+      <div class="sv-step"><span class="n">01</span><p>The user photographs their proof inside the app.</p></div>
+      <div class="sv-step"><span class="n">02</span><p>The media goes to Supabase storage, never straight to a third party.</p></div>
+      <div class="sv-step"><span class="n">03</span><p>An Edge Function builds the request and calls the vision model.</p></div>
+      <div class="sv-step"><span class="n">04</span><p>The model returns a score out of 100 and a written comment.</p></div>
+      <div class="sv-step"><span class="n">05</span><p>Above 70, full reward. Below, reduced manual validation.</p></div>
+    </div>
+
+    <div class="sv-grid" style="margin-top:2rem">
+      <div class="sv-card">
+        <h3>Fallback, designed in from the start</h3>
+        <p>A simulated validation service is interchangeable with the real one behind the same interface.
+        It lets the whole app run without any API key, which serves both the automated test suite and
+        offline demonstrations.</p>
+        <p>The same mechanism enforces the &ldquo;never stuck&rdquo; principle: if the model is unavailable, the
+        experience degrades but never stops.</p>
+      </div>
+      <div class="sv-card">
+        <h3>What a photo cannot prove</h3>
+        <p>Visual proof covers quests whose outcome is observable: a tidy room, a home-cooked meal, a watered plant.
+        It does not cover duration-based quests, because no still image demonstrates thirty minutes of running.</p>
+        <p>Those quests call for other proof modes: a built-in timer, a GPS track or a link to a health app.
+        All three are identified and specified, but deliberately out of scope for this first version.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 04 · SCREENSHOTS ═══════════════
+     ENABLE WHEN THE SCREENSHOTS ARE READY:
+     remove this opening comment line and the closing line further down,
+     then drop the files into assets/shots/.
+     ADB capture: adb shell screencap -p /sdcard/sv_01.png then adb pull /sdcard/sv_01.png
+<section class="section dark-section" id="sv-ecrans">
+  <div class="container">
+    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">The app</h2></div>
+    <p class="sv-lead">Screenshots taken from version 1.0.4 running on a physical device.</p>
+    <div class="sv-shots">
+      <figure class="sv-shot"><img src="assets/shots/sv_01.png" alt="Sameva sign-in screen" loading="lazy"><figcaption>Sign in</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/shots/sv_02.png" alt="Quest list with the progression bar" loading="lazy"><figcaption>My quests</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/shots/sv_03.png" alt="Quest creation form" loading="lazy"><figcaption>New quest</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/shots/sv_04.png" alt="MougiBot analysing the proof" loading="lazy"><figcaption>Validation</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/shots/sv_05.png" alt="Reward screen" loading="lazy"><figcaption>Reward</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/shots/sv_06.png" alt="Player profile and statistics" loading="lazy"><figcaption>Profile</figcaption></figure>
+    </div>
+  </div>
+</section>
+     END OF SCREENSHOT BLOCK ═══════════════ -->
+
+<!-- ═══════════════ 05 · VISUAL IDENTITY ═══════════════ -->
+<section class="section dark-section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">Visual identity</h2></div>
+    <p class="sv-lead">
+      The identity rests on <strong>Paco</strong>, a tuxedo cat drawn in a clean cartoon-mascot style, and on his
+      <strong>MougiBot</strong> variant, the face of the analysis assistant. Paco carries the brand; he is not a game
+      unit. Playable characters and companions belong to a separate visual register, currently in design.
+    </p>
+
+    <div class="sv-assets">
+      <div class="sv-asset">
+        <img src="assets/paco_full.webp" alt="Paco, the Sameva mascot, arms folded." loading="lazy">
+        <b>Paco</b><span>Brand mascot</span>
+      </div>
+      <div class="sv-asset">
+        <img src="assets/mougibot.webp" alt="MougiBot, a variant of Paco with an augmented-reality visor and an analysis panel." loading="lazy">
+        <b>MougiBot</b><span>Face of the analysis assistant</span>
+      </div>
+      <div class="sv-asset">
+        <img src="assets/paco_celebrate.webp" alt="Paco celebrating a completed quest, arms raised." loading="lazy">
+        <b>Celebration</b><span>Reward screen</span>
+      </div>
+      <div class="sv-asset">
+        <img src="assets/wordmark.webp" alt="The word SAMEVA in italics with a purple outline." loading="lazy" style="max-height:70px">
+        <b>Wordmark</b><span>Italic, purple outline</span>
+      </div>
+    </div>
+
+    <div class="sv-palette">
+      <span class="sw"><span class="chip" style="background:#4FD8C6"></span>Teal #4FD8C6 · signature</span>
+      <span class="sw"><span class="chip" style="background:#8A63E0"></span>Purple #8A63E0 · progression</span>
+      <span class="sw"><span class="chip" style="background:#F5C451"></span>Gold #F5C451 · currency</span>
+      <span class="sw"><span class="chip" style="background:linear-gradient(135deg,#2C2A52,#10182B)"></span>Indigo to navy · background</span>
+    </div>
+
+    <div class="sv-items">
+      <img src="assets/crystal.webp" alt="Turquoise crystal, the summoning currency." loading="lazy" style="height:60px">
+      <img src="assets/item_cap.webp" alt="Teal cap with a purple patch." loading="lazy">
+      <img src="assets/item_hoodie.webp" alt="Teal hoodie with a paw print." loading="lazy">
+      <img src="assets/item_sneakers.webp" alt="Purple and white high-top sneakers." loading="lazy">
+      <img src="assets/item_chain.webp" alt="Silver chain with a crystal pendant." loading="lazy">
+    </div>
+    <p class="sv-note" style="text-align:center">Collectible items: streetwear register, constrained palette.</p>
+
+    <figure class="sv-figure">
+      <img src="assets/recherche_ui.webp" alt="Visual research board showing ten Sameva screen mockups inside phone frames." width="1500" height="3890" loading="lazy">
+      <figcaption class="sv-cap">
+        Visual research board, iteration 4. A layout and hierarchy exploration predating the current game direction:
+        playable characters and companions are stood in for by the mascot, which matches neither the shipped app
+        nor the design settled on since.
+      </figcaption>
+    </figure>
+
+    <p class="sv-note">
+      The final art direction, in particular the four character classes and the companion bestiary, will be
+      commissioned from a professional illustrator after certification. The visuals shown here are production
+      research used to scope that brief.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════ 06 · PROJECT STATUS ═══════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">05</span><h2 class="section-title">Where the project stands</h2></div>
+    <p class="sv-lead">
+      Sameva is a product under construction, not a showcase. Here is exactly where the line falls between what
+      runs today, what is in progress and what is still ahead.
+    </p>
+
+    <div class="sv-status">
+
+      <div class="sv-col done">
+        <h3>Shipped in v1.0.4</h3>
+        <ul>
+          <li>Quest creation, tracking and validation</li>
+          <li>RPG progression: levels, experience, gold, streaks</li>
+          <li>Photo and video proof with scoring and manual fallback</li>
+          <li>Offline operation and synchronisation</li>
+          <li>Anonymous, email and Google sign-in with identity linking</li>
+          <li>Collection, summons, inventory, leaderboard</li>
+          <li>Stripe subscription with server-resolved state</li>
+          <li>505 tests and three continuous integration pipelines</li>
+        </ul>
+      </div>
+
+      <div class="sv-col wip">
+        <h3>In progress</h3>
+        <ul>
+          <li>Functional acceptance testing on a physical device</li>
+          <li>Raising test coverage beyond 48.4%</li>
+          <li>Moving from the simulated vision model to the real one in production</li>
+          <li>Scoping the illustration commission</li>
+        </ul>
+      </div>
+
+      <div class="sv-col next">
+        <h3>Planned</h3>
+        <ul>
+          <li>Four illustrated playable character classes</li>
+          <li>A companion bestiary distinct from the mascot</li>
+          <li>Timer-based and GPS-track proof</li>
+          <li>Connectors to health apps</li>
+          <li>Beta testing phase, then store publication</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 07 · CERTIFICATION ═══════════════ -->
+<section class="section dark-section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">06</span><h2 class="section-title">Certification context</h2></div>
+    <p class="sv-lead">
+      Sameva is the project behind the <strong>Expert en développement logiciel</strong> qualification, EQF level 7,
+      RNCP 39583, taken at YNOV Campus in the 2025-2026 cohort. It is run as an engagement for a fictional client,
+      which means holding every role single-handedly: scoping, architecture, development, quality, deployment
+      and project management.
+    </p>
+
+    <ul class="sv-tl">
+      <li class="ok">
+        <span class="d">June 2026</span>
+        <b>Unit 1 · project scoping</b>
+        <p>Oral defence. Requirements analysis, competitive study, technical and budget feasibility.</p>
+      </li>
+      <li class="ok">
+        <span class="d">July 2026</span>
+        <b>Unit 2 · design and development</b>
+        <p>Written report submitted. Application architecture, technical decisions, software quality.</p>
+      </li>
+      <li class="ok">
+        <span class="d">August 2026</span>
+        <b>Unit 4 · operations and maintenance</b>
+        <p>Written report submitted. Delivery pipeline, monitoring, security and operational upkeep.</p>
+      </li>
+      <li class="up">
+        <span class="d">10 September 2026</span>
+        <b>Unit 3 · project management</b>
+        <p>Upcoming oral defence, with a live demonstration of the working application.</p>
+      </li>
+    </ul>
+
+    <div class="sv-actions" style="margin-top:2.5rem">
+      <a class="btn btn-primary" href="https://github.com/SamymaS/Sameva" target="_blank" rel="noopener">GitHub repository</a>
+      <a class="btn btn-secondary" href="index.html#sameva">← Back to portfolio</a>
+    </div>
+  </div>
+</section>
+
+<script>document.getElementById("svLang")?.addEventListener("click",function(){try{localStorage.setItem("sb-lang","fr")}catch(e){}});</script>
+
+</body>
+</html>
