@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sameva — Refonte produit & direction artistique · Samy Boudaoud</title>
-<meta name="description" content="Sameva : application mobile de productivité gamifiée. Refonte de la direction artistique, mascotte Paco, validation des quêtes par IA (MougiBot) et nouveaux écrans produit.">
+<title>Sameva : application Flutter de quêtes gamifiées · Samy Boudaoud</title>
+<meta name="description" content="Sameva : application mobile Flutter qui transforme les habitudes en quêtes RPG, avec validation de preuve photo par modèle de vision. MVP v1.0.4 en recette : architecture, chiffres du projet et feuille de route.">
 <meta name="theme-color" content="#080b10">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,12 +31,13 @@
 }
 .sv-h1{font-size:clamp(2rem,7vw,3.6rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:1.1rem 0 .8rem}
 .sv-h1 em{font-style:normal;color:var(--accent2)}
-.sv-lead{max-width:680px;color:var(--dim);font-size:1.05rem;line-height:1.6}
+.sv-lead{max-width:720px;color:var(--dim);font-size:1.05rem;line-height:1.6}
+.sv-lead + .sv-lead{margin-top:.9rem}
 .sv-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
 .sv-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
- 
-/* concept cards */
-.sv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:.5rem}
+
+/* cartes */
+.sv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-top:1.4rem}
 .sv-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
   padding:1.4rem;transition:border-color .25s,transform .25s;
@@ -47,141 +48,286 @@
 .sv-ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;
   background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2)}
 .sv-ic svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2}
- 
-/* DA palette */
-.sv-palette{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.2rem}
+
+/* chiffres du projet */
+.sv-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:.8rem;margin-top:1.4rem}
+.sv-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.2rem}
+.sv-stat b{display:block;font-family:var(--fm);font-size:1.5rem;font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
+.sv-stat span{display:block;margin-top:.35rem;font-size:.78rem;color:var(--muted);line-height:1.4}
+
+/* listes livré / à venir */
+.sv-list{margin:.9rem 0 0;padding:0;display:grid;gap:.55rem}
+.sv-list li{display:flex;gap:.6rem;font-size:.9rem;color:var(--muted);line-height:1.5}
+.sv-list li::before{content:"";width:7px;height:7px;border-radius:50%;margin-top:.5rem;flex-shrink:0;background:var(--accent)}
+.sv-list.is-next li::before{background:var(--accent2)}
+
+/* jalons de certification */
+.sv-time{display:grid;gap:.65rem;margin-top:1.4rem}
+.sv-step{
+  background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);
+  border-radius:var(--r-sm);padding:.85rem 1.1rem;
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;
+}
+.sv-step.is-next{border-left-color:var(--accent2)}
+.sv-step .d{font-family:var(--fm);font-size:.7rem;letter-spacing:.08em;color:var(--accent);min-width:118px}
+.sv-step.is-next .d{color:var(--accent2)}
+.sv-step .t{font-size:.94rem;font-weight:700}
+.sv-step .s{font-size:.84rem;color:var(--muted)}
+
+/* palette DA */
+.sv-palette{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.3rem}
 .sw{display:flex;align-items:center;gap:.55rem;font-family:var(--fm);font-size:.72rem;color:var(--dim);
   background:var(--surface);border:1px solid var(--border);padding:.5rem .8rem;border-radius:99px}
 .sw .chip{width:16px;height:16px;border-radius:5px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.1) inset}
- 
-/* preview */
-.sv-figure{margin-top:1.4rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg2)}
+
+/* planche de recherche */
+.sv-figure{margin:1.4rem 0 0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg2)}
 .sv-figure img{width:100%;height:auto;display:block}
-.sv-cap{font-family:var(--fm);font-size:.72rem;color:var(--muted);padding:.9rem 1.1rem;border-top:1px solid var(--border);text-align:center}
- 
-/* screen legend */
-.sv-screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem;margin-top:1.2rem}
-.sv-screen{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem}
-.sv-screen .n{font-family:var(--fm);font-size:.66rem;color:var(--accent);letter-spacing:.1em}
-.sv-screen h4{font-size:.95rem;font-weight:700;margin:.25rem 0 .35rem}
-.sv-screen p{color:var(--muted);font-size:.85rem;line-height:1.5}
- 
-.sv-note{margin-top:1.4rem;font-size:.85rem;color:var(--muted);font-style:italic}
+.sv-cap{font-family:var(--fm);font-size:.72rem;color:var(--muted);padding:.9rem 1.1rem;border-top:1px solid var(--border);text-align:center;line-height:1.5}
+
+/* captures d'application */
+.sv-shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:1rem;margin-top:1.4rem}
+.sv-shot{margin:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.sv-shot img{width:100%;height:auto;display:block}
+.sv-shot figcaption{font-family:var(--fm);font-size:.7rem;color:var(--muted);padding:.7rem .85rem;border-top:1px solid var(--border)}
+
+.sv-note{margin-top:1.4rem;max-width:720px;font-size:.85rem;color:var(--muted);line-height:1.6}
+
+@media (prefers-reduced-motion:reduce){
+  .sv-card{transition:none}
+  .sv-card:hover{transform:none}
+}
 </style>
 </head>
 <body>
- 
+
 <a class="skip-link" href="#sv-content">Aller au contenu</a>
- 
+
 <!-- HERO -->
 <header class="sv-hero">
   <div class="container" id="sv-content">
     <a class="sv-back" href="index.html#sameva">← Retour au portfolio</a>
-    <span class="sv-kicker">● Actualité projet</span>
-    <h1 class="sv-h1">Sam<em>eva</em> — refonte produit & direction artistique</h1>
+    <span class="sv-kicker">● v1.0.4 · MVP en recette</span>
+    <h1 class="sv-h1">Sam<em>eva</em> : accomplir pour de vrai, gagner pour de vrai</h1>
     <p class="sv-lead">
-      <strong>Sameva</strong> transforme les habitudes du quotidien en quêtes RPG, validées par une IA de
-      reconnaissance visuelle. Cette page présente la <strong>nouvelle direction artistique</strong> (univers
-      street-art, mascotte Paco) et les <strong>écrans produit</strong> issus de la dernière itération de conception.
+      <strong>Sameva</strong> transforme les habitudes du quotidien en quêtes RPG. L'utilisateur photographie
+      sa preuve, un modèle de vision lui attribue un score, et la récompense (XP, or, loot) suit.
+      Application Flutter développée seul, du cadrage jusqu'au déploiement.
+    </p>
+    <p class="sv-lead">
+      Le MVP est en phase de recette : 268 commits, 505 tests automatisés, une chaîne d'intégration continue
+      et trois workflows de livraison. Cette page décrit ce qui tourne réellement, et ce qui reste devant.
     </p>
     <div class="sv-meta">
       <span class="tag main">Flutter · Dart</span>
       <span class="tag">Supabase</span>
-      <span class="tag">Claude Vision (IA)</span>
+      <span class="tag">Edge Functions</span>
       <span class="tag">MVVM · offline-first</span>
-      <span class="tag">Projet certification RNCP 39583</span>
+      <span class="tag">CI/CD</span>
+      <span class="tag">RNCP 39583</span>
     </div>
     <div class="sv-actions">
       <a class="btn btn-primary" href="https://github.com/SamymaS/Sameva" target="_blank" rel="noopener">Voir le code GitHub</a>
-      <a class="btn btn-secondary" href="#sv-ecrans">Voir les écrans</a>
+      <a class="btn btn-secondary" href="#sv-technique">Sous le capot</a>
     </div>
   </div>
 </header>
- 
+
 <!-- CONCEPT -->
 <section class="section">
   <div class="container">
     <div class="section-header"><span class="section-num">01</span><h2 class="section-title">Le concept</h2></div>
+    <p class="sv-lead">
+      Trois raisons expliquent l'abandon des applications d'habitudes : la récompense n'a aucune valeur,
+      la validation est purement déclarative, et la mécanique tourne en rond. Sameva répond aux trois.
+    </p>
     <div class="sv-grid">
       <div class="sv-card">
         <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Des habitudes en quêtes</h3>
-        <p>L'utilisateur crée ses propres quêtes (étudier, ranger, faire du sport…) et gagne de l'XP, de l'or et du loot en les accomplissant. Progression RPG, niveaux et série de jours consécutifs.</p>
+        <p>L'utilisateur crée ses quêtes (étudier, ranger, faire du sport) et gagne de l'XP, de l'or et du loot en les accomplissant. Niveaux, classes de héros et série de jours consécutifs structurent la progression.</p>
       </div>
       <div class="sv-card">
-        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg></span>Validation par IA — MougiBot</h3>
-        <p>Pour les quêtes à preuve visuelle, une photo est analysée par une IA de vision (MougiBot) qui attribue un score sur 100. Au-delà du seuil, la récompense est pleine.</p>
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg></span>La preuve, pas la déclaration</h3>
+        <p>Valider une quête demande une photo ou une vidéo. MougiBot, l'assistant de validation, analyse la preuve et rend un score sur 100. À partir de 70, la récompense est pleine.</p>
       </div>
       <div class="sv-card">
         <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M12 3c-2 4-7 4-7 9a7 7 0 0 0 14 0c0-5-5-5-7-9z"/></svg></span>Jamais bloqué</h3>
-        <p>Principe produit non négociable : si l'IA refuse, l'utilisateur peut toujours valider manuellement (récompense réduite). L'app n'enferme jamais quelqu'un dans un échec.</p>
+        <p>Principe produit non négociable : si l'analyse échoue ou refuse, l'utilisateur valide manuellement avec une récompense réduite. Une coupure réseau ou une erreur du modèle n'arrête jamais la progression.</p>
       </div>
       <div class="sv-card">
-        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2 6 6 .5-4.5 4 1.5 6L12 15l-5 3.5 1.5-6L4 8.5 10 8z"/></svg></span>Companions & collection</h3>
-        <p>Un sanctuaire de companions (les « Mougis »), un système d'invocation, une garde-robe d'objets streetwear et un classement entre joueurs nourrissent la rétention.</p>
+        <h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2 6 6 .5-4.5 4 1.5 6L12 15l-5 3.5 1.5-6L4 8.5 10 8z"/></svg></span>Un méta-jeu pour tenir dans la durée</h3>
+        <p>Sanctuaire de companions obtenus par invocation, garde-robe d'objets à équiper sur son héros, classement entre joueurs. La récompense immédiate alimente un objectif de collection à long terme.</p>
       </div>
     </div>
   </div>
 </section>
- 
+
+<!-- SOUS LE CAPOT -->
+<section class="section dark-section" id="sv-technique">
+  <div class="container">
+    <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Sous le capot</h2></div>
+    <p class="sv-lead">
+      Quatre versions livrées depuis le premier commit, sur une base de code testée et industrialisée.
+      Les chiffres ci-dessous correspondent à la version v1.0.4.
+    </p>
+
+    <div class="sv-stats">
+      <div class="sv-stat"><b>268</b><span>commits</span></div>
+      <div class="sv-stat"><b>29 000</b><span>lignes de Dart, sur une centaine de fichiers</span></div>
+      <div class="sv-stat"><b>505</b><span>tests automatisés</span></div>
+      <div class="sv-stat"><b>48,4 %</b><span>de couverture de code</span></div>
+      <div class="sv-stat"><b>5</b><span>Edge Functions Deno</span></div>
+      <div class="sv-stat"><b>3</b><span>workflows GitHub Actions</span></div>
+    </div>
+
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>Architecture mobile</h3>
+        <p>MVVM en quatre couches (données, domaine, présentation, interface), état géré par Provider et ChangeNotifier. Stockage local Hive en premier : l'application reste utilisable hors ligne, la synchronisation se fait au retour du réseau.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">Flutter 3</span><span class="tag">Dart</span><span class="tag">Provider</span><span class="tag">Hive</span></div>
+      </div>
+      <div class="sv-card">
+        <h3>Backend et données</h3>
+        <p>Supabase pour PostgreSQL, l'authentification et le row-level security. Cinq Edge Functions en Deno et TypeScript portent la logique sensible côté serveur, dont l'appel au modèle de vision et la vérification de l'état d'abonnement.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">Supabase</span><span class="tag">PostgreSQL</span><span class="tag">RLS</span><span class="tag">Deno</span></div>
+      </div>
+      <div class="sv-card">
+        <h3>Comptes et paiement</h3>
+        <p>Entrée sans inscription grâce à un compte anonyme, puis passage vers un compte e-mail ou Google sans perdre sa progression, via la liaison d'identité Supabase. Abonnement premium à 4,99 € par mois avec Stripe, l'état payant faisant autorité côté serveur.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">Auth anonyme</span><span class="tag">Google Sign-In</span><span class="tag">Stripe</span></div>
+      </div>
+      <div class="sv-card">
+        <h3>Qualité et livraison</h3>
+        <p>Trois chaînes GitHub Actions : intégration continue avec analyse statique et tests, déploiement du backend Supabase, génération de l'APK signé sur tag. Le pipeline de validation dispose d'un service simulé activable, pour démontrer l'application sans clé d'API.</p>
+        <div class="tags" style="margin-top:.8rem"><span class="tag">GitHub Actions</span><span class="tag">Tests</span><span class="tag">Analyse statique</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ÉTAT D'AVANCEMENT -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">03</span><h2 class="section-title">Où en est le produit</h2></div>
+    <p class="sv-lead">
+      Le MVP est complet et testé sur appareil physique. Plusieurs briques sont volontairement repoussées,
+      notamment celles qui engagent un coût récurrent ou une prestation externe.
+    </p>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>Fonctionne aujourd'hui</h3>
+        <ul class="sv-list">
+          <li>Création, suivi et validation de quêtes avec preuve photo ou vidéo</li>
+          <li>Pipeline d'analyse de preuve de bout en bout, seuil de réussite à 70 sur 100</li>
+          <li>Repli manuel systématique en cas d'échec ou d'absence de réseau</li>
+          <li>Progression complète : XP, niveaux, or, objets, séries de jours</li>
+          <li>Invocation de companions, garde-robe et classement</li>
+          <li>Mode hors ligne et synchronisation différée</li>
+          <li>Comptes anonymes, Google Sign-In et abonnement Stripe</li>
+        </ul>
+      </div>
+      <div class="sv-card">
+        <h3>Prochaines étapes</h3>
+        <ul class="sv-list is-next">
+          <li>Bascule du modèle de vision de l'environnement de démonstration vers la production</li>
+          <li>Nouveaux types de preuve : chronomètre, trace GPS et connecteurs santé</li>
+          <li>Direction artistique finale confiée à un illustrateur professionnel</li>
+          <li>Phase de bêta fermée sur un panel réel</li>
+          <li>Publication sur les stores</li>
+        </ul>
+      </div>
+    </div>
+    <p class="sv-note">
+      Un point de conception assumé : une quête du type « courir trente minutes » n'est pas vérifiable par
+      une photo. Ces quêtes attendent les types de preuve temporels, plutôt qu'une validation approximative
+      qui ruinerait la crédibilité du système.
+    </p>
+  </div>
+</section>
+
 <!-- DIRECTION ARTISTIQUE -->
 <section class="section dark-section">
   <div class="container">
-    <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Direction artistique</h2></div>
+    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">Direction artistique</h2></div>
     <p class="sv-lead">
-      La nouvelle DA s'articule autour de <strong>Paco</strong>, un chat tuxedo qui sert de mascotte, d'avatar joueur
-      et d'identité visuelle. Style cartoon-mascotte assumé, univers urbain, et une déclinaison « bot » de Paco pour
-      l'assistant IA. La palette repose sur un fond indigo, un teal signature (le cristal) et un violet électrique.
+      <strong>Paco</strong>, un chat tuxedo, est la mascotte de la marque et le visage de MougiBot,
+      l'assistant de validation. Style mascotte cartoon net, proche des logos esport. Il n'intervient pas
+      dans le jeu lui-même.
+    </p>
+    <p class="sv-lead">
+      Le joueur incarne un héros humanoïde personnalisable, doté d'une classe (guerrier, mage, barde, moine)
+      associée à un domaine d'habitudes. Les companions à collectionner sont des créatures distinctes, sans
+      lien stylistique avec la mascotte. La palette repose sur un fond indigo profond, un teal signature qui
+      porte le cristal et l'identité, et un violet électrique pour la progression.
     </p>
     <div class="sv-palette">
-      <span class="sw"><span class="chip" style="background:#4FD8C6"></span>Teal #4FD8C6 — signature</span>
-      <span class="sw"><span class="chip" style="background:#8A63E0"></span>Violet #8A63E0 — RPG / niveau</span>
-      <span class="sw"><span class="chip" style="background:#F5C451"></span>Or #F5C451 — monnaie</span>
-      <span class="sw"><span class="chip" style="background:linear-gradient(135deg,#2C2A52,#10182B)"></span>Indigo → Navy — fond</span>
+      <span class="sw"><span class="chip" style="background:#4FD8C6"></span>Teal #4FD8C6 : signature</span>
+      <span class="sw"><span class="chip" style="background:#8A63E0"></span>Violet #8A63E0 : progression</span>
+      <span class="sw"><span class="chip" style="background:#F5C451"></span>Or #F5C451 : monnaie</span>
+      <span class="sw"><span class="chip" style="background:linear-gradient(135deg,#2C2A52,#10182B)"></span>Indigo vers Navy : fond</span>
     </div>
+
+    <figure class="sv-figure">
+      <img src="assets/v4_preview.png" alt="Planche de recherche visuelle Sameva : dix concepts d'écrans, du parcours de connexion au classement, servant à cadrer l'identité graphique." loading="lazy">
+      <figcaption class="sv-cap">Planche de recherche visuelle. Concepts destinés à fixer l'identité graphique, pas des captures de l'application.</figcaption>
+    </figure>
+    <p class="sv-note">
+      Ces illustrations ont servi à arrêter la palette, le ton et la place de la mascotte. L'interface réelle
+      en diffère : la direction artistique définitive sera produite par un illustrateur professionnel avant
+      la publication.
+    </p>
   </div>
 </section>
- 
-<!-- ÉCRANS -->
+
+<!--
+  ══════════════════════════════════════════════════════════════════════
+  CAPTURES RÉELLES : décommenter ce bloc une fois les PNG déposés dans
+  assets/screens/. Renuméroter alors la section « Cadre du projet » en 06.
+  Envisager aussi de descendre la planche de recherche sous cette section.
+
+  Capture sur le S918B, sous PowerShell :
+      adb shell screencap -p /sdcard/sv_quetes.png
+      adb pull /sdcard/sv_quetes.png assets/screens/
+  ══════════════════════════════════════════════════════════════════════
+
 <section class="section" id="sv-ecrans">
   <div class="container">
-    <div class="section-header"><span class="section-num">03</span><h2 class="section-title">Les écrans</h2></div>
-    <p class="sv-lead">Planche complète de la dernière itération de conception : le parcours principal (connexion → quêtes → création → validation → récompense) et les écrans de méta-jeu (sanctuaire, invocation, garde-robe, profil, classement).</p>
-    <figure class="sv-figure">
-      <img src="assets/v4_preview.png" alt="Planche des écrans de l'application Sameva : connexion, liste des quêtes, création de quête, validation par IA, récompense, sanctuaire des companions, invocation, garde-robe, profil et classement." loading="lazy">
-      <figcaption class="sv-cap">10 écrans — parcours utilisateur complet et écrans de méta-jeu</figcaption>
-    </figure>
- 
-    <div class="sv-screens">
-      <div class="sv-screen"><span class="n">01</span><h4>Connexion</h4><p>Splash avec Paco et le wordmark de la marque.</p></div>
-      <div class="sv-screen"><span class="n">02</span><h4>Mes quêtes</h4><p>Accueil : HUD RPG (niveau, XP, or, série) et liste des quêtes.</p></div>
-      <div class="sv-screen"><span class="n">03</span><h4>Nouvelle quête</h4><p>Création : catégorie, type de validation, difficulté.</p></div>
-      <div class="sv-screen"><span class="n">04</span><h4>Validation</h4><p>MougiBot analyse la preuve photo et rend un score sur 100.</p></div>
-      <div class="sv-screen"><span class="n">05</span><h4>Récompense</h4><p>Gain d'XP, d'or et drop d'objet ; progression de niveau.</p></div>
-      <div class="sv-screen"><span class="n">06</span><h4>Sanctuaire</h4><p>Collection de companions, classés par rareté.</p></div>
-      <div class="sv-screen"><span class="n">07</span><h4>Invocation</h4><p>Système d'invocation avec taux par rareté.</p></div>
-      <div class="sv-screen"><span class="n">08</span><h4>Garde-robe</h4><p>Inventaire d'objets streetwear à équiper.</p></div>
-      <div class="sv-screen"><span class="n">09</span><h4>Profil</h4><p>Statistiques, succès et historique des quêtes.</p></div>
-      <div class="sv-screen"><span class="n">10</span><h4>Classement</h4><p>Podium et rang du joueur parmi les autres.</p></div>
+    <div class="section-header"><span class="section-num">05</span><h2 class="section-title">L'application</h2></div>
+    <p class="sv-lead">Captures prises sur la version v1.0.4, sur appareil Android physique.</p>
+    <div class="sv-shots">
+      <figure class="sv-shot"><img src="assets/screens/sv_quetes.png" alt="Écran d'accueil de Sameva affichant le niveau, l'XP, l'or et la liste des quêtes du jour." loading="lazy"><figcaption>Mes quêtes</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/screens/sv_creation.png" alt="Écran de création d'une quête avec choix de la catégorie, de la difficulté et du type de preuve." loading="lazy"><figcaption>Nouvelle quête</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/screens/sv_validation.png" alt="Écran de validation où MougiBot analyse la preuve photo et affiche un score sur 100." loading="lazy"><figcaption>Validation par MougiBot</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/screens/sv_recompense.png" alt="Écran de récompense affichant le gain d'XP, d'or et l'objet obtenu." loading="lazy"><figcaption>Récompense</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/screens/sv_sanctuaire.png" alt="Sanctuaire présentant la collection de companions classés par rareté." loading="lazy"><figcaption>Sanctuaire</figcaption></figure>
+      <figure class="sv-shot"><img src="assets/screens/sv_profil.png" alt="Profil du joueur avec ses statistiques, ses succès et l'historique des quêtes." loading="lazy"><figcaption>Profil</figcaption></figure>
     </div>
-    <p class="sv-note">Maquettes de conception — le rendu final en application peut varier. Illustrations originales réalisées pour le projet.</p>
   </div>
 </section>
- 
-<!-- STACK -->
-<section class="section dark-section">
+-->
+
+<!-- CADRE DU PROJET -->
+<section class="section">
   <div class="container">
-    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">Stack technique</h2></div>
-    <div class="sv-grid">
-      <div class="sv-card"><h3>Front mobile</h3><p>Flutter 3 / Dart, architecture MVVM en couches, gestion d'état via Provider, stockage local offline-first (Hive).</p><div class="tags" style="margin-top:.8rem"><span class="tag">Flutter</span><span class="tag">Dart</span><span class="tag">Provider</span><span class="tag">Hive</span></div></div>
-      <div class="sv-card"><h3>Backend</h3><p>Supabase : PostgreSQL, authentification, row-level security et Edge Functions pour l'appel à l'IA de vision.</p><div class="tags" style="margin-top:.8rem"><span class="tag">Supabase</span><span class="tag">PostgreSQL</span><span class="tag">RLS</span><span class="tag">Edge Functions</span></div></div>
-      <div class="sv-card"><h3>IA & qualité</h3><p>Validation des preuves par modèle de vision via une Edge Function ; CI/CD GitHub Actions, suite de tests et analyse statique.</p><div class="tags" style="margin-top:.8rem"><span class="tag">Claude Vision</span><span class="tag">CI/CD</span><span class="tag">Tests</span></div></div>
+    <div class="section-header"><span class="section-num">05</span><h2 class="section-title">Cadre du projet</h2></div>
+    <p class="sv-lead">
+      Sameva est le support pratique du titre <strong>Expert en développement logiciel</strong>
+      (RNCP 39583, niveau 7) chez YNOV Campus, promotion 2025-2026. Le projet est mené comme une prestation
+      freelance pour un client, ce qui impose de tenir le cadrage, l'architecture, la gestion de projet et
+      le développement en même temps.
+    </p>
+    <div class="sv-time">
+      <div class="sv-step"><span class="d">Juin 2026</span><span class="t">Bloc 1</span><span class="s">Cadrage et conception, soutenance orale passée</span></div>
+      <div class="sv-step"><span class="d">Juillet 2026</span><span class="t">Bloc 2</span><span class="s">Dossier de conception et de développement remis</span></div>
+      <div class="sv-step"><span class="d">Août 2026</span><span class="t">Bloc 4</span><span class="s">Dossier de maintien en conditions opérationnelles remis</span></div>
+      <div class="sv-step is-next"><span class="d">10 sept. 2026</span><span class="t">Bloc 3</span><span class="s">Soutenance de pilotage de projet, avec démonstration en direct de l'application</span></div>
     </div>
-    <div class="sv-actions" style="margin-top:2rem">
+    <div class="sv-actions" style="margin-top:2.2rem">
       <a class="btn btn-primary" href="https://github.com/SamymaS/Sameva" target="_blank" rel="noopener">Dépôt GitHub</a>
       <a class="btn btn-secondary" href="index.html#sameva">← Retour au portfolio</a>
     </div>
   </div>
 </section>
- 
+
 </body>
 </html>
