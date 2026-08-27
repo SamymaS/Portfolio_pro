@@ -6,6 +6,25 @@
 <title>Sameva · application mobile de quêtes gamifiées · Samy Boudaoud</title>
 <meta name="description" content="Sameva : application mobile Flutter qui transforme les habitudes en quêtes RPG, avec validation de preuve par modèle de vision. MVP v1.0.4 en recette, architecture MVVM, Supabase, CI/CD. Projet de certification RNCP 39583.">
 <meta name="theme-color" content="#080b10">
+<link rel="canonical" href="https://samy-boudaoud.com/sameva.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Samy Boudaoud">
+<meta property="og:title" content="Sameva : vos habitudes en quêtes RPG">
+<meta property="og:description" content="Application mobile Flutter avec validation de preuve par modèle de vision. MVP v1.0.4 : 29 000 lignes de Dart, 505 tests, architecture MVVM offline-first, Supabase et CI/CD.">
+<meta property="og:url" content="https://samy-boudaoud.com/sameva.html">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://samy-boudaoud.com/assets/og_sameva.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sameva, application mobile de quêtes gamifiées, avec la mascotte Paco.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sameva : vos habitudes en quêtes RPG">
+<meta name="twitter:description" content="Application mobile Flutter avec validation de preuve par modèle de vision. MVP v1.0.4, architecture MVVM offline-first.">
+<meta name="twitter:image" content="https://samy-boudaoud.com/assets/og_sameva.jpg">
+<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("sb-theme")==="light"?"light":"dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -13,7 +32,7 @@
 <style>
 /* ── Page Sameva : styles locaux, basés sur les tokens du portfolio ── */
 .sv-hero{
-  padding:calc(var(--nav-h) + 3rem) 0 2.5rem;
+  padding:3.2rem 0 2.5rem;
   background:
     radial-gradient(700px 380px at 12% -10%, rgba(124,58,237,.18), transparent 60%),
     radial-gradient(620px 360px at 95% 0%, rgba(0,229,255,.12), transparent 55%);
@@ -30,7 +49,7 @@
   letter-spacing:.14em;text-transform:uppercase;color:#000;background:var(--accent);
   padding:.35rem .75rem;border-radius:var(--r-sm);
 }
-.sv-h1{font-size:clamp(2rem,7vw,3.6rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:1.1rem 0 .8rem}
+.sv-h1{font-size:clamp(1.95rem,6vw,3.2rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:1.1rem 0 .8rem}
 .sv-h1 em{font-style:normal;color:var(--accent2)}
 .sv-lead{max-width:680px;color:var(--dim);font-size:1.05rem;line-height:1.6}
 .sv-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
@@ -46,14 +65,15 @@
 }
 
 /* chiffres */
-.sv-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin-bottom:2rem}
+.sv-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.8rem;margin-bottom:2rem}
 .sv-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.2rem}
-.sv-stat b{display:block;font-size:1.7rem;font-weight:800;letter-spacing:-.02em;color:var(--accent);line-height:1.1}
+.sv-stat b{display:block;white-space:nowrap;font-size:clamp(1.4rem,3.2vw,1.7rem);font-weight:800;letter-spacing:-.02em;color:var(--accent);line-height:1.1}
 .sv-stat span{display:block;font-family:var(--fm);font-size:.66rem;color:var(--muted);margin-top:.35rem;letter-spacing:.05em}
 .sv-stat-note{font-family:var(--fm);font-size:.68rem;color:var(--muted);margin-top:-1.2rem;margin-bottom:2rem}
 
 /* cartes */
 .sv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:.5rem}
+.sv-grid.cols3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 .sv-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
   padding:1.4rem;transition:border-color .25s,transform .25s;
@@ -142,7 +162,7 @@
     <div class="sv-hero-grid">
       <div>
         <span class="sv-kicker">v1.0.4 · MVP en recette</span>
-        <h1 class="sv-h1">Sam<em>eva</em> : vos habitudes deviennent des quêtes</h1>
+        <h1 class="sv-h1">Sam<em>eva</em> : vos habitudes en quêtes RPG</h1>
         <p class="sv-lead">
           Application mobile <strong>Flutter</strong> qui transforme les habitudes du quotidien en quêtes RPG.
           L'utilisateur photographie sa preuve, un modèle de vision l'analyse et attribue un score, la récompense
@@ -212,16 +232,16 @@
     <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Sous le capot</h2></div>
 
     <div class="sv-stats">
-      <div class="sv-stat"><b>29 000</b><span>lignes de Dart</span></div>
+      <div class="sv-stat"><b>29 000</b><span>lignes de Dart</span></div>
       <div class="sv-stat"><b>505</b><span>tests automatisés</span></div>
-      <div class="sv-stat"><b>48,4 %</b><span>couverture de code</span></div>
+      <div class="sv-stat"><b>48,4 %</b><span>couverture de code</span></div>
       <div class="sv-stat"><b>268</b><span>commits</span></div>
       <div class="sv-stat"><b>3</b><span>chaînes CI/CD</span></div>
       <div class="sv-stat"><b>5</b><span>Edge Functions</span></div>
     </div>
     <p class="sv-stat-note">Chiffres relevés sur la version 1.0.4, dernière livrée.</p>
 
-    <div class="sv-grid">
+    <div class="sv-grid cols3">
 
       <div class="sv-card">
         <h3>Architecture en couches</h3>
