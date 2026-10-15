@@ -8,17 +8,17 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <script>
-(function(){var d=document.documentElement,l,t;try{l=localStorage.getItem('sb-lang');t=localStorage.getItem('sb-theme')}catch(e){}
+(function(){var d=document.documentElement,l;try{l=localStorage.getItem('sb-lang')}catch(e){}
 if(l!=='fr'&&l!=='en'){l=(navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en'}
-d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t)})();
+d.lang=l})();
 </script>
 <link rel="stylesheet" href="/site.css">
 <style>
   .lost{min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:1.5rem;padding-block:3rem}
   .lost h1{font-size:clamp(4rem,18vw,12rem);font-weight:800;font-stretch:125%;line-height:.9;letter-spacing:-.04em}
   .lost p{font-size:1.2rem;max-width:34em}
-  .flat{height:80px;border:1px solid var(--rule);border-radius:12px;background:var(--panel);position:relative;overflow:hidden}
-  .flat::after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;background:var(--trace)}
+  .flat{height:80px;border:1px solid var(--line);border-radius:16px;background:var(--glass);position:relative;overflow:hidden}
+  .flat::after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;background:var(--grad);box-shadow:0 0 18px #38E6FF}
   .path{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.95rem;overflow-wrap:anywhere}
 </style>
 </head>
@@ -28,7 +28,7 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t)})();
   <div class="flat" aria-hidden="true"></div>
   <p data-l="fr">Aucun signal à cette adresse. La page a peut-être été déplacée, ou l'URL contient une faute de frappe.</p>
   <p data-l="en">No signal at this address. The page may have moved, or the URL has a typo.</p>
-  <p class="path" id="path"></p>
+  <p class="path muted" id="path"></p>
   <p style="display:flex;gap:.6rem;flex-wrap:wrap">
     <a class="btn btn-solid" href="/"><span data-l="fr">Retour à l'accueil</span><span data-l="en">Back to home</span></a>
     <a class="btn" href="/#projets"><span data-l="fr">Voir les projets</span><span data-l="en">See the work</span></a>

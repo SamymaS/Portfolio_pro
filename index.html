@@ -7,9 +7,8 @@
 <meta name="description" content="Samy Boudaoud, ingénieur logiciel chez CS GROUP à Aix-en-Provence. Radio critique TETRA, applications mobiles Flutter, IoT et cloud. Projets, parcours et contact.">
 <meta name="author" content="Samy Boudaoud">
 <link rel="canonical" href="https://samy-boudaoud.com/">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#E9EDF1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#12171D" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05060A">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Samy Boudaoud">
 <meta property="og:title" content="Samy Boudaoud, ingénieur logiciel">
@@ -25,11 +24,12 @@
 <link rel="apple-touch-icon" href="favicon.svg">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="modulepreload" href="vendor/three.min.js">
+<link rel="modulepreload" href="scene.js">
 <script>
-/* Langue et thème avant le premier rendu : pas de clignotement */
-(function(){var d=document.documentElement,l,t;try{l=localStorage.getItem('sb-lang');t=localStorage.getItem('sb-theme')}catch(e){}
+(function(){var d=document.documentElement,l;try{l=localStorage.getItem('sb-lang')}catch(e){}
 if(l!=='fr'&&l!=='en'){l=(navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en'}
-d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.add('js')})();
+d.lang=l;d.classList.add('js')})();
 </script>
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="achievements.css">
@@ -40,369 +40,343 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
 <body>
 <a class="skip" href="#main"><span data-l="fr">Aller au contenu</span><span data-l="en">Skip to content</span></a>
 
+<!-- Scène 3D, fixe derrière toute la page -->
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="veil" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"><span class="cursor-dot"></span><span class="cursor-ring"></span></div>
+<div class="progress" aria-hidden="true"></div>
+
 <header class="top" id="top">
-  <div class="wrap top-in">
-    <a class="mark" href="#top" aria-label="Samy Boudaoud">SB</a>
-    <nav class="nav" id="nav" aria-label="Navigation principale">
-      <a href="#projets"><span data-l="fr">Projets</span><span data-l="en">Work</span></a>
-      <a href="#parcours"><span data-l="fr">Parcours</span><span data-l="en">Experience</span></a>
-      <a href="#competences"><span data-l="fr">Compétences</span><span data-l="en">Skills</span></a>
-      <a href="#labo"><span data-l="fr">Labo</span><span data-l="en">Lab</span></a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <div class="tools">
-      <button class="tool" id="langBtn" type="button" data-aria-fr="Switch to English" data-aria-en="Passer en français"><span data-l="fr">EN</span><span data-l="en">FR</span></button>
-      <button class="tool" id="themeBtn" type="button" data-aria-fr="Changer de thème" data-aria-en="Toggle theme">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
-      </button>
-      <a class="tool tool-cv" href="CV_Samy_Boudaoud.pdf" download data-track="cv">CV</a>
-      <button class="tool menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" data-aria-fr="Ouvrir le menu" data-aria-en="Open menu">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
-      </button>
-    </div>
+  <a class="mark" href="#main" aria-label="Samy Boudaoud">SB</a>
+  <nav class="nav" id="nav" aria-label="Navigation principale">
+    <a href="#projets"><span data-l="fr">Projets</span><span data-l="en">Work</span></a>
+    <a href="#parcours"><span data-l="fr">Parcours</span><span data-l="en">Experience</span></a>
+    <a href="#competences"><span data-l="fr">Compétences</span><span data-l="en">Skills</span></a>
+    <a href="#labo"><span data-l="fr">Labo</span><span data-l="en">Lab</span></a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="tools">
+    <button class="tool" id="langBtn" type="button" data-aria-fr="Switch to English" data-aria-en="Passer en français"><span data-l="fr">EN</span><span data-l="en">FR</span></button>
+    <a class="tool tool-cv" href="CV_Samy_Boudaoud.pdf" download data-track="cv"><span data-l="fr">CV</span><span data-l="en">Résumé</span></a>
+    <button class="tool menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" data-aria-fr="Ouvrir le menu" data-aria-en="Open menu"><span></span><span></span></button>
   </div>
 </header>
 
 <main id="main">
 
 <!-- ═══ OUVERTURE ═══════════════════════════════════════════════ -->
-<section class="hero wrap" aria-labelledby="name">
-  <h1 id="name" class="name"><span>Samy</span> <span>Boudaoud</span></h1>
-  <div class="hero-text">
-    <p class="lede" data-l="fr">Ingénieur logiciel chez CS GROUP, à Aix-en-Provence. Je construis des logiciels qui doivent tenir en conditions réelles&nbsp;: radio critique pour le transport, applications mobiles, objets connectés et services cloud.</p>
-    <p class="lede" data-l="en">Software engineer at CS GROUP in Aix-en-Provence, France. I build software that has to hold up in the real world: mission-critical radio for public transport, mobile apps, connected devices and cloud services.</p>
-    <p class="status"><span class="dot" aria-hidden="true"></span><span data-l="fr">En poste en CDI, statut cadre. Diplômé du Mastère Expert Développement Logiciel, Mobile &amp; IoT (2026).</span><span data-l="en">Permanent position, engineer grade. Master's degree in Software, Mobile &amp; IoT Engineering (2026).</span></p>
-    <div class="ctas">
-      <a class="btn btn-solid" href="#projets"><span data-l="fr">Voir les projets</span><span data-l="en">See the work</span></a>
-      <a class="btn" href="CV_Samy_Boudaoud.pdf" download data-track="cv"><span data-l="fr">Télécharger le CV</span><span data-l="en">Download résumé</span> <small>PDF</small></a>
+<section class="hero" data-stage="0" aria-labelledby="name">
+  <div class="hero-in">
+    <p class="hero-kicker" data-intro><span class="pulse" aria-hidden="true"></span><span data-l="fr">Ingénieur logiciel chez CS GROUP, Aix-en-Provence</span><span data-l="en">Software engineer at CS GROUP, Aix-en-Provence</span></p>
+    <h1 id="name" class="name" aria-label="Samy Boudaoud">
+      <span class="w" aria-hidden="true"><span class="c">S</span><span class="c">a</span><span class="c">m</span><span class="c">y</span></span>
+      <span class="w" aria-hidden="true"><span class="c">B</span><span class="c">o</span><span class="c">u</span><span class="c">d</span><span class="c">a</span><span class="c">o</span><span class="c">u</span><span class="c">d</span></span>
+    </h1>
+    <div class="hero-foot">
+      <p class="lede" data-intro data-l="fr">Je construis des logiciels qui doivent tenir en conditions réelles&nbsp;: radio critique pour le transport, applications mobiles, objets connectés et services cloud.</p>
+      <p class="lede" data-intro data-l="en">I build software that has to hold up in the real world: mission-critical radio for public transport, mobile apps, connected devices and cloud services.</p>
+      <div class="ctas" data-intro>
+        <a class="btn btn-solid magnetic" href="#projets"><span data-l="fr">Voir les projets</span><span data-l="en">See the work</span></a>
+        <a class="btn magnetic" href="#contact"><span data-l="fr">Me contacter</span><span data-l="en">Get in touch</span></a>
+      </div>
     </div>
   </div>
-
-  <figure class="scope" id="scope">
-    <canvas id="scopeCanvas" aria-hidden="true"></canvas>
-    <div class="slots" role="group" data-aria-fr="Filtrer les projets par domaine" data-aria-en="Filter projects by area">
-      <button class="slot" type="button" data-slot="0" data-filter="critical">
-        <span class="slot-id">TS1</span>
-        <span class="slot-name"><span data-l="fr">Logiciel critique</span><span data-l="en">Critical software</span></span>
-        <span class="slot-hint">C++, Qt, Java, Python</span>
-      </button>
-      <button class="slot" type="button" data-slot="1" data-filter="mobile">
-        <span class="slot-id">TS2</span>
-        <span class="slot-name">Mobile</span>
-        <span class="slot-hint">Flutter, React Native</span>
-      </button>
-      <button class="slot" type="button" data-slot="2" data-filter="iot">
-        <span class="slot-id">TS3</span>
-        <span class="slot-name"><span data-l="fr">IoT &amp; embarqué</span><span data-l="en">IoT &amp; embedded</span></span>
-        <span class="slot-hint">ESP32, Modbus, MQTT</span>
-      </button>
-      <button class="slot" type="button" data-slot="3" data-filter="web">
-        <span class="slot-id">TS4</span>
-        <span class="slot-name"><span data-l="fr">Web &amp; cloud</span><span data-l="en">Web &amp; cloud</span></span>
-        <span class="slot-hint">Node, Kubernetes, Terraform</span>
-      </button>
-    </div>
-    <figcaption>
-      <span data-l="fr">Une trame TETRA compte quatre intervalles de temps. Ici, chacun porte un de mes domaines&nbsp;: choisissez-en un pour filtrer les projets.</span>
-      <span data-l="en">A TETRA frame carries four time slots. Here each one carries an area I work in: pick one to filter the projects.</span>
-    </figcaption>
-  </figure>
+  <a class="scroll-cue" href="#manifeste" data-intro><span class="scroll-line" aria-hidden="true"></span><span data-l="fr">Défiler</span><span data-l="en">Scroll</span></a>
 </section>
 
-<!-- ═══ PROJETS ══════════════════════════════════════════════════ -->
-<section class="block" id="projets" aria-labelledby="projets-h">
+<!-- ═══ MANIFESTE ═══════════════════════════════════════════════ -->
+<section class="manifesto" id="manifeste" data-stage="0">
+  <div class="wrap">
+    <p class="big" data-scrub data-l="fr">Six ans d'alternance et d'entreprise, du support informatique à la radio critique. Diplômé du Mastère Expert Développement Logiciel, Mobile et IoT, aujourd'hui en CDI chez CS GROUP. J'aime les systèmes qui ne tombent pas, les interfaces qui donnent envie et le code qu'on peut relire.</p>
+    <p class="big" data-scrub data-l="en">Six years of work-study and industry, from IT support to mission-critical radio. Master's graduate in Software, Mobile and IoT Engineering, now in a permanent role at CS GROUP. I like systems that don't fall over, interfaces people enjoy, and code you can read twice.</p>
+    <dl class="stats">
+      <div data-reveal><dt><span data-l="fr">projets livrés ou en cours</span><span data-l="en">projects shipped or in progress</span></dt><dd data-count="22">22</dd></div>
+      <div data-reveal><dt><span data-l="fr">années en entreprise</span><span data-l="en">years in industry</span></dt><dd data-count="6">6</dd></div>
+      <div data-reveal><dt><span data-l="fr">tests sur Sameva</span><span data-l="en">tests on Sameva</span></dt><dd data-count="505">505</dd></div>
+      <div data-reveal><dt><span data-l="fr">jeux jouables ici</span><span data-l="en">games playable here</span></dt><dd data-count="16">16</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ═══ PROJETS MIS EN AVANT ════════════════════════════════════ -->
+<section id="projets" class="work" aria-labelledby="projets-h">
+  <div class="wrap work-head" data-stage="0">
+    <h2 id="projets-h" class="h2" data-split><span data-l="fr">Projets choisis</span><span data-l="en">Selected work</span></h2>
+    <p class="muted" data-reveal data-l="fr">Quatre projets récents, chacun avec sa forme. Faites défiler, la scène suit.</p>
+    <p class="muted" data-reveal data-l="en">Four recent projects, each with its own shape. Scroll and the scene follows.</p>
+  </div>
+
+  <article class="feat" id="sameva" data-stage="1">
+    <div class="feat-panel">
+      <p class="feat-no" data-reveal><span>01</span> / 04</p>
+      <h3 class="feat-title" data-split>Sameva</h3>
+      <p class="feat-meta" data-reveal><span data-l="fr">2025-2026. Projet personnel et projet de certification du Mastère.</span><span data-l="en">2025-2026. Personal project and Master's capstone.</span> <span class="badge"><span data-l="fr">MVP v1.0.4 en recette</span><span data-l="en">MVP v1.0.4 in acceptance</span></span></p>
+      <p class="feat-pitch" data-reveal data-l="fr">Une application qui transforme les habitudes en quêtes de jeu de rôle. L'utilisateur envoie une photo comme preuve, un modèle de vision lui donne un score sur 100 et la récompense suit.</p>
+      <p class="feat-pitch" data-reveal data-l="en">An app that turns daily habits into role-playing quests. Users send a photo as proof, a vision model scores it out of 100, and the reward follows.</p>
+      <ul class="facts" data-reveal data-l="fr">
+        <li><b>Validation par IA, jamais bloquante.</b> Fonction Supabase vers Claude Haiku Vision. Sous 70/100, validation manuelle à demi-récompense.</li>
+        <li><b>Hors ligne d'abord.</b> MVVM, cache Hive, PostgreSQL protégé par RLS.</li>
+        <li><b>Livré comme un produit.</b> 29&nbsp;000 lignes de Dart, 505 tests, trois workflows qui publient l'APK signé.</li>
+      </ul>
+      <ul class="facts" data-reveal data-l="en">
+        <li><b>AI validation that never blocks.</b> Supabase function calling Claude Haiku Vision. Below 70/100, manual validation at half reward.</li>
+        <li><b>Offline first.</b> MVVM, Hive cache, PostgreSQL behind row-level security.</li>
+        <li><b>Shipped like a product.</b> 29,000 lines of Dart, 505 tests, three workflows publishing a signed APK.</li>
+      </ul>
+      <ul class="chips" data-reveal><li>Flutter</li><li>Supabase</li><li>Claude API</li><li>Hive</li><li>Stripe</li><li>GitHub Actions</li><li>Rive</li></ul>
+      <p class="links" data-reveal>
+        <a class="arrow" href="sameva.html" data-l="fr">Lire l'étude de cas</a><a class="arrow" href="Sameva.en.html" data-l="en">Read the case study</a>
+        <a class="arrow" href="https://github.com/SamymaS/Sameva" rel="noopener" target="_blank">GitHub</a>
+      </p>
+    </div>
+  </article>
+
+  <article class="feat" data-stage="2">
+    <div class="feat-panel">
+      <p class="feat-no" data-reveal><span>02</span> / 04</p>
+      <h3 class="feat-title" data-split>TicketFlow</h3>
+      <p class="feat-meta" data-reveal><span data-l="fr">2026. Projet de Mastère cloud-native&nbsp;: architecture, back-end, infrastructure.</span><span data-l="en">2026. Master's cloud-native project: architecture, back end, infrastructure.</span></p>
+      <p class="feat-pitch" data-reveal data-l="fr">Une billetterie avec réservation de sièges, paiement et billets QR en PDF, découpée en microservices et déployée sur Kubernetes chez Azure.</p>
+      <p class="feat-pitch" data-reveal data-l="en">A ticketing platform with seat booking, payment and QR tickets as PDF, split into microservices and deployed on Kubernetes on Azure.</p>
+      <ul class="facts" data-reveal data-l="fr">
+        <li><b>Pas de double réservation.</b> Verrou atomique Redis avec expiration sur chaque siège.</li>
+        <li><b>Résilient aux pannes.</b> Disjoncteur autour du paiement, file BullMQ avec reprises, worker idempotent.</li>
+        <li><b>Infrastructure en code.</b> Terraform provisionne AKS, ACR et Key Vault, chaque push déploie quatre images.</li>
+      </ul>
+      <ul class="facts" data-reveal data-l="en">
+        <li><b>No double booking.</b> Atomic Redis lock with expiry on every seat.</li>
+        <li><b>Built to fail safely.</b> Circuit breaker around payment, BullMQ queue with retries, idempotent worker.</li>
+        <li><b>Infrastructure as code.</b> Terraform provisions AKS, ACR and Key Vault; every push deploys four images.</li>
+      </ul>
+      <ul class="chips" data-reveal><li>Node.js</li><li>React</li><li>PostgreSQL</li><li>Redis</li><li>Kubernetes</li><li>Terraform</li><li>Azure</li></ul>
+      <p class="links" data-reveal><a class="arrow" href="https://github.com/SamymaS/ticketflow" rel="noopener" target="_blank">GitHub</a></p>
+    </div>
+  </article>
+
+  <article class="feat" data-stage="3">
+    <div class="feat-panel">
+      <p class="feat-no" data-reveal><span>03</span> / 04</p>
+      <h3 class="feat-title" data-split>MythraSona</h3>
+      <p class="feat-meta" data-reveal><span data-l="fr">2026. Projet personnel, auto-hébergé sur mon NAS.</span><span data-l="en">2026. Personal project, self-hosted on my NAS.</span> <span class="badge"><span data-l="fr">Sprint 1, socle déployé</span><span data-l="en">Sprint 1, foundation live</span></span></p>
+      <p class="feat-pitch" data-reveal data-l="fr">Une plateforme familiale de livres audio&nbsp;: des histoires originales lues par des voix de synthèse, avec le texte surligné mot à mot pendant l'écoute.</p>
+      <p class="feat-pitch" data-reveal data-l="en">A family audiobook platform: original stories read by synthetic voices, with the text highlighted word by word as it plays.</p>
+      <ul class="facts" data-reveal data-l="fr">
+        <li><b>Monolithe modulaire.</b> API FastAPI et workers pour l'import, la transcription et l'indexation.</li>
+        <li><b>Synthèse vocale sans GPU.</b> Mistral Voxtral et ElevenLabs fournissent voix et horodatages de mots.</li>
+        <li><b>Exploité comme en production.</b> HTTPS sur Tailscale, images publiées par CI, décisions tracées en ADR.</li>
+      </ul>
+      <ul class="facts" data-reveal data-l="en">
+        <li><b>Modular monolith.</b> FastAPI service plus workers for import, transcription and indexing.</li>
+        <li><b>Speech without a GPU.</b> Mistral Voxtral and ElevenLabs provide voices and word timestamps.</li>
+        <li><b>Run like production.</b> HTTPS over Tailscale, images built in CI, decisions recorded as ADRs.</li>
+      </ul>
+      <ul class="chips" data-reveal><li>Python</li><li>FastAPI</li><li>Flutter</li><li>Docker</li><li>Caddy</li><li>Tailscale</li></ul>
+      <p class="links" data-reveal><span class="private" data-l="fr">Dépôt privé</span><span class="private" data-l="en">Private repository</span></p>
+    </div>
+  </article>
+
+  <article class="feat" data-stage="4">
+    <div class="feat-panel">
+      <p class="feat-no" data-reveal><span>04</span> / 04</p>
+      <h3 class="feat-title" data-split><span data-l="fr">TikTok Live vers Minecraft</span><span data-l="en">TikTok Live to Minecraft</span></h3>
+      <p class="feat-meta" data-reveal><span data-l="fr">2025-2026. Projet personnel, temps réel.</span><span data-l="en">2025-2026. Personal real-time project.</span> <span class="badge"><span data-l="fr">Plugin v0.1 fonctionnel</span><span data-l="en">Plugin v0.1 working</span></span></p>
+      <p class="feat-pitch" data-reveal data-l="fr">Les cadeaux, likes et messages d'un live TikTok déclenchent des actions dans une partie Minecraft, en direct.</p>
+      <p class="feat-pitch" data-reveal data-l="en">Gifts, likes and chat from a TikTok live stream trigger actions in a Minecraft game as they happen.</p>
+      <ul class="facts" data-reveal data-l="fr">
+        <li><b>Pont local en Node.js.</b> Moteur de règles («&nbsp;une rose, un zombie&nbsp;»), anti-doublon, temps de recharge.</li>
+        <li><b>Plugin Paper en Java 25.</b> Douze actions reçues par WebSocket authentifié par jeton.</li>
+        <li><b>Testable sans être en live.</b> Simulateur d'événements et faux plugin.</li>
+      </ul>
+      <ul class="facts" data-reveal data-l="en">
+        <li><b>Local Node.js bridge.</b> Rule engine ("one rose, one zombie"), deduplication, cooldowns.</li>
+        <li><b>Paper plugin in Java 25.</b> Twelve actions received over a token-authenticated WebSocket.</li>
+        <li><b>Testable without going live.</b> Event simulator and fake plugin.</li>
+      </ul>
+      <ul class="chips" data-reveal><li>Node.js</li><li>WebSocket</li><li>Java</li><li>Paper API</li><li>Gradle</li></ul>
+      <p class="links" data-reveal><span class="private" data-l="fr">Dépôt privé</span><span class="private" data-l="en">Private repository</span></p>
+    </div>
+  </article>
+</section>
+
+<!-- ═══ INDEX ═══════════════════════════════════════════════════ -->
+<section class="block" id="index-projets" data-stage="5" aria-labelledby="index-h">
   <div class="wrap">
     <div class="block-head">
-      <h2 id="projets-h"><span data-l="fr">Projets</span><span data-l="en">Work</span></h2>
-      <p data-l="fr">Quatre projets récents en détail, puis l'index complet. Les dépôts publics sont sur GitHub, les autres sont privés ou hébergés par l'équipe.</p>
-      <p data-l="en">Four recent projects in depth, then the full index. Public repositories are on GitHub; the others are private or hosted by the team.</p>
-    </div>
-
-    <div class="feats">
-
-      <article class="feat" id="sameva" data-dom="mobile">
-        <div class="feat-meta">
-          <p class="feat-years">2025-2026</p>
-          <p data-l="fr">Projet personnel et projet de certification RNCP. Conception, développement, design.</p>
-          <p data-l="en">Personal project and the capstone of my Master's degree. Design, development, UI.</p>
-          <p class="feat-state"><span data-l="fr">MVP v1.0.4 en recette</span><span data-l="en">MVP v1.0.4 in acceptance testing</span></p>
-          <p class="links">
-            <a href="sameva.html" data-l="fr">Étude de cas</a><a href="Sameva.en.html" data-l="en">Case study</a>
-            <a href="https://github.com/SamymaS/Sameva" rel="noopener" target="_blank">GitHub</a>
-          </p>
-        </div>
-        <div class="feat-body">
-          <h3>Sameva</h3>
-          <p class="feat-pitch" data-l="fr">Une application qui transforme les habitudes en quêtes de jeu de rôle. L'utilisateur envoie une photo comme preuve, un modèle de vision lui attribue un score sur 100 et la récompense suit.</p>
-          <p class="feat-pitch" data-l="en">An app that turns daily habits into role-playing quests. Users send a photo as proof, a vision model scores it out of 100, and the reward follows.</p>
-          <ul class="facts" data-l="fr">
-            <li><b>Validation par IA, jamais bloquante.</b> Une fonction Supabase appelle Claude Haiku Vision. Sous 70/100, la validation manuelle reste possible à demi-récompense.</li>
-            <li><b>Hors ligne d'abord.</b> Architecture MVVM, cache Hive, synchronisation avec PostgreSQL protégé par des règles RLS.</li>
-            <li><b>Livré comme un produit.</b> 29&nbsp;000 lignes de Dart, 505 tests, trois workflows GitHub Actions qui publient l'APK signé. Abonnement Stripe.</li>
-          </ul>
-          <ul class="facts" data-l="en">
-            <li><b>AI validation that never blocks.</b> A Supabase edge function calls Claude Haiku Vision. Below 70/100, manual validation stays available at half reward.</li>
-            <li><b>Offline first.</b> MVVM architecture, Hive cache, sync with PostgreSQL behind row-level security.</li>
-            <li><b>Shipped like a product.</b> 29,000 lines of Dart, 505 tests, three GitHub Actions workflows publishing a signed APK. Stripe subscription.</li>
-          </ul>
-          <p class="stack">Flutter, Dart, Supabase, PostgreSQL, Hive, Claude API, Stripe, GitHub Actions, Figma, Rive</p>
-        </div>
-      </article>
-
-      <article class="feat" data-dom="web">
-        <div class="feat-meta">
-          <p class="feat-years">2026</p>
-          <p data-l="fr">Projet de Mastère en cloud-native. Architecture, back-end, infrastructure.</p>
-          <p data-l="en">Master's cloud-native project. Architecture, back end, infrastructure.</p>
-          <p class="links"><a href="https://github.com/SamymaS/ticketflow" rel="noopener" target="_blank">GitHub</a></p>
-        </div>
-        <div class="feat-body">
-          <h3>TicketFlow</h3>
-          <p class="feat-pitch" data-l="fr">Une billetterie avec réservation de sièges, paiement et billets QR en PDF, découpée en microservices et déployée sur un cluster Kubernetes Azure.</p>
-          <p class="feat-pitch" data-l="en">A ticketing platform with seat booking, payment and QR tickets as PDF, split into microservices and deployed on an Azure Kubernetes cluster.</p>
-          <ul class="facts" data-l="fr">
-            <li><b>Pas de double réservation.</b> Verrou atomique Redis avec expiration sur chaque siège, contrainte d'unicité côté base.</li>
-            <li><b>Résilient aux pannes.</b> Disjoncteur et délai d'attente autour du paiement, file BullMQ avec reprises et file des échecs, worker idempotent.</li>
-            <li><b>Infrastructure en code.</b> Terraform provisionne AKS, ACR, Key Vault et stockage. Chaque push sur main construit quatre images et les déploie.</li>
-          </ul>
-          <ul class="facts" data-l="en">
-            <li><b>No double booking.</b> Atomic Redis lock with expiry on every seat, plus a uniqueness constraint in the database.</li>
-            <li><b>Built to fail safely.</b> Circuit breaker and timeout around payment, BullMQ queue with retries and dead letters, idempotent worker.</li>
-            <li><b>Infrastructure as code.</b> Terraform provisions AKS, ACR, Key Vault and storage. Every push to main builds four images and deploys them.</li>
-          </ul>
-          <p class="stack">Node.js, Express, React, PostgreSQL, Redis, BullMQ, MinIO, Kubernetes (AKS), Terraform, Traefik, GitHub Actions</p>
-        </div>
-      </article>
-
-      <article class="feat" data-dom="critical mobile">
-        <div class="feat-meta">
-          <p class="feat-years">2026</p>
-          <p data-l="fr">Projet personnel, auto-hébergé sur mon NAS. Conception complète, de l'API au design.</p>
-          <p data-l="en">Personal project, self-hosted on my NAS. End to end, from API to UI design.</p>
-          <p class="feat-state"><span data-l="fr">Sprint 1, socle déployé</span><span data-l="en">Sprint 1, foundation deployed</span></p>
-          <p class="links"><span class="private" data-l="fr">Dépôt privé</span><span class="private" data-l="en">Private repository</span></p>
-        </div>
-        <div class="feat-body">
-          <h3>MythraSona</h3>
-          <p class="feat-pitch" data-l="fr">Une plateforme familiale de livres audio&nbsp;: des histoires originales lues par des voix de synthèse, avec le texte surligné mot à mot pendant l'écoute.</p>
-          <p class="feat-pitch" data-l="en">A family audiobook platform: original stories read by synthetic voices, with the text highlighted word by word as it plays.</p>
-          <ul class="facts" data-l="fr">
-            <li><b>Monolithe modulaire.</b> API FastAPI et workers asynchrones pour l'import, la transcription, l'alignement et l'indexation.</li>
-            <li><b>Synthèse vocale sans GPU.</b> Mistral Voxtral et ElevenLabs fournissent les voix et les horodatages de mots, ce qui supprime une étape d'alignement.</li>
-            <li><b>Exploité comme en production.</b> HTTPS sur réseau privé Tailscale, images publiées par GitHub Actions, décisions tracées en ADR.</li>
-          </ul>
-          <ul class="facts" data-l="en">
-            <li><b>Modular monolith.</b> FastAPI service plus async workers for import, transcription, alignment and indexing.</li>
-            <li><b>Speech without a GPU.</b> Mistral Voxtral and ElevenLabs provide the voices and the word timestamps, removing an alignment step.</li>
-            <li><b>Run like production.</b> HTTPS on a private Tailscale network, images built by GitHub Actions, decisions recorded as ADRs.</li>
-          </ul>
-          <p class="stack">Python, FastAPI, arq, Flutter, Docker Compose, Caddy, Tailscale, GitHub Actions, Figma</p>
-        </div>
-      </article>
-
-      <article class="feat" data-dom="critical">
-        <div class="feat-meta">
-          <p class="feat-years">2025-2026</p>
-          <p data-l="fr">Projet personnel. Pont temps réel et plugin de jeu.</p>
-          <p data-l="en">Personal project. Real-time bridge and game plugin.</p>
-          <p class="feat-state"><span data-l="fr">Plugin v0.1 fonctionnel</span><span data-l="en">Plugin v0.1 working</span></p>
-          <p class="links"><span class="private" data-l="fr">Dépôt privé</span><span class="private" data-l="en">Private repository</span></p>
-        </div>
-        <div class="feat-body">
-          <h3>TikTok Live → Minecraft</h3>
-          <p class="feat-pitch" data-l="fr">Les cadeaux, likes et messages d'un live TikTok déclenchent des actions dans une partie Minecraft, en direct.</p>
-          <p class="feat-pitch" data-l="en">Gifts, likes and chat from a TikTok live stream trigger actions in a Minecraft game as they happen.</p>
-          <ul class="facts" data-l="fr">
-            <li><b>Pont local en Node.js.</b> Lecture du live, moteur de règles configurable («&nbsp;une rose, un zombie&nbsp;»), anti-doublon et temps de recharge.</li>
-            <li><b>Plugin Paper en Java 25.</b> Douze actions en jeu, reçues par WebSocket authentifié par jeton, testées sur un vrai serveur.</li>
-            <li><b>Testable sans être en live.</b> Simulateur d'événements et faux plugin pour développer hors ligne.</li>
-          </ul>
-          <ul class="facts" data-l="en">
-            <li><b>Local Node.js bridge.</b> Reads the stream, runs configurable rules ("one rose, one zombie"), deduplicates and rate-limits.</li>
-            <li><b>Paper plugin in Java 25.</b> Twelve in-game actions, received over a token-authenticated WebSocket, tested on a real server.</li>
-            <li><b>Testable without going live.</b> Event simulator and fake plugin for offline development.</li>
-          </ul>
-          <p class="stack">Node.js, WebSocket, Java, Paper API, Gradle</p>
-        </div>
-      </article>
-    </div>
-
-    <!-- Index complet -->
-    <div class="index-head">
-      <h3 class="index-title"><span data-l="fr">Tous les projets</span><span data-l="en">All projects</span></h3>
-      <div class="filters" role="group" data-aria-fr="Filtrer les projets" data-aria-en="Filter projects">
-        <button type="button" class="chip" data-filter="all" aria-pressed="true"><span data-l="fr">Tous</span><span data-l="en">All</span> <span class="count"></span></button>
-        <button type="button" class="chip" data-filter="critical" aria-pressed="false"><span data-l="fr">Logiciel critique</span><span data-l="en">Critical software</span> <span class="count"></span></button>
-        <button type="button" class="chip" data-filter="mobile" aria-pressed="false">Mobile <span class="count"></span></button>
-        <button type="button" class="chip" data-filter="iot" aria-pressed="false"><span data-l="fr">IoT &amp; embarqué</span><span data-l="en">IoT &amp; embedded</span> <span class="count"></span></button>
-        <button type="button" class="chip" data-filter="web" aria-pressed="false">Web &amp; cloud <span class="count"></span></button>
+      <h2 id="index-h" class="h2" data-split><span data-l="fr">Tous les projets</span><span data-l="en">Everything else</span></h2>
+      <div class="filters" role="group" data-aria-fr="Filtrer les projets" data-aria-en="Filter projects" data-reveal>
+        <button type="button" class="chip-btn" data-filter="all" aria-pressed="true"><span data-l="fr">Tous</span><span data-l="en">All</span></button>
+        <button type="button" class="chip-btn" data-filter="mobile" aria-pressed="false">Mobile</button>
+        <button type="button" class="chip-btn" data-filter="web" aria-pressed="false">Web &amp; cloud</button>
+        <button type="button" class="chip-btn" data-filter="critical" aria-pressed="false"><span data-l="fr">Back-end &amp; logiciel</span><span data-l="en">Back end &amp; software</span></button>
+        <button type="button" class="chip-btn" data-filter="iot" aria-pressed="false">IoT</button>
       </div>
     </div>
 
     <div class="index" id="index">
 
       <details class="row" data-dom="mobile">
-        <summary><span class="y">2026</span><span class="n">QuizzUp</span><span class="s" data-l="fr">Quiz mobile par catégories, jouable hors ligne</span><span class="s" data-l="en">Category quiz app that works offline</span><span class="t">Flutter</span></summary>
+        <summary><span class="y">2026</span><span class="n">QuizzUp</span><span class="s" data-l="fr">Quiz mobile par catégories, jouable hors ligne</span><span class="s" data-l="en">Category quiz app that works offline</span><span class="t">Flutter</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">Projet fil rouge du Mastère, à trois. J'ai écrit l'ensemble du code&nbsp;: authentification Supabase avec mode invité, neuf catégories, chrono adaptatif, statistiques et badges persistés. Un repli sur quatre niveaux garde le jeu utilisable sans réseau, avec un cache de 24 heures.</p>
-          <p data-l="en">Master's team project (three people). I wrote all the code: Supabase auth with guest mode, nine categories, adaptive timer, persisted stats and badges. A four-level fallback keeps the game playable offline, with a 24-hour cache.</p>
+          <p data-l="fr">Projet fil rouge du Mastère, à trois. J'ai écrit l'ensemble du code&nbsp;: authentification Supabase avec mode invité, neuf catégories, chrono adaptatif, statistiques et badges. Un repli sur quatre niveaux garde le jeu utilisable sans réseau, avec un cache de 24 heures.</p>
+          <p data-l="en">Master's team project (three people). I wrote all the code: Supabase auth with guest mode, nine categories, adaptive timer, stats and badges. A four-level fallback keeps it playable offline, with a 24-hour cache.</p>
           <p class="stack">Flutter, Dart, Supabase, PostgreSQL, ValueNotifier</p>
-          <p class="links"><a href="https://github.com/SamymaS/QuizzUp" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/QuizzUp" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="mobile web">
-        <summary><span class="y">2026</span><span class="n">COCI</span><span class="s" data-l="fr">Covoiturage urbain pour la Côte d'Ivoire</span><span class="s" data-l="en">Urban carpooling for Côte d'Ivoire</span><span class="t">React Native</span></summary>
+        <summary><span class="y">2026</span><span class="n">COCI</span><span class="s" data-l="fr">Covoiturage urbain pour la Côte d'Ivoire</span><span class="s" data-l="en">Urban carpooling for Côte d'Ivoire</span><span class="t">React Native</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">Application mobile complète et son API REST, avec des DTO documentés en OpenAPI. Projet d'équipe en cours, hébergé sur un GitLab privé&nbsp;; seule la page d'accueil est publique.</p>
+          <p data-l="fr">Application mobile complète et son API REST, avec des DTO documentés en OpenAPI. Projet d'équipe en cours sur un GitLab privé&nbsp;; seule la page d'accueil est publique.</p>
           <p data-l="en">Full mobile app and its REST API, with DTOs documented in OpenAPI. Ongoing team project on a private GitLab; only the landing page is public.</p>
           <p class="stack">React Native, API REST, OpenAPI</p>
-          <p class="links"><a href="https://github.com/SamymaS/Landing-Page-COCI" rel="noopener" target="_blank"><span data-l="fr">Page d'accueil</span><span data-l="en">Landing page</span></a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/Landing-Page-COCI" rel="noopener" target="_blank"><span data-l="fr">Page d'accueil</span><span data-l="en">Landing page</span></a></p>
         </div>
       </details>
 
       <details class="row" data-dom="web">
-        <summary><span class="y">2026</span><span class="n">Defizz</span><span class="s" data-l="fr">Réseau social de défis entre amis</span><span class="s" data-l="en">Social network for friendly challenges</span><span class="t">React, Node</span></summary>
+        <summary><span class="y">2026</span><span class="n">Defizz</span><span class="s" data-l="fr">Réseau social de défis entre amis</span><span class="s" data-l="en">Social network for friendly challenges</span><span class="t">React, Node</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
           <p data-l="fr">Projet de Mastère à deux, axé cloud-native. J'ai réalisé le back-end Node.js, Express et PostgreSQL, aligné sur le front React 19 de ma binôme.</p>
           <p data-l="en">Two-person Master's project with a cloud-native focus. I built the Node.js, Express and PostgreSQL back end to match my teammate's React 19 front end.</p>
           <p class="stack">React 19, Node.js, Express, PostgreSQL, Kubernetes</p>
-          <p class="links"><a href="https://github.com/FayrouzSAADAOUI/Defizz" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/FayrouzSAADAOUI/Defizz" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="web">
-        <summary><span class="y">2026</span><span class="n">TimeTravel Agency</span><span class="s" data-l="fr">Agence de voyages dans le temps, avec agent conversationnel</span><span class="s" data-l="en">Time-travel agency site with a chatbot</span><span class="t">Next.js</span></summary>
+        <summary><span class="y">2026</span><span class="n">TimeTravel Agency</span><span class="s" data-l="fr">Agence de voyages dans le temps, avec agent conversationnel</span><span class="s" data-l="en">Time-travel agency site with a chatbot</span><span class="t">Next.js</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
           <p data-l="fr">Application web interactive réalisée en équipe&nbsp;: trois destinations, réservation et un agent conversationnel intégré.</p>
           <p data-l="en">Interactive web app built as a team: three destinations, booking and a built-in chatbot.</p>
           <p class="stack">Next.js, TypeScript, Tailwind CSS, React</p>
-          <p class="links"><a href="https://github.com/MelvinTomezak/TimeTravelAgencyWebApp" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/MelvinTomezak/TimeTravelAgencyWebApp" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="web critical">
-        <summary><span class="y">2025</span><span class="n" data-l="fr">Réseau social type Reddit</span><span class="n" data-l="en">Reddit-style social network</span><span class="s" data-l="fr">Communautés, votes et modération par rôles</span><span class="s" data-l="en">Communities, votes and role-based moderation</span><span class="t">TypeScript</span></summary>
+        <summary><span class="y">2025</span><span class="n" data-l="fr">Réseau social type Reddit</span><span class="n" data-l="en">Reddit-style network</span><span class="s" data-l="fr">Communautés, votes et modération par rôles</span><span class="s" data-l="en">Communities, votes and role-based moderation</span><span class="t">TypeScript</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">API REST Express en TypeScript avec validation Zod, Helmet et CORS, base PostgreSQL protégée par RLS, front React. Documentation Swagger et collections Postman, tests Jest.</p>
-          <p data-l="en">Express REST API in TypeScript with Zod validation, Helmet and CORS, PostgreSQL with row-level security, React front end. Swagger docs, Postman collections and Jest tests.</p>
+          <p data-l="fr">API REST Express en TypeScript avec validation Zod, Helmet et CORS, PostgreSQL protégé par RLS, front React. Swagger, collections Postman et tests Jest.</p>
+          <p data-l="en">Express REST API in TypeScript with Zod validation, Helmet and CORS, PostgreSQL with row-level security, React front end. Swagger, Postman collections and Jest tests.</p>
           <p class="stack">Express, TypeScript, React, Supabase, Zod, Swagger, Jest</p>
-          <p class="links"><a href="https://github.com/MelvinTomezak/Projet_Web_Service_RS" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/MelvinTomezak/Projet_Web_Service_RS" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="web critical">
-        <summary><span class="y">2025</span><span class="n">Ynov Express</span><span class="s" data-l="fr">Contrôle d'accès par rôles sur cinq niveaux</span><span class="s" data-l="en">Five-level role-based access control</span><span class="t">Express, React</span></summary>
+        <summary><span class="y">2025</span><span class="n">Ynov Express</span><span class="s" data-l="fr">Contrôle d'accès par rôles sur cinq niveaux</span><span class="s" data-l="en">Five-level role-based access control</span><span class="t">Express, React</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">Plateforme de publications avec authentification JWT et permissions vérifiées deux fois, dans le middleware et dans le contrôleur. Distinction entre ses propres contenus et ceux des autres, panneau d'administration.</p>
-          <p data-l="en">Posting platform with JWT auth and permissions checked twice, in middleware and in the controller. "Own" versus "any" rights, plus an admin panel.</p>
+          <p data-l="fr">Plateforme de publications avec authentification JWT et permissions vérifiées deux fois, dans le middleware et le contrôleur. Distinction entre ses propres contenus et ceux des autres, panneau d'administration.</p>
+          <p data-l="en">Posting platform with JWT auth and permissions checked twice, in middleware and controller. "Own" versus "any" rights, plus an admin panel.</p>
           <p class="stack">Node.js, Express, React, Tailwind, Supabase, JWT</p>
-          <p class="links"><a href="https://github.com/SamymaS/TPwebservices" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/TPwebservices" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="mobile">
-        <summary><span class="y">2025</span><span class="n" data-l="fr">Action ou Vérité</span><span class="n" data-l="en">Truth or Dare</span><span class="s" data-l="fr">Jeu de soirée mobile avec achat intégré</span><span class="s" data-l="en">Party game app with in-app purchase</span><span class="t">React Native</span></summary>
+        <summary><span class="y">2025</span><span class="n" data-l="fr">Action ou Vérité</span><span class="n" data-l="en">Truth or Dare</span><span class="s" data-l="fr">Jeu de soirée mobile avec achat intégré</span><span class="s" data-l="en">Party game app with in-app purchase</span><span class="t">React Native</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">De deux à huit joueurs, 160 défis sur trois niveaux, chrono sur les actions. Paiement Stripe avec Google Pay et Apple Pay via un petit back-end Node. Code découpé en couches métier, infrastructure et présentation.</p>
-          <p data-l="en">Two to eight players, 160 prompts across three levels, timed dares. Stripe payment with Google Pay and Apple Pay through a small Node back end. Code split into domain, infrastructure and presentation layers.</p>
+          <p data-l="fr">De deux à huit joueurs, 160 défis sur trois niveaux. Paiement Stripe avec Google Pay et Apple Pay via un back-end Node. Code découpé en couches métier, infrastructure et présentation.</p>
+          <p data-l="en">Two to eight players, 160 prompts across three levels. Stripe payment with Google Pay and Apple Pay through a Node back end. Code split into domain, infrastructure and presentation layers.</p>
           <p class="stack">React Native, Expo, TypeScript, Stripe, Node.js</p>
           <p class="links"><span class="private" data-l="fr">Dépôt privé</span><span class="private" data-l="en">Private repository</span></p>
         </div>
       </details>
 
       <details class="row" data-dom="mobile">
-        <summary><span class="y">2025</span><span class="n">Photo Gallery</span><span class="s" data-l="fr">Photos géolocalisées sur une carte</span><span class="s" data-l="en">Geotagged photos on a map</span><span class="t">Ionic, Angular</span></summary>
+        <summary><span class="y">2025</span><span class="n">Photo Gallery</span><span class="s" data-l="fr">Photos géolocalisées sur une carte</span><span class="s" data-l="en">Geotagged photos on a map</span><span class="t">Ionic, Angular</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">Application mobile hybride&nbsp;: capture via la caméra, géolocalisation de chaque photo, galerie et carte Leaflet avec regroupement des marqueurs.</p>
+          <p data-l="fr">Application mobile hybride&nbsp;: capture caméra, géolocalisation de chaque photo, galerie et carte Leaflet avec regroupement des marqueurs.</p>
           <p data-l="en">Hybrid mobile app: camera capture, every photo geotagged, gallery and Leaflet map with marker clustering.</p>
           <p class="stack">Ionic 8, Angular 20, Capacitor 7, Leaflet</p>
-          <p class="links"><a href="https://github.com/SamymaS/photo-gallery" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/photo-gallery" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="web critical">
-        <summary><span class="y">2025</span><span class="n" data-l="fr">Puissance 4 multijoueur</span><span class="n" data-l="en">Multiplayer Connect Four</span><span class="s" data-l="fr">Parties synchronisées en temps réel</span><span class="s" data-l="en">Games synced in real time</span><span class="t">WebSocket</span></summary>
+        <summary><span class="y">2025</span><span class="n" data-l="fr">Puissance 4 multijoueur</span><span class="n" data-l="en">Multiplayer Connect Four</span><span class="s" data-l="fr">Parties synchronisées en temps réel</span><span class="s" data-l="en">Games synced in real time</span><span class="t">WebSocket</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
           <p data-l="fr">Serveur WebSocket Node.js qui attribue les rôles (deux joueurs, puis spectateurs), impose l'ordre des tours et diffuse chaque coup avec son historique.</p>
           <p data-l="en">Node.js WebSocket server that assigns roles (two players, then spectators), enforces turn order and broadcasts every move with its history.</p>
           <p class="stack">Node.js, ws, JavaScript</p>
-          <p class="links"><a href="https://github.com/SamymaS/Puissance-4-Websockets" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/Puissance-4-Websockets" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="web">
-        <summary><span class="y">2025</span><span class="n">Tic Tac Toe CI/CD</span><span class="s" data-l="fr">Bonnes pratiques Git et intégration continue</span><span class="s" data-l="en">Git workflow and continuous integration</span><span class="t">Node, GitLab CI</span></summary>
+        <summary><span class="y">2025</span><span class="n">Tic Tac Toe CI/CD</span><span class="s" data-l="fr">Bonnes pratiques Git et intégration continue</span><span class="s" data-l="en">Git workflow and continuous integration</span><span class="t">GitLab CI</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
           <p data-l="fr">Projet d'équipe centré sur l'outillage&nbsp;: hooks Husky, commits normalisés, versionnage sémantique et changelog automatiques, pipeline GitLab et image Docker.</p>
           <p data-l="en">Team project focused on tooling: Husky hooks, conventional commits, automatic semantic versioning and changelog, GitLab pipeline and Docker image.</p>
           <p class="stack">Node.js, Express, EJS, Husky, Commitizen, GitLab CI, Docker</p>
-          <p class="links"><a href="https://github.com/Trit0on/TicTacToe" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/Trit0on/TicTacToe" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="web">
-        <summary><span class="y">2025</span><span class="n">SeaRiders</span><span class="s" data-l="fr">Boutique de planches à voile en déchets recyclés</span><span class="s" data-l="en">Shop for windsurf boards made from recycled waste</span><span class="t">React, Three.js</span></summary>
+        <summary><span class="y">2025</span><span class="n">SeaRiders</span><span class="s" data-l="fr">Boutique de planches à voile en déchets recyclés</span><span class="s" data-l="en">Shop for windsurf boards made from recycled waste</span><span class="t">React, Three.js</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">Site vitrine écoconçu avec visualisation 3D des planches, plus un back-end Flask. Travail sur le front, le back et l'identité visuelle.</p>
-          <p data-l="en">Eco-designed storefront with 3D board previews, plus a Flask back end. I worked on front end, back end and branding.</p>
+          <p data-l="fr">Site vitrine écoconçu avec visualisation 3D des planches, plus un back-end Flask. Front, back et identité visuelle.</p>
+          <p data-l="en">Eco-designed storefront with 3D board previews, plus a Flask back end. Front end, back end and branding.</p>
           <p class="stack">React, Vite, Tailwind, Three.js, Flask</p>
-          <p class="links"><a href="https://github.com/SamymaS/seariders-vitrine" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/seariders-vitrine" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="critical">
-        <summary><span class="y">2025</span><span class="n" data-l="fr">Assistant vocal</span><span class="n" data-l="en">Voice assistant</span><span class="s" data-l="fr">Back-end d'assistant en langage naturel</span><span class="s" data-l="en">Natural-language assistant back end</span><span class="t">Python, Flask</span></summary>
+        <summary><span class="y">2025</span><span class="n" data-l="fr">Assistant vocal</span><span class="n" data-l="en">Voice assistant</span><span class="s" data-l="fr">Back-end d'assistant en langage naturel</span><span class="s" data-l="en">Natural-language assistant back end</span><span class="t">Python, Flask</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
           <p data-l="fr">API Flask qui reçoit la transcription vocale, l'analyse avec spaCy et appelle OpenAI, la météo ou Spotify. Persistance SQLite, journaux rotatifs, exports JSON et CSV.</p>
           <p data-l="en">Flask API that receives speech transcripts, parses them with spaCy and calls OpenAI, weather or Spotify. SQLite storage, rotating logs, JSON and CSV export.</p>
           <p class="stack">Python, Flask, spaCy, OpenAI, SQLAlchemy, SQLite</p>
-          <p class="links"><a href="https://github.com/SamymaS/ham" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/ham" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="critical">
-        <summary><span class="y">2025</span><span class="n" data-l="fr">Calculatrice RPN</span><span class="n" data-l="en">RPN calculator</span><span class="s" data-l="fr">Architecture SOLID en notation polonaise inverse</span><span class="s" data-l="en">SOLID design using reverse Polish notation</span><span class="t">PHP</span></summary>
+        <summary><span class="y">2025</span><span class="n" data-l="fr">Calculatrice RPN</span><span class="n" data-l="en">RPN calculator</span><span class="s" data-l="fr">Architecture SOLID en notation polonaise inverse</span><span class="s" data-l="en">SOLID design with reverse Polish notation</span><span class="t">PHP</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">Analyse des priorités et parenthèses imbriquées par conversion en notation polonaise inverse. Une classe par opération derrière une interface commune, tests unitaires et d'intégration.</p>
-          <p data-l="en">Operator precedence and nested parentheses via reverse Polish conversion. One class per operation behind a shared interface, unit and integration tests.</p>
+          <p data-l="fr">Priorités et parenthèses imbriquées gérées par conversion en notation polonaise inverse. Une classe par opération derrière une interface commune, tests unitaires et d'intégration.</p>
+          <p data-l="en">Precedence and nested parentheses handled by reverse Polish conversion. One class per operation behind a shared interface, unit and integration tests.</p>
           <p class="stack">PHP, Composer, PHPUnit</p>
-          <p class="links"><a href="https://github.com/SamymaS/Calculatrice-PHP" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/Calculatrice-PHP" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="iot">
-        <summary><span class="y">2025</span><span class="n" data-l="fr">Maison connectée Modbus</span><span class="n" data-l="en">Modbus smart home</span><span class="s" data-l="fr">ESP32 et Raspberry Pi en Modbus RTU, MQTT chiffré</span><span class="s" data-l="en">ESP32 and Raspberry Pi over Modbus RTU, encrypted MQTT</span><span class="t">ESP32, RPi</span></summary>
+        <summary><span class="y">2025</span><span class="n" data-l="fr">Maison connectée Modbus</span><span class="n" data-l="en">Modbus smart home</span><span class="s" data-l="fr">ESP32 et Raspberry Pi en Modbus RTU, MQTT chiffré</span><span class="s" data-l="en">ESP32 and Raspberry Pi over Modbus RTU, encrypted MQTT</span><span class="t">ESP32, RPi</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">L'ESP32 expose température et vitesse du ventilateur dans des registres Modbus sur UART. Le Raspberry Pi, maître du bus, régule le ventilateur et publie les mesures sur un broker Mosquitto en TLS (port 8883) avec certificats client.</p>
-          <p data-l="en">The ESP32 exposes temperature and fan speed as Modbus registers over UART. The Raspberry Pi, as bus master, drives the fan and publishes readings to a Mosquitto broker over TLS (port 8883) with client certificates.</p>
+          <p data-l="fr">L'ESP32 expose température et vitesse du ventilateur dans des registres Modbus sur UART. Le Raspberry Pi, maître du bus, régule le ventilateur et publie les mesures sur Mosquitto en TLS avec certificats client.</p>
+          <p data-l="en">The ESP32 exposes temperature and fan speed as Modbus registers over UART. The Raspberry Pi, as bus master, drives the fan and publishes readings to Mosquitto over TLS with client certificates.</p>
           <p class="stack">C++, Arduino, Python, pymodbus, MQTT, TLS</p>
-          <p class="links"><a href="https://github.com/SamymaS/smart-home-modbus-UART-" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/smart-home-modbus-UART-" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="critical">
-        <summary><span class="y">2024</span><span class="n" data-l="fr">ORM en PHP</span><span class="n" data-l="en">PHP ORM</span><span class="s" data-l="fr">Un ORM écrit de zéro</span><span class="s" data-l="en">An ORM written from scratch</span><span class="t">PHP</span></summary>
+        <summary><span class="y">2024</span><span class="n" data-l="fr">ORM en PHP</span><span class="n" data-l="en">PHP ORM</span><span class="s" data-l="fr">Un ORM écrit de zéro</span><span class="s" data-l="en">An ORM written from scratch</span><span class="t">PHP</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
           <p data-l="fr">EntityManager pour le CRUD, Repository pour la lecture, Adapter au-dessus de PDO, objets valeur pour les identifiants et petit générateur de requêtes.</p>
           <p data-l="en">EntityManager for CRUD, Repository for reads, an Adapter over PDO, value objects for IDs and a small query builder.</p>
-          <p class="stack">PHP, PDO, MySQL, Design patterns</p>
-          <p class="links"><a href="https://github.com/SamymaS/ORMProject" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="stack">PHP, PDO, MySQL, design patterns</p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/ORMProject" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="iot mobile">
-        <summary><span class="y">2024</span><span class="n" data-l="fr">Maison connectée Flutter</span><span class="n" data-l="en">Flutter smart home</span><span class="s" data-l="fr">Pilotage de capteurs et actionneurs depuis le téléphone</span><span class="s" data-l="en">Sensors and actuators driven from a phone</span><span class="t">ESP32, BLE</span></summary>
+        <summary><span class="y">2024</span><span class="n" data-l="fr">Maison connectée Flutter</span><span class="n" data-l="en">Flutter smart home</span><span class="s" data-l="fr">Capteurs et actionneurs pilotés depuis le téléphone</span><span class="s" data-l="en">Sensors and actuators driven from a phone</span><span class="t">ESP32, BLE</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
-          <p data-l="fr">Kit Keyestudio KS5009 sur ESP32&nbsp;: détection de mouvement, gaz, RFID, servomoteur, ventilateur PWM, écran LCD. Commande par Bluetooth BLE, Wi-Fi et MQTT depuis une application Flutter.</p>
+          <p data-l="fr">Kit Keyestudio KS5009 sur ESP32&nbsp;: mouvement, gaz, RFID, servomoteur, ventilateur PWM, écran LCD. Commande par Bluetooth LE, Wi-Fi et MQTT depuis une application Flutter.</p>
           <p data-l="en">Keyestudio KS5009 kit on ESP32: motion, gas, RFID, servo, PWM fan, LCD. Controlled over Bluetooth LE, Wi-Fi and MQTT from a Flutter app.</p>
           <p class="stack">ESP32, Arduino, BLE, MQTT, Flutter</p>
-          <p class="links"><a href="https://github.com/SamymaS/Projet-Home-StartKit" rel="noopener" target="_blank">GitHub</a></p>
+          <p class="links"><a class="arrow" href="https://github.com/SamymaS/Projet-Home-StartKit" rel="noopener" target="_blank">GitHub</a></p>
         </div>
       </details>
 
       <details class="row" data-dom="iot">
-        <summary><span class="y">2021</span><span class="n">B4SKET G4ME</span><span class="s" data-l="fr">Puissance 4 grandeur nature pour une équipe de basket</span><span class="s" data-l="en">Life-size Connect Four for basketball practice</span><span class="t">RPi, C++</span></summary>
+        <summary><span class="y">2021</span><span class="n">B4SKET G4ME</span><span class="s" data-l="fr">Puissance 4 grandeur nature pour une équipe de basket</span><span class="s" data-l="en">Life-size Connect Four for basketball practice</span><span class="t">RPi, C++</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
           <p data-l="fr">Projet de BTS&nbsp;: les tirs réussis remplissent une grille physique. Un Raspberry Pi lit les trames des capteurs, le score est stocké en MySQL et affiché sur une interface web.</p>
           <p data-l="en">Vocational degree project: successful shots fill a physical grid. A Raspberry Pi reads sensor frames, scores go to MySQL and show on a web interface.</p>
@@ -411,7 +385,7 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
       </details>
 
       <details class="row" data-dom="iot">
-        <summary><span class="y">2020</span><span class="n">CAROBOT</span><span class="s" data-l="fr">Robot autonome suiveur de ligne</span><span class="s" data-l="en">Autonomous line-following robot</span><span class="t">Arduino</span></summary>
+        <summary><span class="y">2020</span><span class="n">CAROBOT</span><span class="s" data-l="fr">Robot autonome suiveur de ligne</span><span class="s" data-l="en">Autonomous line-following robot</span><span class="t">Arduino</span><span class="plus" aria-hidden="true"></span></summary>
         <div class="row-body">
           <p data-l="fr">Robot capable de suivre une ligne au sol et de saisir des objets, programmé en C et C++ sur Arduino.</p>
           <p data-l="en">A robot that follows a line on the floor and picks up objects, programmed in C and C++ on Arduino.</p>
@@ -419,59 +393,55 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
         </div>
       </details>
     </div>
-    <p class="index-empty" hidden><span data-l="fr">Aucun projet dans ce domaine.</span><span data-l="en">No project in this area.</span></p>
   </div>
 </section>
 
-<!-- ═══ PARCOURS ═════════════════════════════════════════════════ -->
-<section class="block" id="parcours" aria-labelledby="parcours-h">
+<!-- ═══ PARCOURS ════════════════════════════════════════════════ -->
+<section class="block" id="parcours" data-stage="5" aria-labelledby="parcours-h">
   <div class="wrap">
     <div class="block-head">
-      <h2 id="parcours-h"><span data-l="fr">Parcours</span><span data-l="en">Experience</span></h2>
-      <p data-l="fr">Six ans d'alternance et d'entreprise, du support informatique à la radio critique.</p>
-      <p data-l="en">Six years of work-study and industry, from IT support to mission-critical radio.</p>
+      <h2 id="parcours-h" class="h2" data-split><span data-l="fr">Parcours</span><span data-l="en">Experience</span></h2>
     </div>
-
     <ol class="timeline">
-      <li class="job">
-        <div class="when">2024<span class="to" data-l="fr">à aujourd'hui</span><span class="to" data-l="en">to now</span></div>
+      <li class="job" data-reveal>
+        <p class="when"><span data-l="fr">2024 à aujourd'hui</span><span data-l="en">2024 to now</span></p>
         <div class="what">
           <h3>CS GROUP <span class="where">Aix-en-Provence</span></h3>
-          <div class="phase">
+          <div class="phase now">
             <p class="role"><span data-l="fr">Ingénieur logiciel, CDI, statut cadre</span><span data-l="en">Software engineer, permanent, engineer grade</span> <span class="date" data-l="fr">depuis sept. 2026</span><span class="date" data-l="en">since Sept. 2026</span></p>
-            <p data-l="fr">Logiciels C++, Qt et .NET pour des réseaux de radiocommunication critique TETRA dans le transport&nbsp;: systèmes temps réel à forte disponibilité. Industrialisation des déploiements sur les postes d'exploitation (installation silencieuse scriptée en PowerShell, manuels, validation).</p>
-            <p data-l="en">C++, Qt and .NET software for TETRA mission-critical radio networks in public transport: real-time, high-availability systems. Industrialised deployment to operator workstations (scripted silent installs in PowerShell, manuals, validation).</p>
+            <p data-l="fr">Logiciels C++, Qt et .NET pour des réseaux de radiocommunication critique TETRA dans le transport&nbsp;: systèmes temps réel à forte disponibilité. Industrialisation des déploiements sur les postes d'exploitation (installation silencieuse en PowerShell, manuels, validation).</p>
+            <p data-l="en">C++, Qt and .NET software for TETRA mission-critical radio networks in public transport: real-time, high-availability systems. Industrialised deployment to operator workstations (silent PowerShell installs, manuals, validation).</p>
           </div>
           <div class="phase">
             <p class="role"><span data-l="fr">Ingénieur logiciel en alternance</span><span data-l="en">Software engineer, work-study</span> <span class="date" data-l="fr">sept. 2024 à sept. 2026</span><span class="date" data-l="en">Sept. 2024 to Sept. 2026</span></p>
-            <p data-l="fr">D'abord sur MobilitX, plateforme de données de transport en temps réel&nbsp;: back-end Java et Kotlin, architecture modulaire et événementielle, caches et supervision. Puis rattaché aux projets radio TETRA.</p>
-            <p data-l="en">First on MobilitX, a real-time transport data platform: Java and Kotlin back end, modular event-driven architecture, caching and monitoring. Then moved to the TETRA radio projects.</p>
+            <p data-l="fr">D'abord sur MobilitX, plateforme de données de transport en temps réel&nbsp;: back-end Java et Kotlin, architecture modulaire et événementielle. Puis rattaché aux projets radio TETRA.</p>
+            <p data-l="en">First on MobilitX, a real-time transport data platform: Java and Kotlin back end, modular event-driven architecture. Then moved to the TETRA radio projects.</p>
           </div>
-          <p class="stack">C++, Qt, .NET, Java, Kotlin, PowerShell, GitLab, Jira, CI/CD</p>
+          <ul class="chips"><li>C++</li><li>Qt</li><li>.NET</li><li>Java</li><li>Kotlin</li><li>PowerShell</li><li>GitLab</li></ul>
         </div>
       </li>
-      <li class="job">
-        <div class="when">2022<span class="to">2023</span></div>
+      <li class="job" data-reveal>
+        <p class="when">2022-2023</p>
         <div class="what">
-          <h3>Niji <span class="where">Aix-en-Provence</span></h3>
+          <h3>Niji</h3>
           <p class="role"><span data-l="fr">Développeur full-stack Salesforce en alternance</span><span data-l="en">Full-stack Salesforce developer, work-study</span></p>
           <p data-l="fr">Analyse des besoins clients, développement et paramétrage d'applications Salesforce, intégration continue.</p>
           <p data-l="en">Client requirements analysis, Salesforce app development and configuration, continuous integration.</p>
-          <p class="stack">Salesforce, Apex, JavaScript, HTML/CSS</p>
+          <ul class="chips"><li>Salesforce</li><li>Apex</li><li>JavaScript</li></ul>
         </div>
       </li>
-      <li class="job">
-        <div class="when">2021<span class="to">2022</span></div>
+      <li class="job" data-reveal>
+        <p class="when">2021-2022</p>
         <div class="what">
           <h3>REZZO Telecom</h3>
           <p class="role"><span data-l="fr">Développeur logiciel full-stack en alternance</span><span data-l="en">Full-stack software developer, work-study</span></p>
           <p data-l="fr">Refonte d'un logiciel de facturation et de CRM existant&nbsp;: interface C++/Qt, back-end Python Flask, procédures PL/SQL et imports CSV et XLSX.</p>
           <p data-l="en">Rebuilt a legacy billing and CRM application: C++/Qt interface, Python Flask back end, PL/SQL procedures and CSV and XLSX imports.</p>
-          <p class="stack">C++, Qt, Python, Flask, PL/SQL, AWS CodeCommit</p>
+          <ul class="chips"><li>C++</li><li>Qt</li><li>Python</li><li>Flask</li><li>PL/SQL</li></ul>
         </div>
       </li>
-      <li class="job">
-        <div class="when">2020</div>
+      <li class="job" data-reveal>
+        <p class="when">2020</p>
         <div class="what">
           <h3>Groupe ORTEC</h3>
           <p class="role"><span data-l="fr">Technicien informatique, stage</span><span data-l="en">IT technician, internship</span></p>
@@ -481,61 +451,64 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
       </li>
     </ol>
 
-    <h3 class="sub"><span data-l="fr">Formation</span><span data-l="en">Education</span></h3>
+    <h3 class="sub" data-reveal><span data-l="fr">Formation</span><span data-l="en">Education</span></h3>
     <ul class="degrees">
-      <li><span class="when">2024-2026</span><span class="deg"><b data-l="fr">Mastère Expert Développement Logiciel, Mobile &amp; IoT</b><b data-l="en">Master's, Expert in Software, Mobile &amp; IoT Development</b> Ynov Campus Aix-en-Provence. <span data-l="fr">Diplômé, titre RNCP niveau 7.</span><span data-l="en">Graduated, French level 7 (Master's) certification.</span></span></li>
-      <li><span class="when">2021-2022</span><span class="deg"><b data-l="fr">Bachelor Responsable en Ingénierie Logiciel</b><b data-l="en">Bachelor's in Software Engineering</b> CESI Aix-en-Provence.</span></li>
-      <li><span class="when">2019-2021</span><span class="deg"><b data-l="fr">BTS Systèmes Numériques, informatique et réseaux</b><b data-l="en">Two-year degree in Digital Systems, IT and networks</b> <span data-l="fr">Lycée Vauvenargues, Aix-en-Provence.</span><span data-l="en">Lycée Vauvenargues, Aix-en-Provence.</span></span></li>
-      <li><span class="when">TOEIC</span><span class="deg"><b data-l="fr">Anglais C2, score supérieur à 900</b><b data-l="en">English C2, score above 900</b> <span data-l="fr">Français langue maternelle, espagnol scolaire.</span><span data-l="en">Native French, basic Spanish.</span></span></li>
+      <li data-reveal><span class="when">2024-2026</span><span class="deg"><b data-l="fr">Mastère Expert Développement Logiciel, Mobile &amp; IoT</b><b data-l="en">Master's, Expert in Software, Mobile &amp; IoT Development</b> Ynov Campus Aix-en-Provence. <span data-l="fr">Diplômé, titre RNCP niveau 7.</span><span data-l="en">Graduated, French level 7 (Master's) certification.</span></span></li>
+      <li data-reveal><span class="when">2021-2022</span><span class="deg"><b data-l="fr">Bachelor Responsable en Ingénierie Logiciel</b><b data-l="en">Bachelor's in Software Engineering</b> CESI Aix-en-Provence.</span></li>
+      <li data-reveal><span class="when">2019-2021</span><span class="deg"><b data-l="fr">BTS Systèmes Numériques, informatique et réseaux</b><b data-l="en">Two-year degree in Digital Systems, IT and networks</b> Lycée Vauvenargues, Aix-en-Provence.</span></li>
+      <li data-reveal><span class="when">TOEIC</span><span class="deg"><b data-l="fr">Anglais C2, score supérieur à 900</b><b data-l="en">English C2, score above 900</b> <span data-l="fr">Français langue maternelle, espagnol scolaire.</span><span data-l="en">Native French, basic Spanish.</span></span></li>
     </ul>
   </div>
 </section>
 
-<!-- ═══ COMPÉTENCES ══════════════════════════════════════════════ -->
-<section class="block" id="competences" aria-labelledby="competences-h">
+<!-- ═══ COMPÉTENCES ═════════════════════════════════════════════ -->
+<section class="block" id="competences" data-stage="5" aria-labelledby="competences-h">
   <div class="wrap">
     <div class="block-head">
-      <h2 id="competences-h"><span data-l="fr">Compétences</span><span data-l="en">Skills</span></h2>
-      <p data-l="fr">Chaque outil est rattaché à l'endroit où je l'ai utilisé.</p>
-      <p data-l="en">Each tool is tied to where I actually used it.</p>
+      <h2 id="competences-h" class="h2" data-split><span data-l="fr">Compétences</span><span data-l="en">Skills</span></h2>
     </div>
+  </div>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track"><span>C++</span><span class="o">Flutter</span><span>Kotlin</span><span class="o">Kubernetes</span><span>Qt</span><span class="o">TypeScript</span><span>Python</span><span class="o">ESP32</span><span>PostgreSQL</span><span class="o">Terraform</span><span>Java</span><span class="o">.NET</span></div>
+    <div class="marquee-track rev"><span class="o">React Native</span><span>Redis</span><span class="o">FastAPI</span><span>Docker</span><span class="o">MQTT</span><span>Supabase</span><span class="o">Modbus RTU</span><span>Express</span><span class="o">GitHub Actions</span><span>Dart</span><span class="o">Spring</span><span>Linux</span></div>
+  </div>
+  <div class="wrap">
     <dl class="skills">
-      <div><dt><span data-l="fr">Langages</span><span data-l="en">Languages</span></dt>
+      <div class="skill" data-reveal><dt><span data-l="fr">Langages</span><span data-l="en">Languages</span></dt>
         <dd><b>C++</b> <i>Qt, CS GROUP, REZZO</i></dd>
         <dd><b>Java, Kotlin</b> <i>MobilitX, plugin Paper</i></dd>
         <dd><b>Dart</b> <i>Sameva, QuizzUp, MythraSona</i></dd>
         <dd><b>Python</b> <i>FastAPI, Flask, pymodbus</i></dd>
-        <dd><b>TypeScript, JavaScript</b> <i>Express, React, React Native</i></dd>
-        <dd><b>C#, PHP, SQL</b> <i>.NET, ORM maison, PL/SQL</i></dd>
+        <dd><b>TypeScript, JavaScript</b> <i>Express, React</i></dd>
+        <dd><b>C#, PHP, SQL</b> <i>.NET, ORM, PL/SQL</i></dd>
       </div>
-      <div><dt>Mobile</dt>
-        <dd><b>Flutter</b> <i data-l="fr">MVVM, Provider, Hive, hors ligne</i><i data-l="en">MVVM, Provider, Hive, offline</i></dd>
-        <dd><b>React Native, Expo</b> <i>Action ou Vérité, COCI</i></dd>
-        <dd><b>Ionic, Capacitor</b> <i>Photo Gallery</i></dd>
-        <dd><b>Stripe</b> <i data-l="fr">abonnement, Google Pay, Apple Pay</i><i data-l="en">subscriptions, Google Pay, Apple Pay</i></dd>
+      <div class="skill" data-reveal><dt>Mobile</dt>
+        <dd><b>Flutter</b> <i data-l="fr">MVVM, Hive, hors ligne</i><i data-l="en">MVVM, Hive, offline</i></dd>
+        <dd><b>React Native, Expo</b></dd>
+        <dd><b>Ionic, Capacitor</b></dd>
+        <dd><b>Stripe</b> <i>Google Pay, Apple Pay</i></dd>
       </div>
-      <div><dt><span data-l="fr">Back-end et données</span><span data-l="en">Back end and data</span></dt>
+      <div class="skill" data-reveal><dt><span data-l="fr">Back-end et données</span><span data-l="en">Back end and data</span></dt>
         <dd><b>Express, FastAPI, Flask, Spring</b></dd>
-        <dd><b>PostgreSQL, MySQL</b> <i data-l="fr">RLS, PL/SQL, migrations</i><i data-l="en">RLS, PL/SQL, migrations</i></dd>
-        <dd><b>Supabase</b> <i data-l="fr">Auth, Edge Functions, RLS</i><i data-l="en">Auth, Edge Functions, RLS</i></dd>
-        <dd><b>Redis, BullMQ</b> <i data-l="fr">verrous, files, reprises</i><i data-l="en">locks, queues, retries</i></dd>
-        <dd><b>OpenAPI, Swagger, Zod</b></dd>
+        <dd><b>PostgreSQL, MySQL</b> <i>RLS, PL/SQL</i></dd>
+        <dd><b>Supabase</b> <i>Auth, Edge Functions</i></dd>
+        <dd><b>Redis, BullMQ</b> <i data-l="fr">verrous, files</i><i data-l="en">locks, queues</i></dd>
       </div>
-      <div><dt><span data-l="fr">Cloud et DevOps</span><span data-l="en">Cloud and DevOps</span></dt>
-        <dd><b>Docker, Kubernetes</b> <i>AKS, StatefulSet, Ingress</i></dd>
+      <div class="skill" data-reveal><dt><span data-l="fr">Cloud et DevOps</span><span data-l="en">Cloud and DevOps</span></dt>
+        <dd><b>Docker, Kubernetes</b> <i>AKS</i></dd>
         <dd><b>Terraform</b> <i>Azure</i></dd>
         <dd><b>GitHub Actions, GitLab CI</b></dd>
-        <dd><b>Ansible, Caddy, Tailscale</b> <i data-l="fr">NAS auto-hébergé</i><i data-l="en">self-hosted NAS</i></dd>
+        <dd><b>Ansible, Caddy, Tailscale</b></dd>
       </div>
-      <div><dt><span data-l="fr">IoT et embarqué</span><span data-l="en">IoT and embedded</span></dt>
+      <div class="skill" data-reveal><dt><span data-l="fr">IoT et embarqué</span><span data-l="en">IoT and embedded</span></dt>
         <dd><b>ESP32, Arduino, Raspberry Pi</b></dd>
         <dd><b>Modbus RTU, UART, I2C</b></dd>
         <dd><b>MQTT sur TLS, Bluetooth LE</b></dd>
         <dd><b>Linux</b></dd>
       </div>
-      <div><dt><span data-l="fr">Méthode</span><span data-l="en">Practice</span></dt>
-        <dd><b data-l="fr">Architecture</b><b data-l="en">Architecture</b> <i data-l="fr">microservices, événementiel, MVVM, ADR</i><i data-l="en">microservices, event-driven, MVVM, ADRs</i></dd>
-        <dd><b data-l="fr">Tests</b><b data-l="en">Testing</b> <i data-l="fr">unitaires, intégration, widgets</i><i data-l="en">unit, integration, widget</i></dd>
+      <div class="skill" data-reveal><dt><span data-l="fr">Méthode</span><span data-l="en">Practice</span></dt>
+        <dd><b>Architecture</b> <i data-l="fr">microservices, événementiel, ADR</i><i data-l="en">microservices, event-driven, ADRs</i></dd>
+        <dd><b data-l="fr">Tests</b><b data-l="en">Testing</b> <i data-l="fr">unitaires, intégration</i><i data-l="en">unit, integration</i></dd>
         <dd><b>UX</b> <i>Figma, Rive</i></dd>
         <dd><b>Jira, Git</b></dd>
       </div>
@@ -543,17 +516,16 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
   </div>
 </section>
 
-<!-- ═══ LABO ═════════════════════════════════════════════════════ -->
-<section class="block" id="labo" aria-labelledby="labo-h">
+<!-- ═══ LABO ════════════════════════════════════════════════════ -->
+<section class="block" id="labo" data-stage="5" aria-labelledby="labo-h">
   <div class="wrap">
     <div class="block-head">
-      <h2 id="labo-h"><span data-l="fr">Labo</span><span data-l="en">Lab</span></h2>
-      <p data-l="fr">Seize jeux écrits à la main en JavaScript, sans bibliothèque. L'IA du Puissance 4 utilise un minimax à élagage alpha-bêta. Treize succès à débloquer.</p>
-      <p data-l="en">Sixteen games hand-written in plain JavaScript, no libraries. The Connect Four AI uses minimax with alpha-beta pruning. Thirteen achievements to unlock.</p>
+      <h2 id="labo-h" class="h2" data-split><span data-l="fr">Labo</span><span data-l="en">Lab</span></h2>
+      <p class="muted" data-reveal data-l="fr">Seize jeux écrits à la main en JavaScript, sans bibliothèque. Le Puissance 4 joue avec un minimax à élagage alpha-bêta. Treize succès à débloquer.</p>
+      <p class="muted" data-reveal data-l="en">Sixteen games hand-written in plain JavaScript. The Connect Four AI uses minimax with alpha-beta pruning. Thirteen achievements to unlock.</p>
     </div>
     <div class="games" id="games">
-      <button type="button" data-game="connect4"><span data-l="fr">Puissance 4</span><span data-l="en">Connect Four</span></button>
-      <button type="button" data-game="tictactoe"><span data-l="fr">Morpion</span><span data-l="en">Tic-tac-toe</span></button>
+      <button type="button" data-game="connect4"><span data-l="fr">Puissance 4</span><span data-l="en">Connect Four</span><i>IA</i></button>
       <button type="button" data-game="tetris">Tetris</button>
       <button type="button" data-game="snake">Snake</button>
       <button type="button" data-game="2048">2048</button>
@@ -561,6 +533,7 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
       <button type="button" data-game="breakout"><span data-l="fr">Casse-briques</span><span data-l="en">Breakout</span></button>
       <button type="button" data-game="pong">Pong</button>
       <button type="button" data-game="flappy">Flappy</button>
+      <button type="button" data-game="tictactoe"><span data-l="fr">Morpion</span><span data-l="en">Tic-tac-toe</span><i>IA</i></button>
       <button type="button" data-game="memory">Memory</button>
       <button type="button" data-game="simon">Simon</button>
       <button type="button" data-game="taquin"><span data-l="fr">Taquin</span><span data-l="en">15 puzzle</span></button>
@@ -569,29 +542,26 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
       <button type="button" data-game="reflex"><span data-l="fr">Réflexes</span><span data-l="en">Reaction time</span></button>
       <button type="button" data-game="quiz">Quiz tech</button>
     </div>
-    <p class="lab-foot"><span id="achCount"></span> <span data-l="fr">Tapez <kbd>s</kbd> puis <kbd>b</kbd> n'importe où pour ouvrir un terminal.</span><span data-l="en">Type <kbd>s</kbd> then <kbd>b</kbd> anywhere to open a terminal.</span></p>
+    <p class="lab-foot" data-reveal><span id="achCount"></span> <span data-l="fr">Tapez <kbd>s</kbd> puis <kbd>b</kbd> n'importe où pour ouvrir un terminal.</span><span data-l="en">Type <kbd>s</kbd> then <kbd>b</kbd> anywhere to open a terminal.</span></p>
   </div>
 </section>
 
-<!-- ═══ CONTACT ══════════════════════════════════════════════════ -->
-<section class="block contact" id="contact" aria-labelledby="contact-h">
+<!-- ═══ CONTACT ═════════════════════════════════════════════════ -->
+<section class="block contact" id="contact" data-stage="0" aria-labelledby="contact-h">
   <div class="wrap">
-    <div class="block-head">
-      <h2 id="contact-h">Contact</h2>
-      <p data-l="fr">Un projet, une question technique ou simplement l'envie d'échanger&nbsp;: j'aime les messages précis et j'y réponds.</p>
-      <p data-l="en">A project, a technical question or just a chat: I like specific messages and I answer them.</p>
-    </div>
+    <h2 id="contact-h" class="h2 huge" data-split><span data-l="fr">Parlons&#8209;en.</span><span data-l="en">Let's talk.</span></h2>
     <div class="contact-grid">
-      <div class="reach">
+      <div class="reach" data-reveal>
+        <p class="muted" data-l="fr">Un projet, une question technique ou simplement l'envie d'échanger&nbsp;: j'aime les messages précis et j'y réponds.</p>
+        <p class="muted" data-l="en">A project, a technical question or just a chat: I like specific messages and I answer them.</p>
         <a class="mail" href="mailto:samyboudaoud95@gmail.com">samyboudaoud95<wbr>@gmail.com</a>
         <button type="button" class="copy" id="copyMail" data-mail="samyboudaoud95@gmail.com"><span data-l="fr">Copier l'adresse</span><span data-l="en">Copy address</span></button>
         <ul class="elsewhere">
-          <li><a href="https://www.linkedin.com/in/samy-boudaoud" rel="noopener" target="_blank" data-track="social">LinkedIn</a></li>
-          <li><a href="https://github.com/SamymaS" rel="noopener" target="_blank" data-track="social">GitHub</a></li>
-          <li><span data-l="fr">Aix-en-Provence, France</span><span data-l="en">Aix-en-Provence, France</span></li>
+          <li><a class="arrow" href="https://www.linkedin.com/in/samy-boudaoud" rel="noopener" target="_blank">LinkedIn</a></li>
+          <li><a class="arrow" href="https://github.com/SamymaS" rel="noopener" target="_blank">GitHub</a></li>
         </ul>
       </div>
-      <form class="form" id="contactForm" novalidate>
+      <form class="form" id="contactForm" novalidate data-reveal>
         <label><span data-l="fr">Votre nom</span><span data-l="en">Your name</span>
           <input name="name" type="text" autocomplete="name" required maxlength="120"></label>
         <label><span data-l="fr">Votre e-mail</span><span data-l="en">Your email</span>
@@ -599,7 +569,7 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
         <label><span data-l="fr">Message</span><span data-l="en">Message</span>
           <textarea name="message" rows="5" required maxlength="5000"></textarea></label>
         <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
-        <button class="btn btn-solid" type="submit"><span data-l="fr">Envoyer le message</span><span data-l="en">Send message</span></button>
+        <button class="btn btn-solid magnetic" type="submit"><span data-l="fr">Envoyer le message</span><span data-l="en">Send message</span></button>
       </form>
     </div>
   </div>
@@ -609,9 +579,8 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
 
 <footer class="foot">
   <div class="wrap foot-in">
-    <p>© 2026 Samy Boudaoud</p>
+    <p>© 2026 Samy Boudaoud, Aix-en-Provence</p>
     <p><a href="https://github.com/SamymaS/Portfolio_pro" rel="noopener" target="_blank"><span data-l="fr">Code source du site</span><span data-l="en">Site source code</span></a></p>
-    <p><a href="#top"><span data-l="fr">Haut de page</span><span data-l="en">Back to top</span></a></p>
   </div>
 </footer>
 
@@ -626,6 +595,9 @@ d.lang=l;if(t==='light'||t==='dark')d.setAttribute('data-theme',t);d.classList.a
   </div>
 </div>
 
+<script src="vendor/gsap.min.js" defer></script>
+<script src="vendor/ScrollTrigger.min.js" defer></script>
+<script src="vendor/lenis.min.js" defer></script>
 <script src="achievements.js" defer></script>
 <script src="site.js" defer></script>
 </body>

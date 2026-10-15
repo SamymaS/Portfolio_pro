@@ -3,7 +3,7 @@
    Stratégie : network-first pour la navigation (HTML toujours frais),
    cache-first pour les assets statiques (perf + offline).
    ================================================================ */
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = 'sb-portfolio-' + VERSION;
 
 // Ressources de base pré-cachées à l'installation
@@ -12,6 +12,11 @@ const PRECACHE = [
   '/index.html',
   '/site.css',
   '/site.js',
+  '/scene.js',
+  '/vendor/three.min.js',
+  '/vendor/gsap.min.js',
+  '/vendor/ScrollTrigger.min.js',
+  '/vendor/lenis.min.js',
   '/achievements.css',
   '/achievements.js',
   '/games.js',

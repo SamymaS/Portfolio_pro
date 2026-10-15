@@ -1,7 +1,8 @@
 /* ==================================================================
    site.js · Portfolio Samy Boudaoud
-   Aucune dépendance. Les jeux (games.js) et EmailJS ne sont chargés
-   qu'à la première utilisation.
+   Défilement fluide (Lenis), animations (GSAP + ScrollTrigger),
+   scène 3D (scene.js, chargée en module), et tout le reste : langue,
+   filtres, jeux chargés à la demande, formulaire, terminal caché.
    ================================================================== */
 (function () {
   'use strict';
@@ -9,273 +10,336 @@
   const root = document.documentElement;
   const $ = (s, c) => (c || document).querySelector(s);
   const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(pointer: fine) and (hover: hover)').matches;
+  const isNarrow = () => window.innerWidth < 860;
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* stockage indisponible */ } },
   };
+  const hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
+  const gsap = window.gsap;
+  if (hasGsap) gsap.registerPlugin(window.ScrollTrigger);
+  const ST = window.ScrollTrigger;
 
   /* ── Textes dynamiques ──────────────────────────────────────── */
   const T = {
     fr: {
-      title: 'Samy Boudaoud, ingénieur logiciel',
-      copied: 'Adresse copiée', copy: "Copier l'adresse",
+      title: 'Samy Boudaoud, ingénieur logiciel', copied: 'Adresse copiée',
       sending: 'Envoi…', sent: 'Message envoyé. Je vous réponds rapidement.',
       errName: 'Indiquez votre nom.', errEmail: 'Cette adresse e-mail semble incomplète.',
       errMsg: 'Écrivez votre message.', errSend: "L'envoi a échoué. Réessayez, ou écrivez directement à samyboudaoud95@gmail.com.",
       ach: (n, t) => n + '/' + t + ' succès débloqués.',
       gamesErr: 'Les jeux ne se sont pas chargés. Vérifiez votre connexion puis réessayez.',
+      scroll: 'Défiler',
     },
     en: {
-      title: 'Samy Boudaoud, software engineer',
-      copied: 'Address copied', copy: 'Copy address',
+      title: 'Samy Boudaoud, software engineer', copied: 'Address copied',
       sending: 'Sending…', sent: 'Message sent. I will get back to you soon.',
       errName: 'Please enter your name.', errEmail: 'This email address looks incomplete.',
       errMsg: 'Please write your message.', errSend: 'Sending failed. Try again, or email samyboudaoud95@gmail.com directly.',
       ach: (n, t) => n + '/' + t + ' achievements unlocked.',
       gamesErr: 'The games did not load. Check your connection and try again.',
+      scroll: 'Scroll',
     },
   };
   const t = (k) => T[root.lang === 'en' ? 'en' : 'fr'][k];
 
   /* ── Langue ─────────────────────────────────────────────────── */
   function applyLang() {
-    const l = root.lang === 'en' ? 'en' : 'fr';
+    const en = root.lang === 'en';
     document.title = t('title');
-    $$('[data-aria-fr]').forEach((el) => el.setAttribute('aria-label', el.dataset['aria' + (l === 'en' ? 'En' : 'Fr')]));
-    const copy = $('#copyMail');
-    if (copy) copy.dataset.state = '';
+    $$('[data-aria-fr]').forEach((el) => el.setAttribute('aria-label', el.dataset[en ? 'ariaEn' : 'ariaFr']));
     updateAchievements();
   }
   $('#langBtn').addEventListener('click', () => {
     root.lang = root.lang === 'en' ? 'fr' : 'en';
     store.set('sb-lang', root.lang);
     applyLang();
+    if (hasGsap) ST.refresh();
   });
 
-  /* ── Thème ──────────────────────────────────────────────────── */
-  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  const isDark = () => {
-    const forced = root.getAttribute('data-theme');
-    return forced ? forced === 'dark' : darkQuery.matches;
-  };
-  function syncThemeMeta() {
-    const c = isDark() ? '#12171D' : '#E9EDF1';
-    $$('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', c));
+  /* ── Défilement fluide ──────────────────────────────────────── */
+  let lenis = null;
+  if (!reduce && hasGsap && typeof window.Lenis !== 'undefined') {
+    lenis = new window.Lenis({ lerp: 0.09, smoothWheel: true, wheelMultiplier: 1 });
+    lenis.on('scroll', ST.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
   }
-  $('#themeBtn').addEventListener('click', () => {
-    const next = isDark() ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    store.set('sb-theme', next);
-    syncThemeMeta();
-    scope.refreshColors();
+  function scrollToEl(el) {
+    if (!el) return;
+    if (lenis) lenis.scrollTo(el, { offset: el.id === 'main' ? 0 : -40, duration: 1.6 });
+    else el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  }
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const id = a.getAttribute('href');
+    const el = id.length > 1 && document.querySelector(id);
+    if (!el) return;
+    e.preventDefault();
+    setMenu(false);
+    scrollToEl(el);
+    history.replaceState(null, '', id);
   });
-  darkQuery.addEventListener('change', () => { syncThemeMeta(); scope.refreshColors(); });
 
-  /* ── En-tête et menu mobile ─────────────────────────────────── */
+  /* ── En-tête : verre au défilement, masqué en descendant ────── */
   const top = $('#top');
-  const onScroll = () => top.classList.toggle('scrolled', window.scrollY > 8);
+  const bar = $('.progress');
+  let lastY = 0;
+  function onScroll() {
+    const y = window.scrollY;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    top.classList.toggle('solid', y > 40);
+    top.classList.toggle('away', y > 400 && y > lastY && !nav.classList.contains('open'));
+    lastY = y;
+    bar.style.setProperty('--p', max > 0 ? (y / max).toFixed(4) : 0);
+  }
   window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
 
   const nav = $('#nav');
   const menuBtn = $('#menuBtn');
   function setMenu(open) {
     nav.classList.toggle('open', open);
     menuBtn.setAttribute('aria-expanded', String(open));
+    if (lenis) open ? lenis.stop() : lenis.start();
   }
   menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
-  nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  onScroll();
 
-  // Lien de navigation actif selon la section visible
   const navLinks = $$('.nav a');
   const spy = new IntersectionObserver((entries) => {
     entries.forEach((en) => {
       if (!en.isIntersecting) return;
-      navLinks.forEach((a) => a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + en.target.id)));
+      const id = en.target.id === 'index-projets' ? 'projets' : en.target.id;
+      navLinks.forEach((a) => a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + id)));
     });
-  }, { rootMargin: '-40% 0px -55% 0px' });
+  }, { rootMargin: '-45% 0px -50% 0px' });
   $$('main section[id]').forEach((s) => spy.observe(s));
 
-  /* ── Oscilloscope : trame TDMA à quatre intervalles ─────────── */
-  const scope = (function () {
-    const canvas = $('#scopeCanvas');
-    const ctx = canvas.getContext('2d');
-    const SLOTS = 4;
-    const FREQ = [9, 14, 6.5, 11];     // cycles de porteuse par intervalle
-    const GUARD = 0.09;                // période de garde de chaque côté
-    let W = 0, H = 0, dpr = 1;
-    let colors = {};
-    let active = -1;                   // intervalle filtré (-1 = tous)
-    let hover = -1;                    // intervalle survolé
-    let phase = 0;
-    let sweep = 0;                     // 0 → 1 pendant l'animation d'ouverture
-    let running = false, visible = true, last = 0, raf = 0;
+  /* ── Scène 3D ───────────────────────────────────────────────── */
+  let scene = null;
+  let currentStage = 0;
+  const canvas = $('#gl');
 
-    function refreshColors() {
-      const cs = getComputedStyle(root);
-      colors = {
-        grid: cs.getPropertyValue('--grid').trim(),
-        rule: cs.getPropertyValue('--rule').trim(),
-        trace: cs.getPropertyValue('--trace').trim(),
-        muted: cs.getPropertyValue('--muted').trim(),
-      };
-      draw();
-    }
-
-    function resize() {
-      const r = canvas.getBoundingClientRect();
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = Math.round(r.width); H = Math.round(r.height);
-      canvas.width = W * dpr; canvas.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      draw();
-    }
-
-    const smooth = (e0, e1, x) => { const k = Math.min(Math.max((x - e0) / (e1 - e0), 0), 1); return k * k * (3 - 2 * k); };
-
-    // Enveloppe d'une salve dans son intervalle (u entre 0 et 1)
-    function envelope(u) {
-      return smooth(GUARD, GUARD + 0.06, u) * (1 - smooth(1 - GUARD - 0.06, 1 - GUARD, u));
-    }
-
-    function y(x, slot, u) {
-      const mid = H * 0.4, amp = H * 0.25;
-      const env = envelope(u);
-      // modulation de données : petites variations d'amplitude pseudo-aléatoires
-      const data = 0.78 + 0.22 * Math.sin(u * 47 + slot * 3.1 + phase * 0.6) * Math.sin(u * 13 + slot);
-      const carrier = Math.sin(2 * Math.PI * FREQ[slot] * u + phase * (1.2 + slot * 0.15));
-      const noise = (Math.sin(x * 0.9 + phase * 3) + Math.sin(x * 0.37 - phase * 2)) * H * 0.004;
-      return mid - env * amp * data * carrier + noise;
-    }
-
-    function draw() {
-      if (!W) return;
-      ctx.clearRect(0, 0, W, H);
-      const sw = W / SLOTS;
-
-      // graticule
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = colors.grid;
-      ctx.beginPath();
-      const cols = 16, rows = 6;
-      for (let i = 1; i < cols; i++) { const gx = Math.round((W / cols) * i) + 0.5; ctx.moveTo(gx, 0); ctx.lineTo(gx, H); }
-      for (let j = 1; j < rows; j++) { const gy = Math.round((H / rows) * j) + 0.5; ctx.moveTo(0, gy); ctx.lineTo(W, gy); }
-      ctx.stroke();
-
-      // séparations des intervalles
-      ctx.strokeStyle = colors.rule;
-      ctx.beginPath();
-      for (let s = 1; s < SLOTS; s++) { const sx = Math.round(sw * s) + 0.5; ctx.moveTo(sx, 0); ctx.lineTo(sx, H); }
-      ctx.stroke();
-
-      // trace, intervalle par intervalle
-      const limit = W * sweep;
-      for (let s = 0; s < SLOTS; s++) {
-        const x0 = sw * s, x1 = Math.min(sw * (s + 1), limit);
-        if (x1 <= x0) break;
-        const focus = active === -1 ? (hover === -1 || hover === s) : (active === s || hover === s);
-        ctx.strokeStyle = focus ? colors.trace : colors.muted;
-        ctx.globalAlpha = focus ? 1 : 0.35;
-        ctx.lineWidth = focus ? 2 : 1.25;
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        for (let x = x0; x <= x1; x += 1) {
-          const yy = y(x, s, (x - x0) / sw);
-          if (x === x0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
-        }
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-
-      // point du faisceau pendant le balayage
-      if (sweep < 1 && limit > 0) {
-        const s = Math.min(Math.floor(limit / sw), SLOTS - 1);
-        const by = y(limit, s, (limit - sw * s) / sw);
-        ctx.fillStyle = colors.trace;
-        ctx.beginPath(); ctx.arc(limit, by, 3.5, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-
-    function frame(now) {
-      raf = 0;
-      if (!running) return;
-      const dt = Math.min((now - last) / 1000, 0.05);
-      if (sweep < 1) {
-        sweep = Math.min(1, sweep + dt / 1.4);
-        last = now; draw();
-      } else if (now - last >= 33) {           // ralenti à 30 images/s une fois posé
-        phase += dt * 0.9;
-        last = now; draw();
-      }
-      raf = requestAnimationFrame(frame);
-    }
-
-    function start() {
-      if (running || reduceMotion.matches || !visible || document.hidden) return;
-      running = true; last = performance.now();
-      raf = requestAnimationFrame(frame);
-    }
-    function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
-
-    function init() {
-      refreshColors();
-      if (reduceMotion.matches) sweep = 1;
-      resize();
-      new ResizeObserver(resize).observe(canvas);
-      new IntersectionObserver((e) => { visible = e[0].isIntersecting; visible ? start() : stop(); }).observe(canvas);
-      document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-      reduceMotion.addEventListener('change', () => { if (reduceMotion.matches) { stop(); sweep = 1; draw(); } else start(); });
-      // Laisse le temps à la police d'arriver avant de lancer le balayage
-      (document.fonts ? document.fonts.ready : Promise.resolve()).then(start);
-    }
-
+  function stageLayout(stage) {
+    const narrow = isNarrow();
+    const shape = stage >= 1 && stage <= 4;
     return {
-      init, refreshColors,
-      setActive(i) { active = i; draw(); },
-      setHover(i) { hover = i; draw(); },
+      ox: shape && !narrow ? 1.85 : 0,
+      oy: shape && narrow ? 1.6 : 0,
+      opacity: stage === 5 ? 0.55 : 1,
     };
-  })();
-  scope.init();
-
-  /* ── Filtrage des projets ───────────────────────────────────── */
-  const SLOT_OF = { critical: 0, mobile: 1, iot: 2, web: 3 };
-  const items = $$('.feat, .row');
-  const chips = $$('.chip');
-  const slots = $$('.slot');
-  const empty = $('.index-empty');
-
-  chips.forEach((c) => {
-    const f = c.dataset.filter;
-    const n = f === 'all' ? $$('.row').length + $$('.feat').length : items.filter((it) => it.dataset.dom.split(' ').includes(f)).length;
-    $('.count', c).textContent = n;
-  });
-
-  function setFilter(f) {
-    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === f)));
-    slots.forEach((s) => {
-      const on = s.dataset.filter === f;
-      s.classList.toggle('on', on);
-      s.setAttribute('aria-pressed', String(on));
-    });
-    items.forEach((it) => { it.hidden = f !== 'all' && !it.dataset.dom.split(' ').includes(f); });
-    empty.hidden = $$('.row').some((r) => !r.hidden);
-    scope.setActive(f === 'all' ? -1 : SLOT_OF[f]);
   }
-  chips.forEach((c) => c.addEventListener('click', () => setFilter(c.dataset.filter)));
-  slots.forEach((s, i) => {
-    s.setAttribute('aria-pressed', 'false');
-    s.addEventListener('click', () => {
-      const already = s.classList.contains('on');
-      setFilter(already ? 'all' : s.dataset.filter);
-      if (!already) $('#projets').scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+  function goStage(stage) {
+    currentStage = stage;
+    if (!scene) return;
+    const L = stageLayout(stage);
+    if (reduce || !hasGsap) {
+      Object.assign(scene.state, { morph: stage }, L);
+      scene.renderOnce();
+      return;
+    }
+    gsap.to(scene.state, { morph: stage, duration: 2.2, ease: 'power3.inOut', overwrite: 'auto' });
+    gsap.to(scene.state, { ox: L.ox, oy: L.oy, opacity: L.opacity, duration: 1.6, ease: 'power3.inOut', overwrite: false });
+  }
+
+  function webglOK() {
+    try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); }
+    catch (e) { return false; }
+  }
+
+  if (webglOK()) {
+    import('./scene.js').then(({ createScene }) => {
+      scene = createScene(canvas, { reduceMotion: reduce });
+      Object.assign(scene.state, { morph: currentStage }, stageLayout(currentStage));
+      canvas.classList.add('ready');
+      if (reduce) { scene.renderOnce(); return; }
+      scene.start();
+      if (hasGsap) gsap.to(scene.state, { intro: 1, duration: 2.6, ease: 'power3.out', delay: .1 });
+      else scene.state.intro = 1;
+      document.addEventListener('visibilitychange', () => (document.hidden ? scene.stop() : scene.start()));
+      window.addEventListener('resize', () => goStage(currentStage));
+    }).catch(() => root.classList.add('no-gl'));
+  } else {
+    root.classList.add('no-gl');
+  }
+
+  if (hasGsap) {
+    $$('[data-stage]').forEach((el) => {
+      const stage = +el.dataset.stage;
+      ST.create({
+        trigger: el, start: 'top 60%', end: 'bottom 40%',
+        onToggle: (self) => { if (self.isActive) goStage(stage); },
+      });
     });
-    s.addEventListener('pointerenter', () => scope.setHover(i));
-    s.addEventListener('pointerleave', () => scope.setHover(-1));
-    s.addEventListener('focus', () => scope.setHover(i));
-    s.addEventListener('blur', () => scope.setHover(-1));
+  }
+
+  /* ── Découpage du texte en mots ─────────────────────────────── */
+  function splitWords(el, wrapInner) {
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(p)); return; }
+            const w = document.createElement('span');
+            w.className = 'word';
+            if (wrapInner) { const i = document.createElement('span'); i.textContent = p; w.appendChild(i); }
+            else w.textContent = p;
+            frag.appendChild(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && !n.classList.contains('word')) walk(n);
+      });
+    };
+    walk(el);
+  }
+
+  /* ── Animations ─────────────────────────────────────────────── */
+  if (hasGsap && !reduce) {
+    // Ouverture : lettres du nom, puis le reste
+    const chars = $$('.name .c');
+    const intro = $$('[data-intro]');
+    gsap.set(chars, { yPercent: 115, rotate: 6 });
+    gsap.set(intro, { y: 24, opacity: 0 });
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+      gsap.timeline({ delay: .15 })
+        .to(chars, { yPercent: 0, rotate: 0, duration: 1.4, ease: 'expo.out', stagger: .045 })
+        .to(intro, { y: 0, opacity: 1, duration: 1.1, ease: 'expo.out', stagger: .09 }, '-=1.0');
+    });
+    // Le nom s'éloigne doucement quand on quitte l'ouverture
+    gsap.to('.hero-in', {
+      yPercent: -18, opacity: .15, ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
+    });
+
+    // Titres : mots qui montent de derrière un masque
+    $$('[data-split]').forEach((h) => {
+      splitWords(h, true);
+      const inner = $$('.word > span', h);
+      gsap.set(inner, { yPercent: 110 });
+      ST.create({
+        trigger: h, start: 'top 88%', once: true,
+        onEnter: () => gsap.to(inner, { yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: .06 }),
+      });
+    });
+
+    // Blocs : fondu et montée, par lots
+    const reveals = $$('[data-reveal]');
+    gsap.set(reveals, { y: 36, opacity: 0 });
+    ST.batch(reveals, {
+      start: 'top 90%', once: true,
+      onEnter: (batch) => gsap.to(batch, { y: 0, opacity: 1, duration: 1.1, ease: 'expo.out', stagger: .08 }),
+    });
+
+    // Lignes de projets : apparition en cascade
+    ST.batch('.row', {
+      start: 'top 92%', once: true,
+      onEnter: (batch) => gsap.fromTo(batch, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: .9, ease: 'expo.out', stagger: .05 }),
+    });
+
+    // Manifeste : les mots s'allument au fil du défilement
+    $$('[data-scrub]').forEach((p) => {
+      splitWords(p, false);
+      gsap.to($$('.word', p), {
+        opacity: 1, ease: 'none', stagger: .08,
+        scrollTrigger: { trigger: p, start: 'top 82%', end: 'bottom 50%', scrub: .6 },
+      });
+    });
+
+    // Compteurs
+    $$('[data-count]').forEach((el) => {
+      const end = +el.dataset.count, o = { v: 0 };
+      el.textContent = '0';
+      ST.create({
+        trigger: el, start: 'top 92%', once: true,
+        onEnter: () => gsap.to(o, { v: end, duration: 2, ease: 'expo.out', onUpdate: () => { el.textContent = Math.round(o.v); } }),
+      });
+    });
+
+    // Frise : la ligne se dessine, les points s'allument
+    const tl = $('.timeline');
+    ST.create({
+      trigger: tl, start: 'top 70%', end: 'bottom 60%', scrub: .5,
+      onUpdate: (self) => tl.style.setProperty('--p', self.progress.toFixed(3)),
+    });
+    $$('.job').forEach((job) => ST.create({ trigger: job, start: 'top 62%', onEnter: () => job.classList.add('lit'), onLeaveBack: () => job.classList.remove('lit') }));
+
+    // Panneaux de projet : légère inclinaison en 3D sous la souris
+    if (finePointer) {
+      $$('.feat-panel').forEach((panel) => {
+        const rx = gsap.quickTo(panel, 'rotationX', { duration: .8, ease: 'power3' });
+        const ry = gsap.quickTo(panel, 'rotationY', { duration: .8, ease: 'power3' });
+        gsap.set(panel, { transformPerspective: 1200 });
+        panel.addEventListener('pointermove', (e) => {
+          const r = panel.getBoundingClientRect();
+          ry(((e.clientX - r.left) / r.width - .5) * 6);
+          rx(-((e.clientY - r.top) / r.height - .5) * 6);
+        });
+        panel.addEventListener('pointerleave', () => { rx(0); ry(0); });
+      });
+    }
+
+    // Les ouvertures de lignes changent la hauteur de page
+    let refreshT;
+    $$('.row').forEach((d) => d.addEventListener('toggle', () => { clearTimeout(refreshT); refreshT = setTimeout(() => ST.refresh(), 650); }));
+    window.addEventListener('load', () => ST.refresh());
+  } else {
+    $$('.big .word').forEach((w) => { w.style.opacity = 1; });
+  }
+
+  // Défilement infini des technologies : on double le contenu
+  $$('.marquee-track').forEach((tr) => { tr.innerHTML += tr.innerHTML; });
+
+  /* ── Curseur et boutons magnétiques ─────────────────────────── */
+  if (finePointer && !reduce && hasGsap) {
+    root.classList.add('has-cursor');
+    const cur = $('.cursor');
+    const dot = $('.cursor-dot'), ring = $('.cursor-ring');
+    const dx = gsap.quickTo(dot, 'x', { duration: .12, ease: 'power3' });
+    const dy = gsap.quickTo(dot, 'y', { duration: .12, ease: 'power3' });
+    const rx = gsap.quickTo(ring, 'x', { duration: .5, ease: 'power3' });
+    const ry = gsap.quickTo(ring, 'y', { duration: .5, ease: 'power3' });
+    window.addEventListener('pointermove', (e) => { dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY); cur.classList.remove('hidden'); }, { passive: true });
+    document.addEventListener('pointerleave', () => cur.classList.add('hidden'));
+    const HOVER = 'a,button,summary,input,textarea,label';
+    document.addEventListener('pointerover', (e) => cur.classList.toggle('hover', !!e.target.closest(HOVER)));
+
+    $$('.magnetic').forEach((el) => {
+      const mx = gsap.quickTo(el, 'x', { duration: .6, ease: 'power3' });
+      const my = gsap.quickTo(el, 'y', { duration: .6, ease: 'power3' });
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        mx((e.clientX - r.left - r.width / 2) * .3);
+        my((e.clientY - r.top - r.height / 2) * .4);
+      });
+      el.addEventListener('pointerleave', () => { gsap.to(el, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1,.4)' }); });
+    });
+  }
+
+  // Halo qui suit la souris sur les cartes de jeux
+  $('#games').addEventListener('pointermove', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    const r = b.getBoundingClientRect();
+    b.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    b.style.setProperty('--my', (e.clientY - r.top) + 'px');
   });
+
+  /* ── Filtres de l'index ─────────────────────────────────────── */
+  const rows = $$('.row');
+  $$('.chip-btn').forEach((c) => c.addEventListener('click', () => {
+    const f = c.dataset.filter;
+    $$('.chip-btn').forEach((b) => b.setAttribute('aria-pressed', String(b === c)));
+    const show = rows.filter((r) => f === 'all' || r.dataset.dom.split(' ').includes(f));
+    rows.forEach((r) => { r.hidden = !show.includes(r); });
+    if (hasGsap && !reduce) gsap.fromTo(show, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .7, ease: 'expo.out', stagger: .035 });
+    if (hasGsap) ST.refresh();
+  }));
 
   /* ── Piège de focus (utilisé par games.js) ──────────────────── */
   window.focusTrap = function (container) {
@@ -285,12 +349,12 @@
       if (e.key !== 'Tab') return;
       const f = $$(sel, container).filter((el) => el.offsetParent !== null);
       if (!f.length) return;
-      const first = f[0], lastEl = f[f.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastEl.focus(); }
-      else if (!e.shiftKey && document.activeElement === lastEl) { e.preventDefault(); first.focus(); }
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     };
     container.addEventListener('keydown', onKey);
-    const close = $('#gameClose', container) || $(sel, container);
+    const close = $('#gameClose', container);
     if (close) close.focus();
     return () => { container.removeEventListener('keydown', onKey); if (prev && prev.focus) prev.focus(); };
   };
@@ -314,11 +378,16 @@
   gamesEl.addEventListener('pointerenter', () => { loadGames().catch(() => {}); }, { once: true });
   gamesEl.addEventListener('click', (e) => {
     const b = e.target.closest('[data-game]');
-    if (!b || window.openGame) return;      // une fois chargé, games.js gère ses boutons
-    loadGames().then(() => window.openGame(b.dataset.game)).catch(() => {
-      $('.lab-foot').textContent = t('gamesErr');
-    });
+    if (!b || window.openGame) return;
+    loadGames().then(() => window.openGame(b.dataset.game)).catch(() => { $('.lab-foot').textContent = t('gamesErr'); });
   });
+  // Bloque le défilement fluide derrière la fenêtre de jeu
+  const modal = $('#gameModal');
+  new MutationObserver(() => {
+    const open = !modal.classList.contains('hidden');
+    if (lenis) open ? lenis.stop() : lenis.start();
+    if (scene) open ? scene.stop() : (!reduce && scene.start());
+  }).observe(modal, { attributes: true, attributeFilter: ['class'] });
 
   /* ── Succès ─────────────────────────────────────────────────── */
   const GAME_ACH = {
@@ -327,8 +396,7 @@
     minesweeper: 'mine_sweeper', tetris: 'tetris_10', whack: 'whack_25', taquin: 'taquin_win', rps: 'rps_streak',
   };
   function updateAchievements() {
-    const a = window.achievements;
-    const out = $('#achCount');
+    const a = window.achievements, out = $('#achCount');
     if (!a || !out) return;
     const n = a.unlockedCount();
     out.textContent = n ? t('ach')(n, a.total()) : '';
@@ -344,10 +412,9 @@
   copyBtn.addEventListener('click', () => {
     const mail = copyBtn.dataset.mail;
     const done = () => {
-      const label = $$('span', copyBtn);
-      label.forEach((s) => { s.dataset.orig = s.dataset.orig || s.textContent; });
-      label.forEach((s) => { s.textContent = T[s.dataset.l].copied; });
-      setTimeout(() => label.forEach((s) => { s.textContent = s.dataset.orig; }), 2200);
+      const spans = $$('span', copyBtn);
+      spans.forEach((s) => { s.dataset.orig = s.dataset.orig || s.textContent; s.textContent = T[s.dataset.l].copied; });
+      setTimeout(() => spans.forEach((s) => { s.textContent = s.dataset.orig; }), 2200);
     };
     if (navigator.clipboard) navigator.clipboard.writeText(mail).then(done, () => { location.href = 'mailto:' + mail; });
     else location.href = 'mailto:' + mail;
@@ -371,7 +438,6 @@
   const form = $('#contactForm');
   const msg = $('#formMsg');
   form.addEventListener('focusin', () => { loadEmailJS().catch(() => {}); }, { once: true });
-
   function check() {
     const f = form.elements;
     const rules = [
@@ -379,12 +445,9 @@
       [f.email, /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.value.trim()), 'errEmail'],
       [f.message, f.message.value.trim().length > 2, 'errMsg'],
     ];
-    let firstBad = null;
-    rules.forEach(([el, ok, key]) => {
-      el.setAttribute('aria-invalid', String(!ok));
-      if (!ok && !firstBad) firstBad = [el, key];
-    });
-    return firstBad;
+    let bad = null;
+    rules.forEach(([el, ok, key]) => { el.setAttribute('aria-invalid', String(!ok)); if (!ok && !bad) bad = [el, key]; });
+    return bad;
   }
   form.addEventListener('input', (e) => { if (e.target.getAttribute('aria-invalid') === 'true') check(); });
   form.addEventListener('submit', async (e) => {
@@ -417,28 +480,25 @@
     let el = null, out, input, buf = '';
     const say = (text, cls) => { const p = document.createElement('div'); if (cls) p.className = cls; p.textContent = text; out.appendChild(p); out.scrollTop = out.scrollHeight; };
     const en = () => root.lang === 'en';
+    const go = (sel) => { close(); scrollToEl($(sel)); };
     const cmds = {
       help: () => say(en()
-        ? 'whoami  work  stack  contact  cv  github  linkedin  games  theme  lang  clear  exit'
-        : 'whoami  projets  stack  contact  cv  github  linkedin  jeux  theme  lang  clear  exit', 'a'),
-      whoami: () => say(en()
-        ? 'Samy Boudaoud, software engineer at CS GROUP. Aix-en-Provence, France.'
-        : 'Samy Boudaoud, ingénieur logiciel chez CS GROUP. Aix-en-Provence.'),
+        ? 'whoami  work  stack  contact  cv  github  linkedin  games  lang  clear  exit'
+        : 'whoami  projets  stack  contact  cv  github  linkedin  jeux  lang  clear  exit', 'a'),
+      whoami: () => say(en() ? 'Samy Boudaoud, software engineer at CS GROUP. Aix-en-Provence, France.' : 'Samy Boudaoud, ingénieur logiciel chez CS GROUP. Aix-en-Provence.'),
       stack: () => say('C++/Qt  .NET  Java/Kotlin  Dart/Flutter  Python  TypeScript\nPostgreSQL  Redis  Docker  Kubernetes  Terraform\nESP32  Modbus RTU  MQTT  BLE'),
-      projets: () => { close(); $('#projets').scrollIntoView(); },
+      projets: () => go('#projets'),
       contact: () => say('samyboudaoud95@gmail.com'),
       cv: () => { const a = document.createElement('a'); a.href = 'CV_Samy_Boudaoud.pdf'; a.download = ''; a.click(); },
       github: () => window.open('https://github.com/SamymaS', '_blank', 'noopener'),
       linkedin: () => window.open('https://www.linkedin.com/in/samy-boudaoud', '_blank', 'noopener'),
-      jeux: () => { close(); $('#labo').scrollIntoView(); },
-      theme: () => $('#themeBtn').click(),
+      jeux: () => go('#labo'),
       lang: () => $('#langBtn').click(),
       sudo: () => say(en() ? 'Nice try.' : 'Bien tenté.', 'e'),
       clear: () => { out.textContent = ''; },
       exit: () => close(),
     };
     cmds.work = cmds.projets; cmds.games = cmds.jeux; cmds.ls = cmds.help;
-
     function build() {
       el = document.createElement('div');
       el.className = 'term';
@@ -467,7 +527,7 @@
     document.addEventListener('keydown', (e) => {
       const tag = (document.activeElement && document.activeElement.tagName) || '';
       if (/INPUT|TEXTAREA|SELECT/.test(tag) || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (!$('#gameModal').classList.contains('hidden')) return;
+      if (!modal.classList.contains('hidden')) return;
       buf = (buf + e.key.toLowerCase()).slice(-2);
       if (buf === 'sb') { buf = ''; e.preventDefault(); open(); }
     });
@@ -475,8 +535,6 @@
 
   /* ── Démarrage ──────────────────────────────────────────────── */
   applyLang();
-  syncThemeMeta();
-
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
   }
