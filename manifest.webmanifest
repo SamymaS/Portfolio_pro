@@ -1,19 +1,19 @@
 {
-  "name": "Samy Boudaoud — Portfolio",
+  "name": "Samy Boudaoud, ingénieur logiciel",
   "short_name": "Samy B.",
-  "description": "Portfolio de Samy Boudaoud — Ingénieur Logiciel Fullstack & IoT, Aix-en-Provence.",
+  "description": "Portfolio de Samy Boudaoud, ingénieur logiciel chez CS GROUP à Aix-en-Provence.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#080b10",
-  "theme_color": "#080b10",
+  "background_color": "#E9EDF1",
+  "theme_color": "#E9EDF1",
   "lang": "fr",
   "icons": [
     {
       "src": "favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

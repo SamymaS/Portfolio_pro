@@ -8,78 +8,68 @@ Portfolio personnel en HTML, CSS et JavaScript natifs. Aucun framework, aucune �
 
 ## Ce que contient le site
 
-**Le portfolio.** Profil, compétences, expériences, projets, formations et un formulaire de contact. Le CV est téléchargeable directement depuis la barre de navigation.
+**Le portfolio.** Une page unique : ouverture, projets (quatre détaillés puis un index filtrable de tous les autres), parcours, formation, compétences, labo de mini-jeux et contact. Le CV est téléchargeable depuis l'en-tête.
 
-**Une page projet dédiée à Sameva.** Étude de cas complète de mon application Flutter de quêtes gamifiées : concept, architecture, chiffres du projet et feuille de route. Disponible en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html).
+**L'oscilloscope d'ouverture.** Une trame TDMA à quatre intervalles, comme sur un réseau radio TETRA. Chaque intervalle porte un domaine (logiciel critique, mobile, IoT, web et cloud) et sert de filtre pour les projets. Dessiné en Canvas 2D, ralenti à 30 images par seconde, suspendu hors écran et figé si l'utilisateur préfère réduire les animations.
 
-**Seize mini-jeux jouables dans le navigateur.** Puissance 4 et Morpion avec IA, Snake, Casse-briques, 2048, Tetris, Démineur, Taquin, Pong, Flappy, Simon, Memory, Tape-taupe, Pierre-feuille-ciseaux, un test de réflexes et un quiz technique. Treize succès déblocables sont associés, persistés en local.
+**Une page projet dédiée à Sameva.** Étude de cas en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html). Elle garde sa propre feuille de style (`style.css`).
+
+**Seize mini-jeux** et treize succès persistés en local. Tapez `s` puis `b` pour ouvrir un terminal caché.
 
 ---
 
 ## Choix techniques
 
-### Pas de build
+### Pas de build, peu de requêtes
 
-Le site est du HTML, du CSS et du JavaScript écrits à la main. Pas de bundler, pas de transpilation, pas de `node_modules`. Cloner le dépôt et ouvrir `index.html` suffit pour travailler dessus.
+HTML, CSS et JavaScript écrits à la main. Au chargement, la page principale ne demande que cinq fichiers : la police, `site.css`, `achievements.css`, `achievements.js` et `site.js`. Les jeux (`games.js`) ne se chargent qu'au premier clic sur un jeu, et EmailJS qu'au premier focus dans le formulaire. Aucune bibliothèque tierce au démarrage.
 
-Trois ressources seulement viennent de l'extérieur : les polices Google (Syne et Space Mono), Three.js pour l'animation d'en-tête, et EmailJS pour le formulaire de contact.
+### Typographie
+
+Une seule famille, Archivo, auto-hébergée dans `fonts/` en police variable (graisse et largeur). Les titres utilisent l'axe de largeur pour leur caractère, le texte courant reste en largeur normale.
 
 ### Thème et langue
 
-Le thème sombre ou clair repose sur des variables CSS commutées par l'attribut `data-theme` sur `<html>`. Le choix est mémorisé sous la clé `sb-theme`.
+Le thème suit le système par défaut, et le choix manuel est mémorisé sous `sb-theme`. Les couleurs sont des variables CSS redéfinies pour le mode sombre.
 
-L'internationalisation français / anglais est maison : un dictionnaire dans `i18n.js`, des attributs `data-i18n` sur les éléments concernés, et la préférence stockée sous `sb-lang`. La page Sameva fonctionne différemment, avec deux fichiers HTML distincts et des liens `hreflang`, ce qui donne à chaque langue sa propre URL indexable.
+Chaque texte existe en français et en anglais dans le HTML, marqué `data-l="fr"` ou `data-l="en"`. Une règle CSS masque la langue inactive selon l'attribut `lang` de `<html>`, posé avant le premier rendu (préférence sous `sb-lang`). Pour ajouter un texte, il suffit d'écrire les deux versions côte à côte.
 
 ### Application web progressive
 
-`manifest.webmanifest` et `sw.js` rendent le site installable et consultable hors ligne.
+`manifest.webmanifest` et `sw.js` rendent le site installable et consultable hors ligne : network-first pour le HTML, cache-first avec rafraîchissement en arrière-plan pour les ressources.
 
-La stratégie de cache est volontairement dissymétrique : **network-first pour le HTML**, pour qu'une page mise à jour soit toujours servie fraîche, et **cache-first avec rafraîchissement en arrière-plan pour les ressources statiques**, pour la performance.
-
-> **À ne pas oublier :** après toute modification de `style.css` ou d'un fichier `.js`, incrémenter la constante `VERSION` dans `sw.js`. Sans ça, les visiteurs récurrents verront l'ancienne version pendant une visite.
+> **À ne pas oublier :** après toute modification d'un fichier `.css` ou `.js`, incrémenter `VERSION` dans `sw.js`.
 
 ### Sécurité et en-têtes
 
-Les en-têtes HTTP sont définis dans `vercel.json` :
-
-| En-tête | Rôle |
-| --- | --- |
-| `Content-Security-Policy` | Restreint les origines de scripts, styles, polices, images et requêtes |
-| `Strict-Transport-Security` | Force HTTPS, avec `preload` |
-| `X-Frame-Options: DENY` | Bloque l'inclusion du site dans une iframe |
-| `X-Content-Type-Options: nosniff` | Empêche la réinterprétation du type MIME |
-| `Referrer-Policy` | Limite les informations transmises aux sites tiers |
-| `Permissions-Policy` | Désactive caméra, micro et géolocalisation |
-
-Toute nouvelle ressource externe doit être déclarée dans la directive CSP correspondante, sinon le navigateur la bloquera silencieusement.
+Définis dans `vercel.json` : `Content-Security-Policy`, `Strict-Transport-Security`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, et un cache long pour la police. Toute nouvelle ressource externe doit être ajoutée à la CSP.
 
 ### Accessibilité
 
-Lien d'évitement vers le contenu, navigation au clavier, piège de focus dans les fenêtres modales des jeux, attributs ARIA sur les composants interactifs et textes alternatifs sur les images.
+Lien d'évitement, focus visible, contrastes AA dans les deux thèmes (audit axe-core sans violation), index des projets en éléments `<details>` natifs, intervalles de l'oscilloscope en vrais boutons, piège de focus dans la fenêtre des jeux, mouvement réduit respecté.
 
 ---
 
 ## Organisation des fichiers
 
 ```
-├── index.html              Page principale, toutes les sections
+├── index.html              Page principale (FR et EN)
+├── site.css                Styles de la page principale et du 404
+├── site.js                 Thème, langue, oscilloscope, filtres, jeux, formulaire, terminal
+├── games.js                Les seize mini-jeux (chargés à la demande)
+├── achievements.js / .css  Succès et notifications
 ├── sameva.html             Étude de cas Sameva (français)
-├── sameva.en.html          Étude de cas Sameva (anglais)
+├── Sameva.en.html          Étude de cas Sameva (anglais)
+├── style.css               Feuille de styles des pages Sameva
 ├── 404.html                Page d'erreur
-├── style.css               Feuille de styles, variables et thèmes
-├── achievements.css        Styles des succès et notifications
-├── main.js                 Navigation, thème, animations, formulaire
-├── i18n.js                 Dictionnaire et bascule de langue
-├── games.js                Les seize mini-jeux
-├── achievements.js         Succès et persistance locale
+├── fonts/                  Archivo, police variable auto-hébergée
+├── assets/                 Visuels Sameva et image de partage (og_portfolio.png)
 ├── sw.js                   Service worker
 ├── manifest.webmanifest    Manifeste de l'application web
-├── vercel.json             En-têtes HTTP et configuration de déploiement
-├── sitemap.xml             Plan du site avec alternances de langue
-├── robots.txt              Directives d'indexation
-├── favicon.svg             Icône du site
-├── CV_Samy_Boudaoud.pdf    Curriculum vitae
-└── assets/                 Images, illustrations et visuels de partage
+├── vercel.json             En-têtes HTTP
+├── sitemap.xml, robots.txt Indexation
+├── favicon.svg             Icône
+└── CV_Samy_Boudaoud.pdf    Curriculum vitae
 ```
 
 ---
