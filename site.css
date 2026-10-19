@@ -569,3 +569,5 @@ main,.foot{position:relative;z-index:2}
 }
 .ach-toast-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(56,230,255,.08);border:1px solid rgba(56,230,255,.2);color:var(--ink)}
 .ach-toast-icon svg{width:22px;height:22px}
+/* Pendant un jeu, le grain du fond est inutile : on l'arrête */
+body:has(.game-modal:not(.hidden)) .grain{display:none}

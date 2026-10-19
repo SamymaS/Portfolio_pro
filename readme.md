@@ -37,7 +37,26 @@ Toutes les images sont en WebP, chargées en différé (`loading="lazy"`) : envi
 
 **Une page projet dédiée à Sameva**, en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html), avec sa propre feuille de style (`style.css`).
 
-**Seize mini-jeux** et treize succès. Tapez `s` puis `b` pour ouvrir un terminal caché.
+**Seize mini-jeux**, réécrits sur un moteur commun (`games/core.js`) : canvas net sur écran Retina, boucle à pas fixe de 1/120 s (même vitesse sur toutes les machines, rendu interpolé), clavier, souris et tactile, sons synthétisés en WebAudio (coupables), records par jeu, écrans de début et de fin. Chaque jeu vit dans son propre fichier `games/<id>.js` et n'est chargé qu'à son ouverture. Treize succès, une icône dessinée par jeu, aucun émoji. Tapez `s` puis `b` pour ouvrir un terminal caché.
+
+| Jeu | Fichier | Particularité |
+| --- | --- | --- |
+| Puissance 4 | `connect4.js` | IA minimax alpha-bêta (profondeur 5), chute des jetons avec rebond |
+| Morpion | `tictactoe.js` | IA minimax qui peut se tromper dans l'ouverture, traits animés |
+| Blocs | `tetris.js` | Rotations avec rattrapage au mur, pièce fantôme, réserve, répétition des touches gérée par le jeu |
+| Snake | `snake.js` | Serpent interpolé entre les cases, file de commandes |
+| 2048 | `2048.js` | Tuiles qui glissent, fusion animée, coup mis en file |
+| Démineur | `minesweeper.js` | Premier clic sûr, révélation en onde, drapeau à l'appui long |
+| Casse-briques | `breakout.js` | Collisions continues (la balle ne traverse jamais une brique), niveaux |
+| Pong | `pong.js` | Effet selon la vitesse de la raquette, IA battable |
+| Envol | `flappy.js` | Avion de papier, physique au pas fixe, décor en parallaxe |
+| Memory | `memory.js` | Retournement 3D, huit symboles dessinés |
+| Séquence | `simon.js` | Une note par touche, tempo croissant |
+| Taquin | `taquin.js` | Mélanges toujours solubles, lignes entières déplaçables |
+| Tape-taupe | `whack.js` | Signaux qui s'élèvent et s'éteignent, rythme croissant |
+| Pierre-feuille-ciseaux | `rps.js` | L'ordinateur prédit vos coups à partir des deux précédents |
+| Réflexes | `reflex.js` | Mesure au pointerdown, cinq essais, graphique |
+| Quiz tech | `quiz.js` | 31 questions bilingues sur la stack (TETRA, Qt, MQTT, Kubernetes…) |
 
 ---
 
@@ -86,11 +105,11 @@ Définis dans `vercel.json` (CSP, HSTS, `X-Frame-Options`, `nosniff`, `Referrer-
 ├── scene.js                Scène 3D : formes, shaders, rendu
 ├── vendor/                 Three.js, GSAP, ScrollTrigger, Lenis
 ├── fonts/                  Archivo, police variable auto-hébergée
-├── games.js                Les seize mini-jeux (chargés à la demande)
+├── games/                  Moteur commun (core.js) et un fichier par jeu, chargés à la demande
 ├── achievements.js / .css  Succès et notifications
 ├── sameva.html, Sameva.en.html, style.css   Étude de cas Sameva
 ├── 404.html                Page d'erreur
-├── assets/                 Visuels (visuals/, thumbs/, sameva/), mascotte Sameva, image de partage
+├── assets/                 Visuels (visuals/, thumbs/, sameva/), logos des entreprises (logos/), mascotte Sameva, image de partage
 ├── sw.js, manifest.webmanifest, vercel.json, sitemap.xml, robots.txt, favicon.svg
 └── CV_Samy_Boudaoud.pdf    Curriculum vitae
 ```

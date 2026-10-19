@@ -15,6 +15,17 @@ SBG.register('snake', {
 
     let snake, prev, dir, queue, food, score, step, acc, state, grow, eatPulse, deathT;
 
+    const gridLayer = document.createElement('canvas');
+    gridLayer.width = cv.el.width; gridLayer.height = cv.el.height;
+    {
+      const g = gridLayer.getContext('2d');
+      g.setTransform(cv.dpr, 0, 0, cv.dpr, 0, 0);
+      g.fillStyle = C.grid;
+      for (let x = 0; x < COLS; x++) for (let y = 0; y < ROWS; y++) {
+        if ((x + y) % 2 === 0) g.fillRect(x * CELL, y * CELL, CELL, CELL);
+      }
+    }
+
     function reset() {
       snake = [{ x: 8, y: 7 }, { x: 7, y: 7 }, { x: 6, y: 7 }, { x: 5, y: 7 }];
       prev = snake.map((p) => ({ ...p }));
@@ -96,11 +107,8 @@ SBG.register('snake', {
         const k = state === 'play' ? acc / step : 1;
         cv.clear(C.bg);
 
-        // quadrillage discret
-        ctx.fillStyle = C.grid;
-        for (let x = 0; x < COLS; x++) for (let y = 0; y < ROWS; y++) {
-          if ((x + y) % 2 === 0) ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
-        }
+        // quadrillage discret (pré-rendu une seule fois)
+        ctx.drawImage(gridLayer, 0, 0, W, H);
 
         // fruit : orbe qui pulse
         const fxp = food.x * CELL + CELL / 2, fyp = food.y * CELL + CELL / 2;

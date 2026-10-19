@@ -26,6 +26,19 @@ SBG.register('flappy', {
       return { far, near, offFar: 0, offNear: 0 };
     }
 
+    // Les couches bouclent sur W : on les dessine une fois sur une tuile répétable
+    function makeTiles() {
+      const mk = () => { const c = document.createElement('canvas'); c.width = cv.el.width; c.height = cv.el.height; const g = c.getContext('2d'); g.setTransform(cv.dpr, 0, 0, cv.dpr, 0, 0); return [c, g]; };
+      const [far, gf] = mk(), [near, gn] = mk();
+      for (const p of layers.far) { gf.globalAlpha = p.a; gf.fillStyle = C.ink; gf.fillRect(p.x, p.y, p.r, p.r); }
+      gn.lineWidth = 1; gn.lineCap = 'round'; gn.strokeStyle = C.blue;
+      for (const p of layers.near) {
+        gn.globalAlpha = p.a;
+        for (const dx of [0, -W]) { gn.beginPath(); gn.moveTo(p.x + dx, p.y); gn.lineTo(p.x + dx + p.len, p.y); gn.stroke(); }
+      }
+      return { far, near };
+    }
+
     function reset() {
       plane = { y: H * 0.45, vy: 0, a: 0 };
       prev = { y: plane.y, a: 0 };
@@ -158,20 +171,11 @@ SBG.register('flappy', {
       },
       render(alpha) {
         cv.clear(C.bg);
-        // couche lointaine : points
-        for (const p of layers.far) {
-          let x = p.x - layers.offFar; if (x < 0) x += W;
-          ctx.globalAlpha = p.a; ctx.fillStyle = C.ink;
-          ctx.fillRect(x, p.y, p.r, p.r);
-        }
-        // couche proche : traits horizontaux
-        ctx.lineWidth = 1; ctx.lineCap = 'round';
-        for (const p of layers.near) {
-          let x = p.x - layers.offNear; if (x < -p.len) x += W + p.len;
-          ctx.globalAlpha = p.a; ctx.strokeStyle = C.blue;
-          ctx.beginPath(); ctx.moveTo(x, p.y); ctx.lineTo(x + p.len, p.y); ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
+        // deux couches de décor, pré-rendues en tuiles et défilées
+        if (!layers.tiles) layers.tiles = makeTiles();
+        const fo = layers.offFar % W, no = layers.offNear % W;
+        ctx.drawImage(layers.tiles.far, -fo, 0, W, H); ctx.drawImage(layers.tiles.far, W - fo, 0, W, H);
+        ctx.drawImage(layers.tiles.near, -no, 0, W, H); ctx.drawImage(layers.tiles.near, W - no, 0, W, H);
 
         // sol
         ctx.strokeStyle = C.line;
