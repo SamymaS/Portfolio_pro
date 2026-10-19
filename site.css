@@ -390,7 +390,7 @@ main,.foot{position:relative;z-index:2}
 #gameMute .g-slash{display:none}
 #gameMute.off .g-slash{display:inline}
 #gameMute.off .g-wave{display:none}
-.g-stage{position:relative;flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;padding:1rem;outline:none}
+.g-stage{position:relative;flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;justify-content:safe center;gap:.9rem;padding:1rem;outline:none}
 .g-canvas{display:block;width:100%;height:auto;max-height:calc(96svh - 190px);object-fit:contain;border-radius:16px;background:#070912;touch-action:none;user-select:none;-webkit-user-select:none}
 .game-modal-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.3rem 1rem;padding:.65rem 1.1rem .8rem;border-top:1px solid var(--line);font-size:.86rem}
 .g-status{color:var(--ink);font-weight:600;min-height:1.3em}
@@ -419,8 +419,14 @@ main,.foot{position:relative;z-index:2}
 @media (max-width:560px){
   .game-modal{padding:0;align-items:stretch}
   .game-modal-inner{max-height:none;height:100svh;border-radius:0;border:0}
+  .game-modal-hdr{gap:.5rem;padding:.6rem .5rem .6rem .8rem}
+  .g-icon{display:none}
   .game-modal-title{font-size:1rem}
-  .g-chip{min-width:3rem;padding:.15rem .5rem}
+  .g-chip{min-width:0;padding:.1rem .45rem}
+  .g-chip small{font-size:.6rem}
+  .g-chip b{font-size:.88rem}
+  .g-icon-btn{width:34px;height:34px}
+  .g-actions{gap:0}
   .g-help{display:none}
   .g-canvas{max-height:calc(100svh - 170px)}
 }
