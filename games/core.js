@@ -221,6 +221,9 @@
       onKey(fn) {
         const h = (e) => {
           if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+          // Entrée ou Espace sur un bouton de panneau : le bouton s'en charge, le jeu ne doit pas le recevoir aussi
+          const ae = document.activeElement;
+          if ((e.key === 'Enter' || e.key === ' ') && ae && ae.closest && ae.closest('.g-overlay, .g-btn:not(:disabled), #gameRestart, #gameMute, #gameClose')) return;
           if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
           fn(e);
         };
