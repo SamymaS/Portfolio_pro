@@ -180,9 +180,12 @@
         return {
           el: c, ctx, w, h, dpr,
           // coordonnées écran → coordonnées logiques du jeu
+          // tient compte du letterboxing (object-fit: contain quand la hauteur limite)
           toLocal(clientX, clientY) {
             const r = c.getBoundingClientRect();
-            return { x: (clientX - r.left) * (w / r.width), y: (clientY - r.top) * (h / r.height) };
+            const s = Math.min(r.width / w, r.height / h);
+            const ox = (r.width - w * s) / 2, oy = (r.height - h * s) / 2;
+            return { x: (clientX - r.left - ox) / s, y: (clientY - r.top - oy) / s };
           },
           clear(color) { ctx.fillStyle = color || C.bg; ctx.fillRect(0, 0, w, h); },
         };
