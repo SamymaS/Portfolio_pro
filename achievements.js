@@ -7,19 +7,19 @@
 
   // Définition des succès (id → icône + titre + description)
   const DEFS = {
-    champion:     { icon: '🔴', title: 'Champion',        desc: 'Battre l’IA à Puissance 4' },
-    snake_50:     { icon: '🐍', title: 'Charmeur',        desc: 'Atteindre 50 pts à Snake' },
-    quiz_master:  { icon: '💡', title: 'Quiz Master',     desc: 'Sans-faute au Quiz Tech' },
-    memory_king:  { icon: '🧠', title: 'Roi du Memory',   desc: 'Memory en 20 coups max' },
-    tictac_master:{ icon: '⭕', title: 'Stratège',        desc: 'Battre l’IA au Morpion' },
-    pong_win:     { icon: '🏓', title: 'Smash',           desc: 'Gagner un match de Pong' },
-    flappy_20:    { icon: '🐦', title: 'Envolée',         desc: 'Score de 20 à Flappy' },
-    reflex_pro:   { icon: '⚡', title: 'Éclair',          desc: 'Réagir en moins de 250 ms' },
-    mine_sweeper: { icon: '💣', title: 'Démineur',        desc: 'Résoudre le Démineur' },
-    tetris_10:    { icon: '🟦', title: 'Tetromino',       desc: 'Effacer 10 lignes à Tetris' },
-    whack_25:     { icon: '🔨', title: 'Marteau',         desc: '25 taupes en 30 s' },
-    taquin_win:   { icon: '🔢', title: 'Taquin résolu',   desc: 'Remettre le taquin en ordre' },
-    rps_streak:   { icon: '✊', title: 'Série gagnante',  desc: '5 victoires d’affilée' },
+    champion:     { game: 'connect4', title: 'Champion',        desc: 'Battre l’IA au Puissance 4' },
+    snake_50:     { game: 'snake', title: 'Charmeur',        desc: 'Atteindre 50 pts à Snake' },
+    quiz_master:  { game: 'quiz', title: 'Quiz Master',     desc: 'Sans-faute au Quiz Tech' },
+    memory_king:  { game: 'memory', title: 'Roi du Memory',   desc: 'Memory en 20 coups max' },
+    tictac_master:{ game: 'tictactoe', title: 'Stratège',        desc: 'Battre l’IA au Morpion' },
+    pong_win:     { game: 'pong', title: 'Smash',           desc: 'Gagner un match de Pong' },
+    flappy_20:    { game: 'flappy', title: 'Envolée',         desc: 'Passer 20 portes à Envol' },
+    reflex_pro:   { game: 'reflex', title: 'Éclair',          desc: 'Réagir en moins de 250 ms' },
+    mine_sweeper: { game: 'minesweeper', title: 'Démineur',        desc: 'Résoudre le Démineur' },
+    tetris_10:    { game: 'tetris', title: 'Tetromino',       desc: 'Effacer 10 lignes à Blocs' },
+    whack_25:     { game: 'whack', title: 'Marteau',         desc: '25 taupes en 30 s' },
+    taquin_win:   { game: 'taquin', title: 'Taquin résolu',   desc: 'Remettre le taquin en ordre' },
+    rps_streak:   { game: 'rps', title: 'Série gagnante',  desc: '5 victoires d’affilée' },
   };
 
   const STORAGE_KEY = 'sb-achievements';
@@ -52,12 +52,15 @@
     el.className = 'ach-toast';
     el.setAttribute('role', 'status');
     el.innerHTML =
-      '<span class="ach-toast-icon">' + def.icon + '</span>' +
+      '<span class="ach-toast-icon"></span>' +
       '<span class="ach-toast-body">' +
         '<span class="ach-toast-label">Succès débloqué</span>' +
         '<span class="ach-toast-title"></span>' +
         '<span class="ach-toast-desc"></span>' +
       '</span>';
+    // icône du jeu, reprise de son bouton dans le labo
+    const ico = document.querySelector('[data-game="' + def.game + '"] svg');
+    if (ico) el.querySelector('.ach-toast-icon').appendChild(ico.cloneNode(true));
     // textContent pour éviter toute injection
     el.querySelector('.ach-toast-title').textContent = def.title;
     el.querySelector('.ach-toast-desc').textContent = def.desc;

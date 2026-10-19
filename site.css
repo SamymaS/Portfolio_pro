@@ -367,19 +367,63 @@ main,.foot{position:relative;z-index:2}
 .foot a{text-decoration:none}
 .foot a:hover{color:var(--ink)}
 
-/* ── Jeux (structure attendue par games.js) ─────────────────────── */
-.game-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:.75rem;background:rgba(3,4,8,.7);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+/* ── Fenêtre des jeux (games/core.js) ───────────────────────────── */
+.game-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:clamp(.5rem,2vw,1.5rem);background:rgba(3,4,8,.74);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .game-modal.hidden{display:none}
-.game-modal-inner{width:100%;max-width:620px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;background:#0C0E16;border:1px solid var(--line);border-radius:22px;box-shadow:0 40px 120px rgba(0,0,0,.6);animation:pop .5s var(--ease)}
-@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.97)}}
-.game-modal-hdr{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.9rem 1.2rem;border-bottom:1px solid var(--line)}
-.game-modal-title{font-weight:700;font-stretch:112%}
-.game-close-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line)}
-.game-close-btn:hover{border-color:var(--ink)}
-#gameContainer{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:1rem}
-#gameContainer .btn{height:auto;min-height:40px;padding:.5rem 1.2rem}
-.btn-primary{background:var(--ink);color:var(--bg);border:1px solid var(--ink)}
-.btn-secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.game-modal-inner{
+  width:100%;max-width:720px;max-height:96svh;display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,#0E1120,#090B15);border:1px solid var(--line);border-radius:24px;
+  box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 0 1px rgba(56,230,255,.05);animation:pop .5s var(--ease);
+}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}}
+.game-modal-hdr{display:flex;align-items:center;gap:.8rem;padding:.8rem .9rem .8rem 1.1rem;border-bottom:1px solid var(--line)}
+.g-icon{width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;background:rgba(56,230,255,.07);border:1px solid rgba(56,230,255,.18);color:var(--ink)}
+.g-icon svg{width:24px;height:24px}
+.game-modal-title{font-weight:750;font-stretch:112%;font-size:1.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.g-chips{display:flex;gap:.4rem;margin-left:auto}
+.g-chip{display:flex;flex-direction:column;align-items:flex-end;padding:.2rem .65rem;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid var(--line);min-width:3.6rem}
+.g-chip small{font-size:.66rem;color:var(--faint);line-height:1.2}
+.g-chip b{font-size:.98rem;font-variant-numeric:tabular-nums;line-height:1.2;display:inline-block}
+.g-actions{display:flex;gap:.3rem}
+.g-icon-btn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--muted);border:1px solid transparent;transition:color .2s,border-color .2s,background .2s}
+.g-icon-btn:hover{color:var(--ink);border-color:var(--line);background:rgba(255,255,255,.04)}
+#gameMute .g-slash{display:none}
+#gameMute.off .g-slash{display:inline}
+#gameMute.off .g-wave{display:none}
+.g-stage{position:relative;flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;padding:1rem;outline:none}
+.g-canvas{display:block;width:100%;height:auto;max-height:calc(96svh - 190px);object-fit:contain;border-radius:16px;background:#070912;touch-action:none;user-select:none;-webkit-user-select:none}
+.game-modal-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.3rem 1rem;padding:.65rem 1.1rem .8rem;border-top:1px solid var(--line);font-size:.86rem}
+.g-status{color:var(--ink);font-weight:600;min-height:1.3em}
+.g-help{color:var(--faint);margin-left:auto;text-align:right}
+.g-loading,.g-error{color:var(--muted);padding:3rem 1rem;text-align:center}
+
+/* Panneau de début / fin au-dessus du jeu */
+.g-overlay{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:1rem;background:rgba(7,9,18,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .35s var(--ease)}
+.g-overlay.on{opacity:1}
+.g-overlay-box{text-align:center;display:grid;justify-items:center;gap:.55rem;max-width:22rem;transform:translateY(10px);transition:transform .5s var(--ease)}
+.g-overlay.on .g-overlay-box{transform:none}
+.g-kicker{font-size:.8rem;color:var(--c2);font-weight:600}
+.g-ov-title{font-size:clamp(1.6rem,4.5vw,2.3rem);font-weight:800;font-stretch:118%;letter-spacing:-.02em;line-height:1.05}
+.g-overlay.good .g-ov-title{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.g-ov-text{color:var(--muted);font-size:.96rem}
+.g-btn{margin-top:.5rem;height:46px;padding:0 1.4rem;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:650;font-size:.98rem;transition:transform .2s var(--ease),background .3s}
+.g-btn:hover{transform:translateY(-2px);background:#fff}
+.g-btn:active{transform:none}
+
+/* Boutons de jeu en HTML (quiz, pierre-feuille-ciseaux, réflexes…) */
+.g-choice{min-height:48px;padding:.7rem 1rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);font-weight:600;text-align:left;transition:border-color .2s,background .2s,transform .15s}
+.g-choice:hover:not(:disabled){border-color:rgba(56,230,255,.5);background:rgba(56,230,255,.06)}
+.g-choice:active:not(:disabled){transform:scale(.98)}
+.g-choice.ok{border-color:var(--c2);background:rgba(95,227,161,.12);border-color:#5FE3A1}
+.g-choice.ko{border-color:#FF7A6B;background:rgba(255,122,107,.1)}
+@media (max-width:560px){
+  .game-modal{padding:0;align-items:stretch}
+  .game-modal-inner{max-height:none;height:100svh;border-radius:0;border:0}
+  .game-modal-title{font-size:1rem}
+  .g-chip{min-width:3rem;padding:.15rem .5rem}
+  .g-help{display:none}
+  .g-canvas{max-height:calc(100svh - 170px)}
+}
 
 /* ── Terminal ───────────────────────────────────────────────────── */
 .term{position:fixed;right:1rem;bottom:1rem;z-index:150;width:min(460px,calc(100vw - 2rem));background:rgba(8,10,16,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#D7DEE5;border-radius:16px;border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.5);font:500 .85rem/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
@@ -480,3 +524,42 @@ main,.foot{position:relative;z-index:2}
 @media (prefers-reduced-motion:reduce){
   .feat-media>img,.job-visual img,.lab-visual img{transform:none}
 }
+
+/* ── Cartes de jeux avec icônes ─────────────────────────────────── */
+.games button{height:auto;min-height:112px;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:.9rem}
+.games button .g-ico{width:30px;height:30px;color:#C9CEDA;transition:transform .5s var(--ease),color .3s}
+.games button:hover .g-ico{transform:translateY(-2px) rotate(-4deg);color:var(--ink)}
+.games button .g-name{line-height:1.25}
+.games button i{position:absolute;top:1rem;right:1rem}
+.g-ico .a1,.g-icon .a1{fill:var(--c2)}
+.g-ico .a2,.g-icon .a2{fill:var(--c3)}
+.g-ico .s1,.g-icon .s1{stroke:var(--c2)}
+.g-ico .s2,.g-icon .s2{stroke:var(--c3)}
+
+/* ── Logos des entreprises ──────────────────────────────────────── */
+.clients{margin-top:clamp(2.5rem,6vh,4rem)}
+.clients-title{color:var(--faint);font-size:.95rem;margin-bottom:1rem}
+.clients-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+.clients-list li{display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:20px;border:1px solid var(--line);background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:border-color .4s,transform .5s var(--ease)}
+.clients-list li:hover{border-color:rgba(255,255,255,.2);transform:translateY(-3px)}
+.clients-meta{display:grid;line-height:1.3;min-width:0}
+.clients-meta b{font-weight:700;font-stretch:108%}
+.clients-meta small{color:var(--faint);font-size:.85rem}
+.logo-tile{flex:none;display:grid;place-items:center;width:72px;height:56px;padding:8px;border-radius:14px;background:#F4F6FA;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
+.logo-tile img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block}
+.logo-tile.l-niji{background:#0066FF;padding:0;overflow:hidden}
+.logo-tile.l-niji img{width:100%;height:100%;max-height:none;object-fit:cover}
+.logo-tile.l-ortec{padding:6px}
+.logo-tile.sm{width:44px;height:34px;padding:5px;border-radius:9px;margin-right:.75rem;vertical-align:middle;display:inline-grid;transform:translateY(-.12em)}
+.logo-tile.sm.l-niji{padding:0}
+.logo-tile.sm.l-ortec{padding:3px}
+@media (max-width:1000px){.clients-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.clients-list li{padding:.8rem;gap:.75rem}.logo-tile{width:58px;height:46px}}
+.logo-tile.l-cs{width:88px;padding:4px 6px}
+.logo-tile.sm.l-cs{width:54px;padding:2px 4px}
+@media (max-width:520px){
+  .clients-list li{flex-direction:column;align-items:flex-start}
+  .clients-list .logo-tile.l-cs{width:88px}
+}
+.ach-toast-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(56,230,255,.08);border:1px solid rgba(56,230,255,.2);color:var(--ink)}
+.ach-toast-icon svg{width:22px;height:22px}

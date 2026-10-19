@@ -416,7 +416,7 @@
     if (hasGsap) ST.refresh();
   }));
 
-  /* ── Piège de focus (utilisé par games.js) ──────────────────── */
+  /* ── Piège de focus (utilisé par games/core.js) ──────────────────── */
   window.focusTrap = function (container) {
     const prev = document.activeElement;
     const sel = 'a[href],button:not([disabled]),input,textarea,select,[tabindex]:not([tabindex="-1"])';
@@ -441,7 +441,7 @@
     if (!gamesPromise) {
       gamesPromise = new Promise((resolve, reject) => {
         const s = document.createElement('script');
-        s.src = 'games.js';
+        s.src = 'games/core.js?v=1';
         s.onload = resolve;
         s.onerror = () => { gamesPromise = null; reject(); };
         document.body.appendChild(s);

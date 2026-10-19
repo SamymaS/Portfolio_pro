@@ -96,6 +96,15 @@ d.lang=l;d.classList.add('js')})();
       <div data-reveal><dt><span data-l="fr">tests sur Sameva</span><span data-l="en">tests on Sameva</span></dt><dd data-count="505">505</dd></div>
       <div data-reveal><dt><span data-l="fr">jeux jouables ici</span><span data-l="en">games playable here</span></dt><dd data-count="16">16</dd></div>
     </dl>
+    <div class="clients" data-reveal>
+      <p class="clients-title"><span data-l="fr">Là où j'ai travaillé</span><span data-l="en">Where I have worked</span></p>
+      <ul class="clients-list">
+        <li><span class="logo-tile l-cs"><img src="assets/logos/cs-group.svg" alt="CS GROUP" width="108" height="48" loading="lazy" decoding="async"></span><span class="clients-meta"><b>CS GROUP</b><small data-l="fr">Depuis 2024, CDI cadre</small><small data-l="en">Since 2024, permanent</small></span></li>
+        <li><span class="logo-tile l-niji"><img src="assets/logos/niji.svg" alt="Niji" width="80" height="80" loading="lazy" decoding="async"></span><span class="clients-meta"><b>Niji</b><small>2022-2023</small></span></li>
+        <li><span class="logo-tile l-rezzo"><img src="assets/logos/rezzo.png" alt="REZZO Telecom" width="139" height="39" loading="lazy" decoding="async"></span><span class="clients-meta"><b>REZZO Telecom</b><small>2021-2022</small></span></li>
+        <li><span class="logo-tile l-ortec"><img src="assets/logos/ortec.webp" alt="Groupe ORTEC" width="160" height="160" loading="lazy" decoding="async"></span><span class="clients-meta"><b>Groupe ORTEC</b><small>2020</small></span></li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -442,7 +451,7 @@ d.lang=l;d.classList.add('js')})();
           <figure class="job-visual"><img src="assets/visuals/tetra-radio-sm.webp" width="720" height="538" loading="lazy" decoding="async" alt=""></figure>
         </div>
         <div class="what">
-          <h3>CS GROUP <span class="where">Aix-en-Provence</span></h3>
+          <h3><span class="logo-tile sm l-cs" aria-hidden="true"><img src="assets/logos/cs-group.svg" alt="" width="108" height="48" loading="lazy" decoding="async"></span>CS GROUP <span class="where">Aix-en-Provence</span></h3>
           <div class="phase now">
             <p class="role"><span data-l="fr">Ingénieur logiciel, CDI, statut cadre</span><span data-l="en">Software engineer, permanent, engineer grade</span> <span class="date" data-l="fr">depuis sept. 2026</span><span class="date" data-l="en">since Sept. 2026</span></p>
             <p data-l="fr">Logiciels C++, Qt et .NET pour des réseaux de radiocommunication critique TETRA dans le transport&nbsp;: systèmes temps réel à forte disponibilité. Industrialisation des déploiements sur les postes d'exploitation (installation silencieuse en PowerShell, manuels, validation).</p>
@@ -459,7 +468,7 @@ d.lang=l;d.classList.add('js')})();
       <li class="job" data-reveal>
         <p class="when">2022-2023</p>
         <div class="what">
-          <h3>Niji</h3>
+          <h3><span class="logo-tile sm l-niji" aria-hidden="true"><img src="assets/logos/niji.svg" alt="" width="80" height="80" loading="lazy" decoding="async"></span>Niji</h3>
           <p class="role"><span data-l="fr">Développeur full-stack Salesforce en alternance</span><span data-l="en">Full-stack Salesforce developer, work-study</span></p>
           <p data-l="fr">Analyse des besoins clients, développement et paramétrage d'applications Salesforce, intégration continue.</p>
           <p data-l="en">Client requirements analysis, Salesforce app development and configuration, continuous integration.</p>
@@ -469,7 +478,7 @@ d.lang=l;d.classList.add('js')})();
       <li class="job" data-reveal>
         <p class="when">2021-2022</p>
         <div class="what">
-          <h3>REZZO Telecom</h3>
+          <h3><span class="logo-tile sm l-rezzo" aria-hidden="true"><img src="assets/logos/rezzo.png" alt="" width="139" height="39" loading="lazy" decoding="async"></span>REZZO Telecom</h3>
           <p class="role"><span data-l="fr">Développeur logiciel full-stack en alternance</span><span data-l="en">Full-stack software developer, work-study</span></p>
           <p data-l="fr">Refonte d'un logiciel de facturation et de CRM existant&nbsp;: interface C++/Qt, back-end Python Flask, procédures PL/SQL et imports CSV et XLSX.</p>
           <p data-l="en">Rebuilt a legacy billing and CRM application: C++/Qt interface, Python Flask back end, PL/SQL procedures and CSV and XLSX imports.</p>
@@ -479,7 +488,7 @@ d.lang=l;d.classList.add('js')})();
       <li class="job" data-reveal>
         <p class="when">2020</p>
         <div class="what">
-          <h3>Groupe ORTEC</h3>
+          <h3><span class="logo-tile sm l-ortec" aria-hidden="true"><img src="assets/logos/ortec.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></span>Groupe ORTEC</h3>
           <p class="role"><span data-l="fr">Technicien informatique, stage</span><span data-l="en">IT technician, internship</span></p>
           <p data-l="fr">Numérisation de documents vers l'ERP, modules d'e-learning Java et SharePoint, support et déploiement de postes.</p>
           <p data-l="en">Document digitisation into the ERP, Java and SharePoint e-learning modules, support and workstation deployment.</p>
@@ -563,22 +572,22 @@ d.lang=l;d.classList.add('js')})();
     <div class="lab-layout">
     <figure class="lab-visual" data-reveal><img src="assets/visuals/labo-sm.webp" srcset="assets/visuals/labo-sm.webp 720w, assets/visuals/labo.webp 1200w" sizes="(max-width: 860px) 92vw, 40vw" width="1200" height="896" loading="lazy" decoding="async" alt=""></figure>
     <div class="games" id="games">
-      <button type="button" data-game="connect4"><span data-l="fr">Puissance 4</span><span data-l="en">Connect Four</span><i>IA</i></button>
-      <button type="button" data-game="tetris">Tetris</button>
-      <button type="button" data-game="snake">Snake</button>
-      <button type="button" data-game="2048">2048</button>
-      <button type="button" data-game="minesweeper"><span data-l="fr">Démineur</span><span data-l="en">Minesweeper</span></button>
-      <button type="button" data-game="breakout"><span data-l="fr">Casse-briques</span><span data-l="en">Breakout</span></button>
-      <button type="button" data-game="pong">Pong</button>
-      <button type="button" data-game="flappy">Flappy</button>
-      <button type="button" data-game="tictactoe"><span data-l="fr">Morpion</span><span data-l="en">Tic-tac-toe</span><i>IA</i></button>
-      <button type="button" data-game="memory">Memory</button>
-      <button type="button" data-game="simon">Simon</button>
-      <button type="button" data-game="taquin"><span data-l="fr">Taquin</span><span data-l="en">15 puzzle</span></button>
-      <button type="button" data-game="whack"><span data-l="fr">Tape-taupe</span><span data-l="en">Whack-a-mole</span></button>
-      <button type="button" data-game="rps"><span data-l="fr">Pierre-feuille-ciseaux</span><span data-l="en">Rock paper scissors</span></button>
-      <button type="button" data-game="reflex"><span data-l="fr">Réflexes</span><span data-l="en">Reaction time</span></button>
-      <button type="button" data-game="quiz">Quiz tech</button>
+      <button type="button" data-game="connect4"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="14" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="a2" cx="12" cy="14" r="2"/><circle class="a1" cx="16" cy="14" r="2"/><circle class="a1" cx="12" cy="9" r="2"/></svg><span class="g-name"><span data-l="fr">Puissance 4</span><span data-l="en">Connect Four</span></span><i>IA</i></button>
+      <button type="button" data-game="tetris"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12v4H4zM8 13h4v4H8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a1" x="14.5" y="13.5" width="5" height="5" rx="1"/><rect class="a2" x="14.5" y="4.5" width="5" height="5" rx="1"/><path d="M4 21h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Blocs</span><span data-l="en">Blocks</span></span></button>
+      <button type="button" data-game="snake"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c0-3 3-3 5-3s3-1 3-3-1-3-3-3H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/><path d="M12 11c0 2 1 3 3 3h2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/><circle class="a1" cx="19.2" cy="14" r="1.9"/><circle class="a2" cx="18" cy="6" r="1.6"/></svg><span class="g-name">Snake</span></button>
+      <button type="button" data-game="2048"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="4" width="7" height="7" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="4" y="13" width="7" height="7" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a1" x="13" y="13" width="7" height="7" rx="1.8"/><path d="M15.2 9.2l2-2.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name">2048</span></button>
+      <button type="button" data-game="minesweeper"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a1" x="13" y="13" width="7" height="7" rx="1"/><path d="M6.5 9.2V5.5l3 1.3-3 1.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16.5" cy="7.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Démineur</span><span data-l="en">Minesweeper</span></span></button>
+      <button type="button" data-game="breakout"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4.5h5v3H3zM9.5 4.5h5v3h-5zM16 4.5h5v3h-5zM6 9h5v3H6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a2" x="12.5" y="9" width="5" height="3" rx=".5"/><circle class="a1" cx="14" cy="15.5" r="1.6"/><path d="M8 20h8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/></svg><span class="g-name"><span data-l="fr">Casse-briques</span><span data-l="en">Breakout</span></span></button>
+      <button type="button" data-game="pong"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7v6M20 11v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><path d="M12 3v2M12 8v2M12 13v2M12 18v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="a1" cx="15.5" cy="9" r="1.7"/><path d="M8 12l6-2.6" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="1 2" opacity=".6"/></svg><span class="g-name">Pong</span></button>
+      <button type="button" data-game="flappy"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v6M5 15v6M19 3v3M19 12v9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><path class="a1" d="M8.5 13.5l8-4-3.4 6.3-1.6-2.2z"/><path d="M8.5 13.5l3 .6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Envol</span><span data-l="en">Glide</span></span></button>
+      <button type="button" data-game="tictactoe"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v16M15 4v16M4 9h16M4 15h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="s1" d="M5.3 5.3l2.4 2.4M7.7 5.3L5.3 7.7" fill="none" stroke-width="1.8" stroke-linecap="round"/><circle class="s2" cx="12" cy="12" r="1.6" fill="none" stroke-width="1.8"/><path class="s1" d="M16.3 16.3l2.4 2.4M18.7 16.3l-2.4 2.4" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg><span class="g-name"><span data-l="fr">Morpion</span><span data-l="en">Tic-tac-toe</span></span><i>IA</i></button>
+      <button type="button" data-game="memory"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="10" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-8 9 13)"/><rect x="10" y="4" width="10" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a1" d="M15 8.2l1.1 2.2 2.4.3-1.8 1.6.5 2.4-2.2-1.2-2.2 1.2.5-2.4-1.8-1.6 2.4-.3z"/></svg><span class="g-name">Memory</span></button>
+      <button type="button" data-game="simon"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3.5v17M3.5 12h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a1" d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5H12z"/><circle cx="12" cy="12" r="2.6" fill="#05060A" stroke="currentColor" stroke-width="1.6"/></svg><span class="g-name"><span data-l="fr">Séquence</span><span data-l="en">Sequence</span></span></button>
+      <button type="button" data-game="taquin"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM9.3 4v16M14.7 4v10.7M4 9.3h16M4 14.7h10.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a1" x="15.4" y="15.4" width="4" height="4" rx=".6"/><path d="M17.4 12.4v1.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Taquin</span><span data-l="en">15 puzzle</span></span></button>
+      <button type="button" data-game="whack"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19a3 3 0 0 1 6 0M13 19a3 3 0 0 1 6 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="a1" cx="16" cy="12" r="2.2"/><path d="M12.2 8.8a5 5 0 0 1 7.6 0M10.3 6.6a8 8 0 0 1 11.4 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".75"/></svg><span class="g-name"><span data-l="fr">Tape-taupe</span><span data-l="en">Whack-a-mole</span></span></button>
+      <button type="button" data-game="rps"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="7.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a2" x="13.5" y="4.3" width="6.5" height="7.4" rx="1.2"/><circle cx="7" cy="17.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12.5" cy="17.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="s1" d="M8.4 16.4L17.5 13M13.9 16.2L18.5 19.5" fill="none" stroke-width="1.6" stroke-linecap="round"/></svg><span class="g-name"><span data-l="fr">Pierre-feuille-ciseaux</span><span data-l="en">Rock paper scissors</span></span></button>
+      <button type="button" data-game="reflex"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 3h4M12 3v3M18.2 6.8l1.3-1.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a1" d="M13 8.5l-3.6 5.6h3l-1 4.4 3.6-5.6h-3z"/></svg><span class="g-name"><span data-l="fr">Réflexes</span><span data-l="en">Reaction time</span></span></button>
+      <button type="button" data-game="quiz"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="s1" d="M8.6 10.3l2.2 2.2 4.6-4.6" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name">Quiz tech</span></button>
     </div>
     </div>
     <p class="lab-foot" data-reveal><span id="achCount"></span> <span data-l="fr">Tapez <kbd>s</kbd> puis <kbd>b</kbd> n'importe où pour ouvrir un terminal.</span><span data-l="en">Type <kbd>s</kbd> then <kbd>b</kbd> anywhere to open a terminal.</span></p>
@@ -624,14 +633,27 @@ d.lang=l;d.classList.add('js')})();
   </div>
 </footer>
 
-<!-- Fenêtre des jeux (remplie par games.js, chargé au premier clic) -->
+<!-- Fenêtre des jeux (remplie par games/core.js, chargé au premier clic) -->
 <div id="gameModal" class="game-modal hidden" role="dialog" aria-modal="true" aria-labelledby="gameTitle">
   <div class="game-modal-inner">
     <div class="game-modal-hdr">
+      <span class="g-icon" id="gameIcon" aria-hidden="true"></span>
       <span id="gameTitle" class="game-modal-title"></span>
-      <button id="gameClose" class="game-close-btn" type="button" data-aria-fr="Fermer le jeu" data-aria-en="Close game">✕</button>
+      <div class="g-chips" aria-live="polite">
+        <span class="g-chip"><small>Score</small><b id="gameScore">0</b></span>
+        <span class="g-chip"><small data-l="fr">Record</small><small data-l="en">Best</small><b id="gameBest">–</b></span>
+      </div>
+      <div class="g-actions">
+        <button id="gameRestart" class="g-icon-btn" type="button" data-aria-fr="Recommencer" data-aria-en="Restart"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button id="gameMute" class="g-icon-btn" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path class="g-wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="g-slash" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <button id="gameClose" class="g-icon-btn" type="button" data-aria-fr="Fermer le jeu" data-aria-en="Close game"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      </div>
     </div>
-    <div id="gameContainer"></div>
+    <div id="gameContainer" class="g-stage"></div>
+    <div class="game-modal-foot">
+      <p id="gameStatus" class="g-status" role="status" aria-live="polite"></p>
+      <p id="gameHelp" class="g-help"></p>
+    </div>
   </div>
 </div>
 
