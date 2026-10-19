@@ -17,8 +17,8 @@ SBG.register('2048', {
 
     // tons : du bleu nuit au cyan, puis violet, puis chaud pour 2048
     const TILE = {
-      2: ['#182036', C.ink], 4: ['#1E2A48', C.ink], 8: ['#173E5C', C.ink], 16: ['#145477', C.ink],
-      32: ['#116E94', '#fff'], 64: ['#0E8DB5', '#fff'], 128: ['#38C9E6', '#06202A'], 256: ['#6E8BFF', '#0B1030'],
+      2: ['#283253', C.ink], 4: ['#2F3D68', C.ink], 8: ['#1F5279', '#fff'], 16: ['#18678F', '#fff'],
+      32: ['#1280A8', '#fff'], 64: ['#0E9AC4', '#fff'], 128: ['#38C9E6', '#06202A'], 256: ['#6E8BFF', '#0B1030'],
       512: ['#8F7CFF', '#fff'], 1024: ['#B07CFF', '#fff'], 2048: ['#FFC56B', '#2A1A00'],
     };
     const tileStyle = (v) => TILE[v] || ['#FF7A6B', '#2A0A06'];
@@ -96,6 +96,7 @@ SBG.register('2048', {
       if (gained) {
         score += gained;
         api.hud({ score });
+        floats.length = 0;   // un seul gain affiché à la fois : pas d'empilement
         floats.push({ text: '+' + gained, x: px(best.c) + CELL / 2, y: px(best.r) + CELL / 2, t: 0 });
       }
     }
@@ -190,19 +191,22 @@ SBG.register('2048', {
           const x = api.lerp(px(t.fc), px(t.c), k), y = api.lerp(px(t.fr), px(t.r), k);
           let s = 1;
           if (t.born < SPAWN) s = t.born <= 0 ? 0 : api.ease.back(t.born / SPAWN);
-          if (t.pop < POP) s = 1 + 0.14 * Math.sin(Math.PI * t.pop / POP);
+          if (t.pop < POP) s = 1 + 0.1 * Math.sin(Math.PI * t.pop / POP);
           if (s <= 0.01) continue;
           drawTile(x, y, t.v, s);
         }
 
         // gains qui montent
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.font = `700 22px ${api.font}`;
+        ctx.font = `700 20px ${api.font}`;
         for (const f of floats) {
           const p = f.t / 0.8;
-          ctx.globalAlpha = 1 - p * p;
-          ctx.fillStyle = '#fff';
-          ctx.fillText(f.text, f.x, f.y - 30 - api.ease.out(p) * 36);
+          const y = Math.max(20, f.y - 22 - api.ease.out(p) * 34);
+          ctx.globalAlpha = (1 - p * p) * 0.95;
+          ctx.fillStyle = 'rgba(7,9,18,0.55)';
+          api.roundRect(ctx, f.x - 26, y - 13, 52, 26, 13); ctx.fill();
+          ctx.fillStyle = C.warm;
+          ctx.fillText(f.text, f.x, y + 1);
         }
         ctx.globalAlpha = 1;
         fx.draw(ctx);
@@ -219,8 +223,10 @@ SBG.register('2048', {
       }
       ctx.fillStyle = bg;
       api.roundRect(ctx, cxp - w / 2, cyp - w / 2, w, w, 12 * s); ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.06)';
-      api.roundRect(ctx, cxp - w / 2, cyp - w / 2, w, w * 0.5, 12 * s); ctx.fill();
+      const sheen = ctx.createLinearGradient(0, cyp - w / 2, 0, cyp + w / 2);
+      sheen.addColorStop(0, 'rgba(255,255,255,0.10)'); sheen.addColorStop(0.55, 'rgba(255,255,255,0)');
+      ctx.fillStyle = sheen; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.stroke();
       const digits = String(v).length;
       const fs = (digits <= 2 ? 40 : digits === 3 ? 34 : digits === 4 ? 27 : 22) * s;
       ctx.fillStyle = ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';

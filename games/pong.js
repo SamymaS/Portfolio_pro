@@ -17,7 +17,7 @@ SBG.register('pong', {
     const LX = M, RX = W - M - PW;
     const SERVE = 1.35;
 
-    let me, ai, ball, prevBall, prevMe, prevAi, ps, as, state, serveT, serveDir, rally, ty, keys, aiT, aiReact, aiErr, trail, flashL, flashR, lastStart = -1e9, runId = 0;
+    let overAt = 0, me, ai, ball, prevBall, prevMe, prevAi, ps, as, state, serveT, serveDir, rally, ty, keys, aiT, aiReact, aiErr, trail, flashL, flashR, lastStart = -1e9, runId = 0;
 
     function reset() {
       me = { y: H / 2, v: 0 }; ai = { y: H / 2, v: 0 };
@@ -88,7 +88,7 @@ SBG.register('pong', {
       if (left) flashL = 1; else flashR = 1;
       api.tone(left ? 520 : 400, 0.06, 'square', 0.22, 1.2);
       fx.burst(ball.x, ball.y, { n: Math.round(7 * MANY), color: left ? C.cyan : C.violet, speed: 120, life: 0.35, size: 1.8 });
-      if (left) aiErr = (Math.random() * 2 - 1) * (16 + ball.sp * 0.05);
+      if (left) aiErr = (Math.random() * 2 - 1) * (16 + ball.sp * 0.06 + Math.abs(ball.vy) * 0.12);
     }
 
     function point(playerScored) {
@@ -104,7 +104,7 @@ SBG.register('pong', {
     }
 
     function end(won) {
-      state = 'over';
+      state = 'over'; overAt = performance.now();
       if (won) { api.unlock('pong_win'); api.sfx('win'); } else api.sfx('lose');
       const record = api.setBest(ps);
       const id = runId;
@@ -151,7 +151,7 @@ SBG.register('pong', {
         aiT = 0.11 + Math.random() * 0.06;
         aiReact = ball.vx > 0 && state === 'play' ? predict() + aiErr : H / 2 + (ball.y - H / 2) * 0.25;
       }
-      const maxV = 290 + Math.min(70, rally * 6);
+      const maxV = 270 + Math.min(50, rally * 4);
       const want = api.clamp((aiReact - ai.y) * 7, -maxV, maxV);
       ai.v += (want - ai.v) * Math.min(1, dt * 10);
       ai.y = api.clamp(ai.y + ai.v * dt, PH / 2, H - PH / 2);
@@ -244,7 +244,7 @@ SBG.register('pong', {
       const k = e.key;
       if (k === 'ArrowUp' || k === 'z' || k === 'w') keys.u = true;
       else if (k === 'ArrowDown' || k === 's') keys.d = true;
-      else if ((k === ' ' || k === 'Enter') && (state === 'ready' || state === 'over')) { api.hideOverlay(); start(); }
+      else if ((k === ' ' || k === 'Enter') && (state === 'ready' || (state === 'over' && performance.now() - overAt > 800))) { api.hideOverlay(); start(); }
     });
     api.on(document, 'keyup', (e) => {
       const k = e.key;

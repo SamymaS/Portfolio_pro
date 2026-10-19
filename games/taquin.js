@@ -175,8 +175,9 @@ SBG.register('taquin', {
       const cx = x + CELL / 2, cy = y + CELL / 2, w = CELL * s;
       ctx.fillStyle = hot ? '#1B2442' : '#151C34';
       api.roundRect(ctx, cx - w / 2, cy - w / 2, w, w, 12 * s); ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.045)';
-      api.roundRect(ctx, cx - w / 2, cy - w / 2, w, w * 0.48, 12 * s); ctx.fill();
+      const sheen = ctx.createLinearGradient(0, cy - w / 2, 0, cy + w / 2);
+      sheen.addColorStop(0, 'rgba(255,255,255,0.08)'); sheen.addColorStop(0.55, 'rgba(255,255,255,0)');
+      ctx.fillStyle = sheen; ctx.fill();
       ctx.lineWidth = 1.2;
       ctx.strokeStyle = inPlace ? 'rgba(56,230,255,0.45)' : hot ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)';
       api.roundRect(ctx, cx - w / 2 + 0.6, cy - w / 2 + 0.6, w - 1.2, w - 1.2, 12 * s); ctx.stroke();

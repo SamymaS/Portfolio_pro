@@ -143,7 +143,26 @@ SBG.register('simon', {
       },
     });
 
-    function sector(p) {
+    // halo flou d'un pavé, rendu à 1x (le flou masque la définition)
+    const GLOW = {};
+    function glowSprite(i, wrong) {
+      const key = i + (wrong ? 'x' : '');
+      if (GLOW[key]) return GLOW[key];
+      const c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      const g = c.getContext('2d');
+      const [r, gg, b] = wrong ? rgb(C.bad) : PADS[i].rgb;
+      g.shadowColor = 'rgba(' + r + ',' + gg + ',' + b + ',0.55)';
+      g.shadowBlur = 38;
+      g.shadowOffsetX = 4000;           // seule l'ombre (le halo) est visible sur le canvas
+      g.translate(-4000, 0);
+      g.fillStyle = '#000';
+      sectorOn(g, PADS[i]); g.fill();
+      return (GLOW[key] = c);
+    }
+
+    function sector(p) { return sectorOn(ctx, p); }
+    function sectorOn(ctx, p) {
       const [dx, dy] = p.dir;
       const ox = CX + dx * GAP * 0.7071, oy = CY + dy * GAP * 0.7071;
       const a0 = p.a0, a1 = p.a0 + Math.PI / 2;
@@ -166,18 +185,13 @@ SBG.register('simon', {
       ctx.globalAlpha = dim;
       ctx.translate(CX, CY); ctx.scale(pressScale, pressScale); ctx.translate(-CX, -CY);
 
-      // halo lumineux autour du pavé (dégradé additif, sans flou coûteux)
-      const gl = wrong ? 0.7 : L;
+      // halo lumineux : flou pré-rendu une fois, puis simple fondu
+      const gl = wrong ? 0.75 : L;
       if (gl > 0.02) {
-        const [dx, dy] = p.dir;
-        const gx = CX + dx * 110, gy = CY + dy * 110;
-        const halo = ctx.createRadialGradient(gx, gy, 20, gx, gy, 210);
-        halo.addColorStop(0, col(0.32 * gl));
-        halo.addColorStop(1, col(0));
         ctx.save();
+        ctx.globalAlpha = dim * gl;
         ctx.globalCompositeOperation = 'lighter';
-        ctx.fillStyle = halo;
-        ctx.fillRect(dx < 0 ? 0 : CX, dy < 0 ? 0 : CY, CX, CY);
+        ctx.drawImage(glowSprite(i, wrong), 0, 0, W, H);
         ctx.restore();
       }
 
@@ -249,7 +263,7 @@ SBG.register('simon', {
       ctx.fillStyle = phase === 'over' ? C.bad : C.ink;
       ctx.font = '800 30px ' + api.font;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(String(Math.max(seq.length, 0)), 0, 0);
+      ctx.fillText(String(phase === 'over' ? score : seq.length), 0, 0);
       ctx.restore();
       ctx.fillStyle = C.faint;
       ctx.font = '600 10.5px ' + api.font;

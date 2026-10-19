@@ -242,12 +242,15 @@ SBG.register('memory', {
       g.restore();
       g.strokeStyle = 'rgba(255,255,255,0.06)';
       api.roundRect(g, -CW / 2 + 7, -CH / 2 + 7, CW - 14, CH - 14, 9); g.stroke();
-      // petit losange central
+      // emblème central : pastille et quatre points (neutre, ne ressemble à aucun glyphe)
       g.fillStyle = C.bg2;
-      g.strokeStyle = isHover ? 'rgba(56,230,255,0.8)' : 'rgba(56,230,255,0.4)';
-      g.lineWidth = 1.5;
-      g.beginPath(); g.moveTo(0, -9); g.lineTo(9, 0); g.lineTo(0, 9); g.lineTo(-9, 0); g.closePath();
-      g.fill(); g.stroke();
+      api.roundRect(g, -13, -13, 26, 26, 8); g.fill();
+      g.strokeStyle = isHover ? 'rgba(56,230,255,0.55)' : 'rgba(255,255,255,0.08)';
+      g.lineWidth = 1; g.stroke();
+      g.fillStyle = isHover ? 'rgba(56,230,255,0.9)' : 'rgba(56,230,255,0.45)';
+      for (const [px, py] of [[-4, -4], [4, -4], [-4, 4], [4, 4]]) {
+        g.beginPath(); g.arc(px, py, 1.9, 0, Math.PI * 2); g.fill();
+      }
     }
 
     function drawFace(g, gi) {

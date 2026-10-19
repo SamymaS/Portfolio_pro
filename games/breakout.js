@@ -18,7 +18,7 @@ SBG.register('breakout', {
     const PADW = 92, PADH = 12, PADY = H - 34, R = 6;
     const ROW_COLS = [C.violet, '#9F86FF', '#8E8FFF', C.blue, '#7FA3FF', '#8FB6FF', '#9CC6FF', '#A8D4FF'];
 
-    let bricks, dying, ball, prevBall, pad, prevPadX, tx, keys, lives, level, score, state, stuck, trail, trailTick, banner, lastStart = -1e9, runId = 0;
+    let overAt = 0, bricks, dying, ball, prevBall, pad, prevPadX, tx, keys, lives, level, score, state, stuck, trail, trailTick, banner, lastStart = -1e9, runId = 0;
 
     function layout(n) {
       const rows = Math.min(8, 4 + n);
@@ -173,7 +173,7 @@ SBG.register('breakout', {
       });
     }
     function gameOver() {
-      state = 'over';
+      state = 'over'; overAt = performance.now();
       api.sfx('lose');
       const record = api.setBest(score);
       const id = runId;
@@ -332,7 +332,7 @@ SBG.register('breakout', {
       else if (k === 'ArrowRight' || k === 'd') keys.r = true;
       else if (k === ' ' || k === 'Enter' || k === 'ArrowUp') {
         if (state === 'play') launch();
-        else if ((state === 'ready' || state === 'over') && k !== 'ArrowUp') { api.hideOverlay(); start(); }
+        else if ((state === 'ready' || (state === 'over' && performance.now() - overAt > 900)) && k !== 'ArrowUp') { api.hideOverlay(); start(); }
       }
     });
     api.on(document, 'keyup', (e) => {

@@ -127,15 +127,25 @@
       }
 
       // ── IA ─────────────────────────────────────────────────────
-      function minimax(b, who, depth) {
+      const memo = new Map();   // positions déjà évaluées : calcul instantané
+      function minimax(b, who) {
+        const key = b.join('') + who;
+        const hit = memo.get(key);
+        if (hit !== undefined) return hit;
+        const v = minimaxRaw(b, who);
+        memo.set(key, v);
+        return v;
+      }
+      function minimaxRaw(b, who) {
         const l = winnerLine(b);
-        if (l) return b[l[0]] === AI ? 10 - depth : depth - 10;
+        // gagner tôt vaut plus : le score dépend des cases encore libres
+        if (l) { const e = 1 + b.filter((v) => !v).length; return b[l[0]] === AI ? e : -e; }
         if (b.every((v) => v)) return 0;
         let best = who === AI ? -Infinity : Infinity;
         for (let i = 0; i < 9; i++) {
           if (b[i]) continue;
           b[i] = who;
-          const v = minimax(b, who === AI ? HUMAN : AI, depth + 1);
+          const v = minimax(b, who === AI ? HUMAN : AI);
           b[i] = 0;
           best = who === AI ? Math.max(best, v) : Math.min(best, v);
         }
@@ -151,10 +161,12 @@
       }
       function chooseMove() {
         const b = board.slice();
+        // plateau vide : coin ou centre, tous deux optimaux (évite la recherche la plus longue)
+        if (b.every((v) => !v)) return [0, 2, 4, 6, 8][Math.floor(Math.random() * 5)];
         const scored = [];
         for (let i = 0; i < 9; i++) {
           if (b[i]) continue;
-          b[i] = AI; scored.push({ i, v: minimax(b, HUMAN, 1) }); b[i] = 0;
+          b[i] = AI; scored.push({ i, v: minimax(b, HUMAN) }); b[i] = 0;
         }
         const top = Math.max(...scored.map((s) => s.v));
         const best = scored.filter((s) => s.v === top);
