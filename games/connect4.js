@@ -384,9 +384,15 @@
         ctx.beginPath(); ctx.arc(x, y, R * 0.66, 0, Math.PI * 2); ctx.stroke();
       }
 
+      // comme cv.toLocal, mais tient compte du letterboxing (object-fit: contain)
+      function toLocal(e) {
+        const r = cv.el.getBoundingClientRect();
+        const s = Math.min(r.width / W, r.height / H) || 1;
+        return { x: (e.clientX - r.left - (r.width - W * s) / 2) / s, y: (e.clientY - r.top - (r.height - H * s) / 2) / s };
+      }
       // ── Entrées ───────────────────────────────────────────────
       function colAt(e) {
-        const p = cv.toLocal(e.clientX, e.clientY);
+        const p = toLocal(e);
         return api.clamp(Math.floor((p.x - BX) / CELL), 0, COLS - 1);
       }
       api.on(cv.el, 'pointermove', (e) => {

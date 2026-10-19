@@ -22,6 +22,21 @@ SBG.register('memory', {
     const GLYPHS = ['ring', 'triangle', 'diamond', 'hexagon', 'cross', 'wave', 'bolt', 'star'];
     const TINTS = GLYPHS.map((_, i) => mix3(C.cyan, C.blue, C.violet, i / (GLYPHS.length - 1)));
 
+    // sprites pré-rendus (dos, faces, cadre lumineux, ombre) : les lueurs
+    // sont calculées une seule fois, chaque image ne fait que les recopier.
+    const M = 30;
+    const SPR = {};
+    function spr(key, draw) {
+      if (SPR[key]) return SPR[key];
+      const c = document.createElement('canvas');
+      c.width = Math.ceil((CW + M * 2) * cv.dpr); c.height = Math.ceil((CH + M * 2) * cv.dpr);
+      const g = c.getContext('2d');
+      g.scale(cv.dpr, cv.dpr); g.translate(CW / 2 + M, CH / 2 + M);
+      draw(g);
+      return (SPR[key] = c);
+    }
+    const blit = (im, dx, dy) => ctx.drawImage(im, -CW / 2 - M + (dx || 0), -CH / 2 - M + (dy || 0), CW + M * 2, CH + M * 2);
+
     let cards, open, moves, pairs, state, clock, cursor, kbd, hover, missAt, endT;
 
     function reset(deal) {
@@ -172,16 +187,27 @@ SBG.register('memory', {
       ctx.scale(sc * Math.max(sx, 0.02), sc);
       ctx.globalAlpha = de;
 
-      // ombre portée, plus large quand la carte est soulevée
+      // ombre portée, plus diffuse quand la carte est soulevée
       ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.55)';
-      ctx.shadowBlur = 14 + lift * 18;
-      ctx.shadowOffsetY = 6 + lift * 8;
-      ctx.fillStyle = C.panel;
-      api.roundRect(ctx, -CW / 2, -CH / 2, CW, CH, 14); ctx.fill();
+      ctx.globalAlpha *= 0.85 - lift * 0.25;
+      blit(spr('shadow', (g) => {
+        g.shadowColor = 'rgba(0,0,0,0.7)'; g.shadowBlur = 16 * cv.dpr; g.shadowOffsetY = 1000 * cv.dpr;
+        g.fillStyle = '#000';
+        api.roundRect(g, -CW / 2, -CH / 2 - 1000, CW, CH, 14); g.fill();
+      }), 0, 6 + lift * 10);
       ctx.restore();
 
-      if (showFace) drawFace(c, glow); else drawBack(isHover);
+      if (showFace) {
+        blit(spr('face' + c.g, (g) => drawFace(g, c.g)));
+        if (glow > 0) {
+          ctx.save();
+          ctx.globalAlpha *= Math.min(1, glow);
+          blit(spr('glow' + c.g, (g) => drawGlow(g, c.g)));
+          ctx.restore();
+        }
+      } else {
+        blit(spr(isHover ? 'backh' : 'back', (g) => drawBack(g, isHover)));
+      }
 
       // assombrissement sur la tranche
       if (lift > 0.02) {
@@ -190,89 +216,88 @@ SBG.register('memory', {
       }
       if (isCursor) {
         ctx.strokeStyle = C.cyan; ctx.lineWidth = 2;
-        ctx.shadowColor = C.cyan; ctx.shadowBlur = 14;
-        api.roundRect(ctx, -CW / 2 - 3, -CH / 2 - 3, CW + 6, CH + 6, 16); ctx.stroke();
+        api.roundRect(ctx, -CW / 2 - 4, -CH / 2 - 4, CW + 8, CH + 8, 17); ctx.stroke();
+        ctx.strokeStyle = 'rgba(56,230,255,0.25)'; ctx.lineWidth = 6;
+        api.roundRect(ctx, -CW / 2 - 4, -CH / 2 - 4, CW + 8, CH + 8, 17); ctx.stroke();
       }
       ctx.restore();
     }
 
-    function drawBack(isHover) {
-      const g = ctx.createLinearGradient(0, -CH / 2, 0, CH / 2);
-      g.addColorStop(0, isHover ? '#1C2440' : '#161C32');
-      g.addColorStop(1, '#0F1324');
-      ctx.fillStyle = g;
-      api.roundRect(ctx, -CW / 2, -CH / 2, CW, CH, 14); ctx.fill();
-      ctx.strokeStyle = isHover ? 'rgba(56,230,255,0.4)' : 'rgba(255,255,255,0.08)';
-      ctx.lineWidth = 1; ctx.stroke();
+    function drawBack(g, isHover) {
+      const gr = g.createLinearGradient(0, -CH / 2, 0, CH / 2);
+      gr.addColorStop(0, isHover ? '#1C2440' : '#161C32');
+      gr.addColorStop(1, '#0F1324');
+      g.fillStyle = gr;
+      api.roundRect(g, -CW / 2, -CH / 2, CW, CH, 14); g.fill();
+      g.strokeStyle = isHover ? 'rgba(56,230,255,0.4)' : 'rgba(255,255,255,0.08)';
+      g.lineWidth = 1; g.stroke();
       // motif : fines diagonales, coupées au cadre
-      ctx.save();
-      api.roundRect(ctx, -CW / 2 + 7, -CH / 2 + 7, CW - 14, CH - 14, 9);
-      ctx.clip();
-      ctx.strokeStyle = 'rgba(255,255,255,0.035)';
-      ctx.lineWidth = 1;
-      for (let d = -CH; d < CW + CH; d += 9) {
-        ctx.beginPath(); ctx.moveTo(-CW / 2 + d, -CH / 2); ctx.lineTo(-CW / 2 + d - CH, CH / 2); ctx.stroke();
+      g.save();
+      api.roundRect(g, -CW / 2 + 7, -CH / 2 + 7, CW - 14, CH - 14, 9);
+      g.clip();
+      g.strokeStyle = 'rgba(255,255,255,0.035)';
+      for (let d = 0; d < CW + CH; d += 9) {
+        g.beginPath(); g.moveTo(-CW / 2 + d, -CH / 2); g.lineTo(-CW / 2 + d - CH, CH / 2); g.stroke();
       }
-      ctx.restore();
-      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-      api.roundRect(ctx, -CW / 2 + 7, -CH / 2 + 7, CW - 14, CH - 14, 9); ctx.stroke();
+      g.restore();
+      g.strokeStyle = 'rgba(255,255,255,0.06)';
+      api.roundRect(g, -CW / 2 + 7, -CH / 2 + 7, CW - 14, CH - 14, 9); g.stroke();
       // petit losange central
-      ctx.fillStyle = C.bg2;
-      ctx.strokeStyle = isHover ? 'rgba(56,230,255,0.75)' : 'rgba(56,230,255,0.35)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(9, 0); ctx.lineTo(0, 9); ctx.lineTo(-9, 0); ctx.closePath();
-      ctx.fill(); ctx.stroke();
+      g.fillStyle = C.bg2;
+      g.strokeStyle = isHover ? 'rgba(56,230,255,0.8)' : 'rgba(56,230,255,0.4)';
+      g.lineWidth = 1.5;
+      g.beginPath(); g.moveTo(0, -9); g.lineTo(9, 0); g.lineTo(0, 9); g.lineTo(-9, 0); g.closePath();
+      g.fill(); g.stroke();
     }
 
-    function drawFace(c, glow) {
-      const tint = TINTS[c.g];
-      const g = ctx.createLinearGradient(0, -CH / 2, 0, CH / 2);
-      g.addColorStop(0, '#1A2036');
-      g.addColorStop(1, '#121628');
-      ctx.fillStyle = g;
-      api.roundRect(ctx, -CW / 2, -CH / 2, CW, CH, 14); ctx.fill();
-      if (glow > 0) {
-        ctx.save();
-        ctx.globalAlpha *= 0.12 * glow;
-        ctx.fillStyle = tint;
-        api.roundRect(ctx, -CW / 2, -CH / 2, CW, CH, 14); ctx.fill();
-        ctx.restore();
-      }
-      ctx.save();
-      ctx.strokeStyle = c.matched ? tint : 'rgba(255,255,255,0.14)';
-      ctx.globalAlpha *= c.matched ? 0.35 + 0.5 * glow : 1;
-      ctx.lineWidth = c.matched ? 1.5 : 1;
-      if (c.matched) { ctx.shadowColor = tint; ctx.shadowBlur = 18 * glow; }
-      api.roundRect(ctx, -CW / 2 + 0.5, -CH / 2 + 0.5, CW - 1, CH - 1, 14); ctx.stroke();
-      ctx.restore();
+    function drawFace(g, gi) {
+      const tint = TINTS[gi];
+      const gr = g.createLinearGradient(0, -CH / 2, 0, CH / 2);
+      gr.addColorStop(0, '#1A2036');
+      gr.addColorStop(1, '#121628');
+      g.fillStyle = gr;
+      api.roundRect(g, -CW / 2, -CH / 2, CW, CH, 14); g.fill();
+      g.strokeStyle = 'rgba(255,255,255,0.14)'; g.lineWidth = 1;
+      api.roundRect(g, -CW / 2 + 0.5, -CH / 2 + 0.5, CW - 1, CH - 1, 14); g.stroke();
       // halo doux derrière le glyphe
-      const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, 40);
-      halo.addColorStop(0, hexA(tint, 0.16 + 0.2 * glow));
+      const halo = g.createRadialGradient(0, 0, 0, 0, 0, 42);
+      halo.addColorStop(0, hexA(tint, 0.2));
       halo.addColorStop(1, hexA(tint, 0));
-      ctx.fillStyle = halo;
-      ctx.fillRect(-40, -40, 80, 80);
-      ctx.save();
-      ctx.strokeStyle = tint; ctx.fillStyle = tint;
-      ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-      ctx.shadowColor = tint; ctx.shadowBlur = 10 + 10 * glow;
-      glyph(GLYPHS[c.g], 22);
-      ctx.restore();
+      g.fillStyle = halo;
+      g.fillRect(-42, -42, 84, 84);
+      g.strokeStyle = tint; g.fillStyle = tint;
+      g.lineWidth = 3; g.lineJoin = 'round'; g.lineCap = 'round';
+      g.shadowColor = tint; g.shadowBlur = 12 * cv.dpr;
+      glyph(g, GLYPHS[gi], 22);
+    }
+
+    // cadre lumineux d'une paire trouvée (dessiné avec une opacité variable)
+    function drawGlow(g, gi) {
+      const tint = TINTS[gi];
+      g.fillStyle = hexA(tint, 0.1);
+      api.roundRect(g, -CW / 2, -CH / 2, CW, CH, 14); g.fill();
+      g.strokeStyle = tint; g.lineWidth = 1.5;
+      g.shadowColor = tint; g.shadowBlur = 18 * cv.dpr;
+      api.roundRect(g, -CW / 2 + 0.75, -CH / 2 + 0.75, CW - 1.5, CH - 1.5, 14); g.stroke();
+      g.shadowBlur = 8 * cv.dpr;
+      g.lineWidth = 3;
+      glyph(g, GLYPHS[gi], 22);
     }
 
     // les huit glyphes, centrés sur l'origine, rayon r
-    function glyph(name, r) {
+    function glyph(ctx, name, r) {
       ctx.beginPath();
       switch (name) {
         case 'ring':
           ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
           ctx.beginPath(); ctx.arc(0, 0, r * 0.38, 0, Math.PI * 2); ctx.fill();
           return;
-        case 'triangle': poly(3, r * 1.08, -Math.PI / 2, r * 0.12); ctx.stroke(); return;
+        case 'triangle': poly(ctx, 3, r * 1.08, -Math.PI / 2, r * 0.12); ctx.stroke(); return;
         case 'diamond':
-          poly(4, r * 1.05, -Math.PI / 2, 0); ctx.stroke();
-          ctx.beginPath(); poly(4, r * 0.42, -Math.PI / 2, 0); ctx.fill();
+          poly(ctx, 4, r * 1.05, -Math.PI / 2, 0); ctx.stroke();
+          ctx.beginPath(); poly(ctx, 4, r * 0.42, -Math.PI / 2, 0); ctx.fill();
           return;
-        case 'hexagon': poly(6, r, 0, 0); ctx.stroke(); return;
+        case 'hexagon': poly(ctx, 6, r, 0, 0); ctx.stroke(); return;
         case 'cross': {
           const a = r * 0.34, b = r * 0.95;
           ctx.moveTo(-a, -b); ctx.lineTo(a, -b); ctx.lineTo(a, -a); ctx.lineTo(b, -a); ctx.lineTo(b, a); ctx.lineTo(a, a);
@@ -299,7 +324,7 @@ SBG.register('memory', {
         }
       }
     }
-    function poly(n, r, rot) {
+    function poly(ctx, n, r, rot) {
       for (let i = 0; i < n; i++) {
         const a = rot + (i * Math.PI * 2) / n;
         i ? ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r) : ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);

@@ -139,7 +139,7 @@ SBG.register('taquin', {
         if (state === 'solved') {
           const k = api.ease.out(Math.min(1, solvedT / 0.4));
           const i = N * N - 1, x = px(i) + CELL / 2, y = py(i) + CELL / 2, w = CELL * (0.6 + 0.4 * k);
-          ctx.globalAlpha = k * 0.9;
+          ctx.globalAlpha = k * 0.7;
           const g = ctx.createLinearGradient(x - w / 2, y - w / 2, x + w / 2, y + w / 2);
           g.addColorStop(0, C.cyan); g.addColorStop(1, C.violet);
           ctx.fillStyle = g;
@@ -165,7 +165,7 @@ SBG.register('taquin', {
           }
           if (s <= 0.01) continue;
           const movable = state === 'play' && (Math.floor(i / N) === Math.floor(zi / N) || i % N === zi % N);
-          drawTile(x, y, v, s, board[v - 1] === v || i === v - 1, hover === i && movable);
+          drawTile(x, y, v, s, i === v - 1, hover === i && movable);
         }
         fx.draw(ctx);
       },
@@ -180,20 +180,21 @@ SBG.register('taquin', {
       ctx.lineWidth = 1.2;
       ctx.strokeStyle = inPlace ? 'rgba(56,230,255,0.45)' : hot ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)';
       api.roundRect(ctx, cx - w / 2 + 0.6, cy - w / 2 + 0.6, w - 1.2, w - 1.2, 12 * s); ctx.stroke();
-      if (inPlace) {
-        ctx.fillStyle = C.cyan; ctx.globalAlpha *= 0.8;
-        api.roundRect(ctx, cx - 9 * s, cy + w / 2 - 14 * s, 18 * s, 3 * s, 2); ctx.fill();
-        ctx.globalAlpha = 1;
-      }
       ctx.fillStyle = inPlace ? C.cyan : C.ink;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.font = `700 ${38 * s}px ${api.font}`;
       ctx.fillText(String(v), cx, cy + 1);
     }
 
+    // comme cv.toLocal, mais tient compte du letterboxing (object-fit: contain)
+    function toLocal(e) {
+      const r = cv.el.getBoundingClientRect();
+      const s = Math.min(r.width / W, r.height / H) || 1;
+      return { x: (e.clientX - r.left - (r.width - W * s) / 2) / s, y: (e.clientY - r.top - (r.height - H * s) / 2) / s };
+    }
     // ── Entrées ───────────────────────────────────────────────
     function cellAt(e) {
-      const p = cv.toLocal(e.clientX, e.clientY);
+      const p = toLocal(e);
       for (let i = 0; i < N * N; i++) {
         if (p.x >= px(i) - GAP / 2 && p.x < px(i) + CELL + GAP / 2 && p.y >= py(i) - GAP / 2 && p.y < py(i) + CELL + GAP / 2) return i;
       }

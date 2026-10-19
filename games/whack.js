@@ -170,10 +170,63 @@ SBG.register('whack', {
       else { g.addColorStop(0, C.cyan); g.addColorStop(1, C.violet); }
       ctx.save();
       ctx.fillStyle = g;
-      ctx.shadowColor = left <= 5 && state === 'play' ? C.warm : C.cyan; ctx.shadowBlur = 8;
-      api.roundRect(ctx, x, y, Math.max(h, w * k), h, 2); ctx.fill();
+            api.roundRect(ctx, x, y, Math.max(h, w * k), h, 2); ctx.fill();
       ctx.restore();
     }
+
+    // sprites pré-rendus : socle du port et orbe lumineux
+    const SPR = {};
+    function spr(key, w, h, draw) {
+      if (SPR[key]) return SPR[key];
+      const c = document.createElement('canvas');
+      c.width = Math.ceil(w * cv.dpr); c.height = Math.ceil(h * cv.dpr);
+      const g = c.getContext('2d');
+      g.scale(cv.dpr, cv.dpr); g.translate(w / 2, h / 2);
+      draw(g);
+      return (SPR[key] = { c, w, h });
+    }
+    const blit = (s, x, y) => ctx.drawImage(s.c, x - s.w / 2, y - s.h / 2, s.w, s.h);
+    const BASE_W = (PRX + 24) * 2, BASE_H = (PRY + 16) * 2;
+    const baseSpr = () => spr('base', BASE_W, BASE_H, (g) => {
+      // disque de sol
+      const floor = g.createRadialGradient(0, 4, 0, 0, 4, PRX + 22);
+      floor.addColorStop(0, 'rgba(110,139,255,0.10)');
+      floor.addColorStop(1, 'rgba(110,139,255,0)');
+      g.fillStyle = floor;
+      g.beginPath(); g.ellipse(0, 4, PRX + 22, PRY + 12, 0, 0, Math.PI * 2); g.fill();
+      // épaisseur du dôme
+      g.strokeStyle = 'rgba(255,255,255,0.05)'; g.lineWidth = 1;
+      g.beginPath(); g.ellipse(0, 7, PRX + 6, PRY + 5, 0, 0.1, Math.PI - 0.1); g.stroke();
+      // ouverture du puits
+      const well = g.createLinearGradient(0, -PRY, 0, PRY);
+      well.addColorStop(0, '#03040A'); well.addColorStop(1, '#141A30');
+      g.fillStyle = well;
+      g.beginPath(); g.ellipse(0, 0, PRX, PRY, 0, 0, Math.PI * 2); g.fill();
+    });
+    const wellGlow = () => spr('wellglow', PRX * 2, PRY * 2, (g) => {
+      g.scale(1, PRY / PRX);
+      const gl = g.createRadialGradient(0, 0, 0, 0, 0, PRX);
+      gl.addColorStop(0, 'rgba(56,230,255,0.4)');
+      gl.addColorStop(1, 'rgba(56,230,255,0)');
+      g.fillStyle = gl;
+      g.beginPath(); g.arc(0, 0, PRX, 0, Math.PI * 2); g.fill();
+    });
+    const ORB_BOX = ORB * 5.6;
+    const orbSpr = (hit) => spr(hit ? 'orbhit' : 'orb', ORB_BOX, ORB_BOX, (g) => {
+      const hc = hit ? '255,255,255' : '56,230,255';
+      const halo = g.createRadialGradient(0, 0, 0, 0, 0, ORB * 2.7);
+      halo.addColorStop(0, 'rgba(' + hc + ',0.45)');
+      halo.addColorStop(1, 'rgba(' + hc + ',0)');
+      g.fillStyle = halo;
+      g.fillRect(-ORB_BOX / 2, -ORB_BOX / 2, ORB_BOX, ORB_BOX);
+      const orb = g.createRadialGradient(-ORB * 0.3, -ORB * 0.35, 1, 0, 0, ORB);
+      orb.addColorStop(0, '#FFFFFF');
+      orb.addColorStop(0.35, hit ? '#E8FBFF' : '#9FF3FF');
+      orb.addColorStop(1, hit ? '#9FF3FF' : C.cyan);
+      g.fillStyle = orb;
+      g.shadowColor = C.cyan; g.shadowBlur = 20 * cv.dpr;
+      g.beginPath(); g.arc(0, 0, ORB, 0, Math.PI * 2); g.fill();
+    });
 
     function drawPort(p) {
       const s = sig[p.i];
@@ -181,38 +234,21 @@ SBG.register('whack', {
       const isCursor = kbd && cursor === p.i && state === 'play';
       const press = p.press;
 
-      // socle : léger disque de sol
-      const floor = ctx.createRadialGradient(p.x, p.y + 4, 0, p.x, p.y + 4, PRX + 22);
-      floor.addColorStop(0, 'rgba(110,139,255,0.10)');
-      floor.addColorStop(1, 'rgba(110,139,255,0)');
-      ctx.fillStyle = floor;
-      ctx.beginPath(); ctx.ellipse(p.x, p.y + 4, PRX + 22, PRY + 12, 0, 0, Math.PI * 2); ctx.fill();
+      blit(baseSpr(), p.x, p.y);
 
-      // ouverture du puits
-      ctx.save();
-      ctx.beginPath(); ctx.ellipse(p.x, p.y, PRX, PRY, 0, 0, Math.PI * 2);
-      const well = ctx.createLinearGradient(0, p.y - PRY, 0, p.y + PRY);
-      well.addColorStop(0, '#03040A'); well.addColorStop(1, '#141A30');
-      ctx.fillStyle = well; ctx.fill();
-      ctx.restore();
-
-      // lueur interne quand un signal est présent
-      if (s) {
-        const rk = riseK(s);
-        const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, PRX);
-        glow.addColorStop(0, 'rgba(56,230,255,' + (0.35 * rk) + ')');
-        glow.addColorStop(1, 'rgba(56,230,255,0)');
-        ctx.fillStyle = glow;
-        ctx.beginPath(); ctx.ellipse(p.x, p.y, PRX, PRY, 0, 0, Math.PI * 2); ctx.fill();
-      }
-
-      // signal : découpé par l'ouverture (tout ce qui est au-dessus du centre + l'ellipse)
       if (s) {
         const rk = riseK(s);
         const hit = s.hit >= 0;
         const fade = s.gone >= 0 ? Math.max(0, 1 - (clock - s.gone) / 0.3) : 1;
         const urgency = s.hit < 0 && s.gone < 0 ? api.clamp((clock - s.born) / s.life, 0, 1) : 0;
         const oy = p.y + ORB - (RISE + ORB) * rk;
+
+        // lueur au fond du puits
+        ctx.globalAlpha = Math.min(1, rk) * fade;
+        blit(wellGlow(), p.x, p.y);
+        ctx.globalAlpha = 1;
+
+        // signal : découpé par l'ouverture (tout ce qui est au-dessus du centre + la moitié avant de l'ellipse)
         ctx.save();
         ctx.beginPath();
         ctx.rect(p.x - PRX - 40, p.y - 140, (PRX + 40) * 2, 140);
@@ -220,29 +256,16 @@ SBG.register('whack', {
         ctx.ellipse(p.x, p.y, PRX, PRY, 0, 0, Math.PI);
         ctx.clip();
         ctx.globalAlpha = fade;
-        // halo
-        const halo = ctx.createRadialGradient(p.x, oy, 0, p.x, oy, ORB * 2.6);
-        const hc = hit ? '255,255,255' : '56,230,255';
-        halo.addColorStop(0, 'rgba(' + hc + ',' + (0.45) + ')');
-        halo.addColorStop(1, 'rgba(' + hc + ',0)');
-        ctx.fillStyle = halo;
-        ctx.fillRect(p.x - ORB * 2.6, oy - ORB * 2.6, ORB * 5.2, ORB * 5.2);
         // colonne de lumière qui relie le signal au puits
         const col = ctx.createLinearGradient(0, oy, 0, p.y);
         col.addColorStop(0, 'rgba(56,230,255,0.28)');
         col.addColorStop(1, 'rgba(56,230,255,0.02)');
         ctx.fillStyle = col;
         ctx.fillRect(p.x - ORB * 0.55, oy, ORB * 1.1, Math.max(0, p.y - oy));
-        // orbe
-        const orb = ctx.createRadialGradient(p.x - ORB * 0.3, oy - ORB * 0.35, 1, p.x, oy, ORB);
-        orb.addColorStop(0, '#FFFFFF');
-        orb.addColorStop(0.35, hit ? '#E8FBFF' : '#9FF3FF');
-        orb.addColorStop(1, hit ? '#9FF3FF' : C.cyan);
-        ctx.fillStyle = orb;
-        ctx.shadowColor = C.cyan; ctx.shadowBlur = 24;
+        // orbe (grossit et blanchit quand il est touché)
         const sc = hit ? 1 + (clock - s.hit) * 2.2 : 1;
-        ctx.beginPath(); ctx.arc(p.x, oy, ORB * sc, 0, Math.PI * 2); ctx.fill();
-        ctx.shadowBlur = 0;
+        const o = orbSpr(hit);
+        ctx.drawImage(o.c, p.x - (o.w / 2) * sc, oy - (o.h / 2) * sc, o.w * sc, o.h * sc);
         // anneau d'urgence : se referme avant l'extinction
         if (urgency > 0 && !api.reduced) {
           ctx.strokeStyle = 'rgba(176,124,255,0.85)';
@@ -252,20 +275,17 @@ SBG.register('whack', {
         ctx.restore();
       }
 
-      // lèvre avant du port (par-dessus le signal)
-      ctx.save();
-      const rimCol = p.flash > 0 ? 'rgba(255,122,107,' + (0.25 + 0.6 * p.flash) + ')'
-        : isHover || isCursor ? 'rgba(56,230,255,0.6)' : 'rgba(255,255,255,0.13)';
-      ctx.strokeStyle = rimCol;
+      // lèvre du port (par-dessus le signal)
+      const rx = PRX + press * 2, ry = PRY + press;
+      if (p.flash > 0 || isCursor) {
+        ctx.strokeStyle = p.flash > 0 ? 'rgba(255,122,107,' + (0.18 * p.flash) + ')' : 'rgba(56,230,255,0.2)';
+        ctx.lineWidth = 7;
+        ctx.beginPath(); ctx.ellipse(p.x, p.y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.strokeStyle = p.flash > 0 ? 'rgba(255,122,107,' + (0.25 + 0.6 * p.flash) + ')'
+        : isHover || isCursor ? 'rgba(56,230,255,0.65)' : 'rgba(255,255,255,0.13)';
       ctx.lineWidth = 2 + press * 1.5;
-      if (p.flash > 0) { ctx.shadowColor = C.bad; ctx.shadowBlur = 14 * p.flash; }
-      else if (isCursor) { ctx.shadowColor = C.cyan; ctx.shadowBlur = 12; }
-      ctx.beginPath(); ctx.ellipse(p.x, p.y, PRX + press * 2, PRY + press, 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.restore();
-      // épaisseur du dôme
-      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.ellipse(p.x, p.y + 7, PRX + 6, PRY + 5, 0, 0.1, Math.PI - 0.1); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(p.x, p.y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
 
       // numéro de touche
       ctx.fillStyle = C.faint;

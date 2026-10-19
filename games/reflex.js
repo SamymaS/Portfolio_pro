@@ -19,7 +19,7 @@ SBG.register('reflex', {
 .g-stage:has(> .rx-root){justify-content:flex-start}
 .rx-root{width:100%;max-width:560px;margin-block:auto;display:grid;gap:1.2rem;user-select:none;-webkit-user-select:none}
 .rx-pad{position:relative;height:clamp(200px,38svh,280px);border-radius:26px;border:1px solid var(--line);background:rgba(255,255,255,.025);display:grid;place-items:center;align-content:center;gap:.4rem;text-align:center;padding:1rem;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow:hidden;outline:none;transition:background .35s ease-out,border-color .35s ease-out,box-shadow .35s ease-out}
-.rx-pad:focus-visible{border-color:rgba(56,230,255,.5)}
+.rx-pad:focus-visible{border-color:rgba(238,241,247,.28)}
 .rx-pad::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(60% 70% at 50% 50%,rgba(56,230,255,.35),rgba(56,230,255,0) 70%);opacity:0;transition:opacity .3s ease-out}
 .rx-big{position:relative;font-size:clamp(1.7rem,6vw,2.6rem);font-weight:800;font-stretch:118%;letter-spacing:-.02em;line-height:1.05;color:var(--ink);font-variant-numeric:tabular-nums}
 .rx-small{position:relative;font-size:.92rem;color:var(--muted)}
@@ -39,7 +39,7 @@ SBG.register('reflex', {
 .rx-pad.fast .rx-big{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .rx-meta{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;font-size:.86rem;color:var(--faint)}
 .rx-meta b{color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
-.rx-chart{position:relative;display:grid;grid-template-columns:repeat(${TRIES},1fr);gap:.7rem;height:120px;padding:0 .2rem;border-bottom:1px solid var(--line)}
+.rx-chart{--ch:112px;position:relative;box-sizing:content-box;display:grid;grid-template-columns:repeat(${TRIES},1fr);gap:.7rem;height:var(--ch);padding:1.5rem .2rem 0;border-bottom:1px solid var(--line)}
 .rx-col{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
 .rx-bar{width:100%;max-width:56px;height:100%;border-radius:10px 10px 3px 3px;background:linear-gradient(180deg,rgba(176,124,255,.55),rgba(176,124,255,.18));transform-origin:50% 100%;transform:scaleY(0);transition:transform .45s cubic-bezier(.2,.8,.2,1),background .3s}
 .rx-col.best .rx-bar{background:linear-gradient(180deg,var(--c2),rgba(56,230,255,.25))}
@@ -48,7 +48,7 @@ SBG.register('reflex', {
 .rx-val{position:absolute;bottom:calc(var(--h,0) * 100% + 6px);font-size:.78rem;font-weight:650;color:var(--muted);font-variant-numeric:tabular-nums;opacity:0;transition:opacity .3s ease-out .15s}
 .rx-col.has .rx-val{opacity:1}
 .rx-col.best .rx-val{color:var(--c2)}
-.rx-avg{position:absolute;left:0;right:0;bottom:0;height:0;border-top:1px dashed rgba(238,241,247,.35);transform:translateY(calc(var(--a,0) * -120px));opacity:0;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s;pointer-events:none}
+.rx-avg{position:absolute;left:0;right:0;bottom:0;height:0;border-top:1px dashed rgba(238,241,247,.35);transform:translateY(calc(var(--a,0) * -1 * var(--ch)));opacity:0;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s;pointer-events:none}
 .rx-avg span{position:absolute;right:0;top:-1.25rem;font-size:.7rem;color:var(--muted);background:#0B0E1A;padding:0 .3rem;border-radius:4px}
 .rx-avg.on{opacity:1}
 .rx-axis{display:grid;grid-template-columns:repeat(${TRIES},1fr);gap:.7rem;padding:0 .2rem;margin-top:-.75rem;font-size:.72rem;color:var(--faint);text-align:center}
@@ -135,7 +135,7 @@ SBG.register('reflex', {
     function arm() {
       clearTimers();
       state = 'wait';
-      setPad('wait', t('Attendez le signal', 'Wait for the signal'), t('Ne cliquez pas encore', 'Do not press yet'));
+      setPad('wait', t('Attendez le signal', 'Wait for the signal'), t('Pas encore', 'Not yet'));
       K('hint').textContent = '';
       paintChart();
       const delay = 1200 + Math.random() * 2300;
@@ -163,6 +163,8 @@ SBG.register('reflex', {
       }
       if (state === 'go') {
         const v = Math.max(1, Math.round(now - goAt));
+        // sous 90 ms, aucun humain ne réagit : c'est une anticipation
+        if (v < 90) { state = 'wait'; press(); return; }
         times.push(v);
         state = 'shown';
         api.hud({ score: v });

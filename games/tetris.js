@@ -17,6 +17,7 @@ SBG.register('tetris', {
     const ctx = cv.ctx;
     const fx = api.particles();
     const MANY = api.reduced ? 0.4 : 1;
+    const COARSE = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
 
     const DAS = 0.15, ARR = 0.038, LOCK = 0.5, SOFT = 0.032, MAX_RESETS = 15;
     const CLEAR_DUR = 0.26, COLLAPSE_DUR = 0.16, ROT_DUR = 0.085;
@@ -60,7 +61,7 @@ SBG.register('tetris', {
     };
 
     let board, piece, bag, queue, hold, holdUsed, score, lines, level, state;
-    let fallAcc, lockT, lockResets, lowest, soft, das, vis, clearRows, clearT, collapse, overT, drops, lands, lastStart = -1e9;
+    let fallAcc, lockT, lockResets, lowest, soft, das, vis, clearRows, clearT, collapse, overT, drops, lands, lastStart = -1e9, runId = 0;
     const held = { left: false, right: false };
 
     function reset() {
@@ -113,7 +114,7 @@ SBG.register('tetris', {
     function start() {
       const now = performance.now();
       if (now - lastStart < 350) return;
-      lastStart = now;
+      lastStart = now; runId++;
       reset();
       state = 'play';
       spawn();
@@ -239,7 +240,8 @@ SBG.register('tetris', {
       das.dir = 0; soft = false;
       api.sfx('lose'); api.shake(6);
       const record = api.setBest(score);
-      api.after(900, () => api.overlay({
+      const id = runId;
+      api.after(900, () => id === runId && state === 'over' && api.overlay({
         kicker: record && score > 0 ? api.t('Nouveau record', 'New best') : '',
         title: api.t('Partie terminée', 'Game over'),
         text: api.t(score + ' points · ' + lines + (lines > 1 ? ' lignes' : ' ligne'), score + ' points · ' + lines + (lines === 1 ? ' line' : ' lines')),
@@ -461,7 +463,7 @@ SBG.register('tetris', {
       if (hold) miniPiece(hold, PX + PW / 2, HOLD_BOX.y + HOLD_BOX.h / 2, 18, holdUsed ? 0.3 : 0.9);
       else {
         ctx.fillStyle = C.faint; ctx.font = '500 12px ' + api.font; ctx.textAlign = 'center';
-        ctx.fillText(api.t('C ou Maj', 'C or Shift'), PX + PW / 2, HOLD_BOX.y + HOLD_BOX.h / 2 + 4);
+        ctx.fillText(COARSE ? api.t('Toucher ici', 'Tap here') : api.t('C ou Maj', 'C or Shift'), PX + PW / 2, HOLD_BOX.y + HOLD_BOX.h / 2 + 4);
       }
       const stats = [[api.t('Niveau', 'Level'), level], [api.t('Lignes', 'Lines'), lines]];
       stats.forEach(([l, v], i) => {

@@ -15,11 +15,28 @@ SBG.register('minesweeper', {
     const ctx = cv.ctx;
     const fx = api.particles();
     const LONG_PRESS = 0.35;
+    const S = CELL - 4;
+
+    // petits sprites pré-rendus : les lueurs (shadowBlur) coûtent cher à
+    // chaque image, on les dessine une fois puis on les recopie.
+    const SPR = {};
+    function spr(key, draw) {
+      if (SPR[key]) return SPR[key];
+      const c = document.createElement('canvas');
+      c.width = c.height = Math.ceil(S * cv.dpr);
+      const g = c.getContext('2d');
+      g.scale(cv.dpr, cv.dpr); g.translate(S / 2, S / 2);
+      draw(g);
+      return (SPR[key] = c);
+    }
+    const blit = (im) => ctx.drawImage(im, -S / 2, -S / 2, S, S);
+    // les chiffres sont rendus dans la police du site une fois celle-ci prête
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { for (const k in SPR) if (k[0] === 'n') delete SPR[k]; });
 
     // teintes des chiffres : du cyan au corail, en restant dans la palette
     const NUM = [null, C.cyan, C.blue, C.violet, '#E08BFF', C.warm, '#FF9F7A', C.bad, C.ink];
 
-    let cells, state, clock, startAt, elapsed, flags, opened, cursor, kbd, hover, press, firstMove;
+    let cells, state, clock, startAt, flags, opened, cursor, kbd, hover, press, firstMove;
     let winWave, shownSec;
 
     const idx = (x, y) => y * N + x;
@@ -37,7 +54,7 @@ SBG.register('minesweeper', {
       for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
         cells.push({ x, y, mine: false, n: 0, open: false, flag: false, showAt: 0, flagT: -1, boomAt: -1, wrong: false, nudge: -1 });
       }
-      clock = 0; startAt = -1; elapsed = 0; flags = 0; opened = 0;
+      clock = 0; startAt = -1; flags = 0; opened = 0;
       cursor = { x: 4, y: 4 }; kbd = false; hover = null; press = null; firstMove = true;
       winWave = -1; shownSec = -1;
       fx.clear();
@@ -67,7 +84,7 @@ SBG.register('minesweeper', {
       const c = cells[idx(x, y)];
       if (c.flag) return;
       if (c.open) { chord(c); return; }
-      if (firstMove) { plantMines(x, y); firstMove = false; startAt = clock; }
+      if (firstMove) { plantMines(x, y); firstMove = false; startAt = performance.now(); }
       if (c.mine) return lose(c);
       api.sfx(flood([c], x, y) > 6 ? 'pop' : 'flip');
       checkWin(x, y);
@@ -124,8 +141,7 @@ SBG.register('minesweeper', {
     function checkWin(x, y) {
       if (opened < N * N - MINES) return;
       state = 'won';
-      const secs = Math.max(1, Math.round(clock - startAt));
-      elapsed = clock - startAt;
+      const secs = Math.max(1, Math.round((performance.now() - startAt) / 1000));
       for (const c of cells) if (c.mine && !c.flag) { c.flag = true; c.flagT = clock + 0.3; }
       flags = MINES; api.hud({ score: 0 });
       winWave = clock + 0.25;
@@ -148,7 +164,6 @@ SBG.register('minesweeper', {
 
     function lose(hit) {
       state = 'lost';
-      elapsed = clock - startAt;
       const mines = cells.filter((c) => c.mine);
       let last = clock;
       for (const m of mines) {
@@ -178,7 +193,7 @@ SBG.register('minesweeper', {
         clock += dt;
         fx.update(dt);
         if (state === 'play' && startAt >= 0) {
-          const s = Math.floor(clock - startAt);
+          const s = Math.floor((performance.now() - startAt) / 1000);
           if (s !== shownSec) { shownSec = s; api.status(api.t('Temps ', 'Time ') + fmt(s)); }
         }
         if (state === 'lost') {
@@ -189,11 +204,6 @@ SBG.register('minesweeper', {
               api.tone(140 + Math.random() * 60, 0.12, 'triangle', 0.25, 0.5);
             }
           }
-        }
-        if (press && press.touch && !press.fired && clock - press.t >= LONG_PRESS) {
-          press.fired = true;
-          toggleFlag(press.x, press.y);
-          if (navigator.vibrate) { try { navigator.vibrate(12); } catch (e) { /* rien */ } }
         }
       },
       render() {
@@ -208,11 +218,9 @@ SBG.register('minesweeper', {
         // curseur clavier
         if (kbd && state === 'play') {
           const px = PAD + cursor.x * CELL, py = PAD + cursor.y * CELL;
-          ctx.save();
-          ctx.shadowColor = C.cyan; ctx.shadowBlur = 14;
-          ctx.strokeStyle = C.cyan; ctx.lineWidth = 2;
-          api.roundRect(ctx, px + 1.5, py + 1.5, CELL - 3, CELL - 3, 9); ctx.stroke();
-          ctx.restore();
+          api.roundRect(ctx, px + 1.5, py + 1.5, CELL - 3, CELL - 3, 9);
+          ctx.strokeStyle = 'rgba(56,230,255,0.22)'; ctx.lineWidth = 6; ctx.stroke();
+          ctx.strokeStyle = C.cyan; ctx.lineWidth = 2; ctx.stroke();
         }
         fx.draw(ctx);
       },
@@ -242,12 +250,14 @@ SBG.register('minesweeper', {
         if (c.n > 0) {
           const sc = api.reduced ? 1 : 0.55 + 0.45 * api.ease.back(k);
           ctx.save();
-          ctx.translate(cx, cy + 1); ctx.scale(sc, sc);
-          ctx.fillStyle = NUM[c.n];
-          ctx.font = '700 ' + Math.round(CELL * 0.44) + 'px ' + api.font;
-          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.shadowColor = NUM[c.n]; ctx.shadowBlur = 8;
-          ctx.fillText(String(c.n), 0, 0);
+          ctx.translate(cx, cy); ctx.scale(sc, sc);
+          blit(spr('n' + c.n, (g) => {
+            g.fillStyle = NUM[c.n];
+            g.font = '700 ' + Math.round(CELL * 0.44) + 'px ' + api.font;
+            g.textAlign = 'center'; g.textBaseline = 'middle';
+            g.shadowColor = NUM[c.n]; g.shadowBlur = 8 * cv.dpr;
+            g.fillText(String(c.n), 0, 1);
+          }));
           ctx.restore();
         }
         ctx.globalAlpha = 1;
@@ -278,7 +288,7 @@ SBG.register('minesweeper', {
         const al = c.open ? 1 - k : 1;
         drawClosed(c, px, py, s, sc, al);
         if (c.open && k > 0 && k < 1 && !api.reduced) {
-          ctx.strokeStyle = 'rgba(56,230,255,' + (0.55 * (1 - k)) + ')';
+          ctx.strokeStyle = 'rgba(56,230,255,' + (0.4 * (1 - k) * (1 - k)) + ')';
           ctx.lineWidth = 1.5;
           api.roundRect(ctx, px + 2, py + 2, s, s, 8); ctx.stroke();
         }
@@ -295,17 +305,18 @@ SBG.register('minesweeper', {
       ctx.globalAlpha = al;
       ctx.translate(cx + (nudge ? Math.sin(nudge * 30) * 2 * nudge : 0), cy);
       ctx.scale(scale, scale);
-      const g = ctx.createLinearGradient(0, -s / 2, 0, s / 2);
-      g.addColorStop(0, isHover ? '#1E2742' : '#182036');
-      g.addColorStop(1, isHover ? '#161D33' : '#121829');
-      ctx.fillStyle = g;
-      api.roundRect(ctx, -s / 2, -s / 2, s, s, 8); ctx.fill();
-      ctx.strokeStyle = isHover ? 'rgba(56,230,255,0.35)' : 'rgba(255,255,255,0.07)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      // reflet supérieur
-      ctx.fillStyle = 'rgba(255,255,255,0.05)';
-      api.roundRect(ctx, -s / 2 + 3, -s / 2 + 2, s - 6, 2, 1); ctx.fill();
+      blit(spr(isHover ? 'th' : 't', (g) => {
+        const gr = g.createLinearGradient(0, -s / 2, 0, s / 2);
+        gr.addColorStop(0, isHover ? '#1E2742' : '#182036');
+        gr.addColorStop(1, isHover ? '#161D33' : '#121829');
+        g.fillStyle = gr;
+        api.roundRect(g, -s / 2 + 0.5, -s / 2 + 0.5, s - 1, s - 1, 8); g.fill();
+        g.strokeStyle = isHover ? 'rgba(56,230,255,0.4)' : 'rgba(255,255,255,0.07)';
+        g.lineWidth = 1; g.stroke();
+        // reflet supérieur
+        g.fillStyle = 'rgba(255,255,255,0.05)';
+        api.roundRect(g, -s / 2 + 4, -s / 2 + 2.5, s - 8, 2, 1); g.fill();
+      }));
       if (nudge) {
         ctx.strokeStyle = 'rgba(255,197,107,' + (0.6 * nudge) + ')';
         api.roundRect(ctx, -s / 2, -s / 2, s, s, 8); ctx.stroke();
@@ -319,39 +330,43 @@ SBG.register('minesweeper', {
       const k = c.flagT >= 0 ? api.clamp((clock - c.flagT) / 0.26, 0, 1) : 1;
       if (k <= 0) return;
       const sc = api.reduced ? 1 : api.ease.back(k);
+      const col = c.wrong ? C.bad : (state === 'won' ? C.good : C.warm);
       ctx.save();
       ctx.scale(sc, sc);
-      const col = c.wrong ? C.bad : (state === 'won' ? C.good : C.warm);
-      ctx.strokeStyle = col; ctx.fillStyle = col;
-      ctx.lineWidth = 2; ctx.lineCap = 'round';
-      ctx.shadowColor = col; ctx.shadowBlur = 10;
-      ctx.beginPath(); ctx.moveTo(-5, 10); ctx.lineTo(-5, -10); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-4, -10); ctx.lineTo(9, -4.5); ctx.lineTo(-4, 1); ctx.closePath(); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha *= 0.5;
-      ctx.beginPath(); ctx.moveTo(-10, 10); ctx.lineTo(0, 10); ctx.stroke();
-      if (c.wrong) {
-        ctx.globalAlpha = 1;
-        ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(-11, -11); ctx.lineTo(11, 11); ctx.moveTo(11, -11); ctx.lineTo(-11, 11); ctx.stroke();
-      }
+      blit(spr('f' + col + c.wrong, (g) => {
+        g.strokeStyle = col; g.fillStyle = col;
+        g.lineWidth = 2; g.lineCap = 'round'; g.lineJoin = 'round';
+        g.shadowColor = col; g.shadowBlur = 10 * cv.dpr;
+        g.beginPath(); g.moveTo(-5, 10); g.lineTo(-5, -10); g.stroke();
+        g.beginPath(); g.moveTo(-4, -10); g.lineTo(9, -4.5); g.lineTo(-4, 1); g.closePath(); g.fill();
+        g.shadowBlur = 0;
+        g.globalAlpha = 0.5;
+        g.beginPath(); g.moveTo(-10, 10); g.lineTo(0, 10); g.stroke();
+        if (c.wrong) {
+          g.globalAlpha = 1;
+          g.strokeStyle = C.ink; g.lineWidth = 2;
+          g.beginPath(); g.moveTo(-11, -11); g.lineTo(11, 11); g.moveTo(11, -11); g.lineTo(-11, 11); g.stroke();
+        }
+      }));
       ctx.restore();
     }
 
     function drawMine(cx, cy) {
       ctx.save();
       ctx.translate(cx, cy);
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.lineCap = 'round';
-      for (let i = 0; i < 8; i++) {
-        const a = (i / 8) * Math.PI * 2;
-        ctx.beginPath(); ctx.moveTo(Math.cos(a) * 7, Math.sin(a) * 7); ctx.lineTo(Math.cos(a) * 11.5, Math.sin(a) * 11.5); ctx.stroke();
-      }
-      ctx.fillStyle = C.ink;
-      ctx.shadowColor = C.bad; ctx.shadowBlur = 12;
-      ctx.beginPath(); ctx.arc(0, 0, 7.5, 0, Math.PI * 2); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = C.bad;
-      ctx.beginPath(); ctx.arc(-2.4, -2.4, 2.2, 0, Math.PI * 2); ctx.fill();
+      blit(spr('mine', (g) => {
+        g.strokeStyle = C.ink; g.lineWidth = 2; g.lineCap = 'round';
+        for (let i = 0; i < 8; i++) {
+          const a = (i / 8) * Math.PI * 2;
+          g.beginPath(); g.moveTo(Math.cos(a) * 7, Math.sin(a) * 7); g.lineTo(Math.cos(a) * 11.5, Math.sin(a) * 11.5); g.stroke();
+        }
+        g.fillStyle = C.ink;
+        g.shadowColor = C.bad; g.shadowBlur = 12 * cv.dpr;
+        g.beginPath(); g.arc(0, 0, 7.5, 0, Math.PI * 2); g.fill();
+        g.shadowBlur = 0;
+        g.fillStyle = C.bad;
+        g.beginPath(); g.arc(-2.4, -2.4, 2.2, 0, Math.PI * 2); g.fill();
+      }));
       ctx.restore();
     }
 
@@ -383,16 +398,26 @@ SBG.register('minesweeper', {
       if (e.button === 2) { toggleFlag(c.x, c.y); return; }
       if (e.button !== 0) return;
       try { cv.el.setPointerCapture(e.pointerId); } catch (err) { /* rien */ }
-      press = { x: c.x, y: c.y, t: clock, touch: e.pointerType !== 'mouse', fired: false, sx: e.clientX, sy: e.clientY };
+      const pr = press = { x: c.x, y: c.y, fired: false, sx: e.clientX, sy: e.clientY, timer: 0 };
+      // appui long (tactile ou stylet) : pose un drapeau
+      if (e.pointerType !== 'mouse') {
+        pr.timer = api.after(LONG_PRESS * 1000, () => {
+          if (press !== pr || state !== 'play') return;
+          pr.fired = true;
+          toggleFlag(pr.x, pr.y);
+          if (navigator.vibrate) { try { navigator.vibrate(12); } catch (err) { /* rien */ } }
+        });
+      }
     });
+    function dropPress() { if (press && press.timer) clearTimeout(press.timer); press = null; }
     api.on(cv.el, 'pointermove', (e) => {
       if (e.pointerType === 'mouse') { hover = cellAt(e); if (hover) kbd = false; }
-      if (press && Math.hypot(e.clientX - press.sx, e.clientY - press.sy) > 12) press = null;
+      if (press && Math.hypot(e.clientX - press.sx, e.clientY - press.sy) > 12) dropPress();
     });
     api.on(cv.el, 'pointerleave', () => { hover = null; });
-    api.on(cv.el, 'pointercancel', () => { press = null; });
+    api.on(cv.el, 'pointercancel', dropPress);
     api.on(cv.el, 'pointerup', (e) => {
-      const p = press; press = null;
+      const p = press; dropPress();
       if (!p || p.fired || state !== 'play') return;
       const c = cellAt(e);
       if (c && c.x === p.x && c.y === p.y) reveal(c.x, c.y);

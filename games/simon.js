@@ -166,13 +166,18 @@ SBG.register('simon', {
       ctx.globalAlpha = dim;
       ctx.translate(CX, CY); ctx.scale(pressScale, pressScale); ctx.translate(-CX, -CY);
 
-      // halo lumineux sous le pavé
-      if (L > 0.02 || wrong) {
+      // halo lumineux autour du pavé (dégradé additif, sans flou coûteux)
+      const gl = wrong ? 0.7 : L;
+      if (gl > 0.02) {
+        const [dx, dy] = p.dir;
+        const gx = CX + dx * 110, gy = CY + dy * 110;
+        const halo = ctx.createRadialGradient(gx, gy, 20, gx, gy, 210);
+        halo.addColorStop(0, col(0.32 * gl));
+        halo.addColorStop(1, col(0));
         ctx.save();
-        ctx.shadowColor = col(1);
-        ctx.shadowBlur = 50 * (wrong ? 0.8 : L);
-        ctx.fillStyle = col(0.12 + 0.25 * L);
-        sector(p); ctx.fill();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = halo;
+        ctx.fillRect(dx < 0 ? 0 : CX, dy < 0 ? 0 : CY, CX, CY);
         ctx.restore();
       }
 
@@ -221,10 +226,13 @@ SBG.register('simon', {
       if (seq.length && (phase === 'input' || phase === 'wait')) {
         const k = phase === 'wait' ? 1 : step / seq.length;
         ctx.strokeStyle = phase === 'wait' ? C.good : C.cyan;
-        ctx.lineWidth = 3; ctx.lineCap = 'round';
-        ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 10;
-        if (k > 0) { ctx.beginPath(); ctx.arc(CX, CY, r - 6, -Math.PI / 2, -Math.PI / 2 + k * Math.PI * 2); ctx.stroke(); }
-        ctx.shadowBlur = 0;
+        ctx.lineCap = 'round';
+        if (k > 0) {
+          ctx.globalAlpha = 0.25; ctx.lineWidth = 8;
+          ctx.beginPath(); ctx.arc(CX, CY, r - 6, -Math.PI / 2, -Math.PI / 2 + k * Math.PI * 2); ctx.stroke();
+          ctx.globalAlpha = 1; ctx.lineWidth = 3;
+          ctx.stroke();
+        }
       }
       if (phase === 'show') {
         // points de lecture

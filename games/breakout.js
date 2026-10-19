@@ -13,7 +13,7 @@ SBG.register('breakout', {
     const fx = api.particles();
     const MANY = api.reduced ? 0.4 : 1;
 
-    const COLS = 10, MX = 22, GAP = 6, TOP = 58;
+    const COLS = 10, MX = 22, GAP = 6, TOP = 62, CEIL = 41;
     const BW = (W - MX * 2 - GAP * (COLS - 1)) / COLS, BH = 16;
     const PADW = 92, PADH = 12, PADY = H - 34, R = 6;
     const ROW_COLS = [C.violet, '#9F86FF', '#8E8FFF', C.blue, '#7FA3FF', '#8FB6FF', '#9CC6FF', '#A8D4FF'];
@@ -111,7 +111,7 @@ SBG.register('breakout', {
 
         if (ball.x < R) { ball.x = R; ball.vx = Math.abs(ball.vx); wall(); }
         else if (ball.x > W - R) { ball.x = W - R; ball.vx = -Math.abs(ball.vx); wall(); }
-        if (ball.y < R) { ball.y = R; ball.vy = Math.abs(ball.vy); wall(); }
+        if (ball.y < CEIL + R) { ball.y = CEIL + R; ball.vy = Math.abs(ball.vy); wall(); }
 
         // raquette
         const half = PADW / 2;
@@ -164,12 +164,12 @@ SBG.register('breakout', {
       api.sfx('win');
       banner = { text: api.t('Niveau ' + level, 'Level ' + level), t: 0 };
       syncStatus();
+      stick();
       const id = runId;
       api.after(1100, () => {
         if (id !== runId || state !== 'between') return;
         bricks = layout(level); dying = [];
         state = 'play';
-        stick();
       });
     }
     function gameOver() {
@@ -208,8 +208,8 @@ SBG.register('breakout', {
         pad.v = pad.v * 0.8 + ((nx - pad.x) / dt) * 0.2;
         pad.x = nx;
 
-        if (state !== 'play') return;
         if (stuck) { ball.x = pad.x; ball.y = PADY - R - 1; return; }
+        if (state !== 'play') return;
         step(dt);
         if (++trailTick % 2 === 0) { trail.push({ x: ball.x, y: ball.y }); if (trail.length > (api.reduced ? 0 : 9)) trail.shift(); }
       },

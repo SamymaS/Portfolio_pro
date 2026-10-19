@@ -259,9 +259,15 @@
         ctx.beginPath(); ctx.arc(x, y, r, a0, a0 + Math.PI * 2 * api.ease.out(k)); ctx.stroke();
       }
 
+      // comme cv.toLocal, mais tient compte du letterboxing (object-fit: contain)
+      function toLocal(e) {
+        const r = cv.el.getBoundingClientRect();
+        const s = Math.min(r.width / W, r.height / H) || 1;
+        return { x: (e.clientX - r.left - (r.width - W * s) / 2) / s, y: (e.clientY - r.top - (r.height - H * s) / 2) / s };
+      }
       // ── Entrées ───────────────────────────────────────────────
       function cellAt(e) {
-        const p = cv.toLocal(e.clientX, e.clientY);
+        const p = toLocal(e);
         const c = Math.floor((p.x - OX) / CELL), r = Math.floor((p.y - OY) / CELL);
         if (c < 0 || c > 2 || r < 0 || r > 2) return -1;
         return r * 3 + c;

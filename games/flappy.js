@@ -89,15 +89,16 @@ SBG.register('flappy', {
     function collides() {
       if (plane.y + HIT > FLOOR) return true;
       for (const g of gates) {
-        // cercle contre les deux piliers
         if (PX + HIT < g.x || PX - HIT > g.x + GW) continue;
         const top = g.y - g.g / 2, bot = g.y + g.g / 2;
-        const nx = api.clamp(PX, g.x, g.x + GW);
-        if (plane.y < top + 0) { const ny = Math.min(plane.y, top); if ((PX - nx) ** 2 + (plane.y - ny) ** 2 < HIT * HIT || plane.y < top) return true; }
-        if (plane.y - HIT < top) { const dy = plane.y - top, dx = PX - nx; if (dx * dx + dy * dy < HIT * HIT) return true; }
-        if (plane.y + HIT > bot) { const dy = plane.y - bot, dx = PX - nx; if (dx * dx + dy * dy < HIT * HIT || plane.y > bot) return true; }
+        if (circleRect(PX, plane.y, HIT, g.x, -1000, GW, top + 1000)) return true;
+        if (circleRect(PX, plane.y, HIT, g.x, bot, GW, 1000)) return true;
       }
       return false;
+    }
+    function circleRect(cx, cy, r, x, y, w, h) {
+      const nx = api.clamp(cx, x, x + w), ny = api.clamp(cy, y, y + h);
+      return (cx - nx) * (cx - nx) + (cy - ny) * (cy - ny) < r * r;
     }
 
     const loop = api.loop({
@@ -176,12 +177,12 @@ SBG.register('flappy', {
         ctx.strokeStyle = C.line;
         ctx.beginPath(); ctx.moveTo(0, FLOOR + 0.5); ctx.lineTo(W, FLOOR + 0.5); ctx.stroke();
         ctx.fillStyle = C.grid;
-        const off = state === 'play' ? (layers.offNear * 2) % 24 : (layers.offNear * 2) % 24;
+        const off = (layers.offNear * 2) % 24;
         for (let x = -off; x < W; x += 24) ctx.fillRect(x, FLOOR + 8, 10, 1.5);
 
-        // portiques
-        const shift = state === 'play' ? speed * (alpha - 1) / 120 : 0;
-        for (const g of gates) drawGate(g.x - shift * 0, g);
+        // portiques (interpolés entre deux pas fixes)
+        const shift = state === 'play' ? speed * (1 - alpha) / 120 : 0;
+        for (const g of gates) drawGate(g.x + shift, g);
 
         // traînée
         if (trail.length > 2) {
@@ -190,7 +191,7 @@ SBG.register('flappy', {
             const k = i / trail.length;
             ctx.strokeStyle = 'rgba(56,230,255,' + (k * k * 0.35) + ')';
             ctx.lineWidth = 0.5 + k * 2.5;
-            ctx.beginPath(); ctx.moveTo(trail[i - 1].x, trail[i - 1].y); ctx.lineTo(trail[i].x, trail[i].y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(trail[i - 1].x + shift, trail[i - 1].y); ctx.lineTo(trail[i].x + shift, trail[i].y); ctx.stroke();
           }
         }
 
@@ -224,10 +225,12 @@ SBG.register('flappy', {
       ctx.fillStyle = 'rgba(' + col + ',0.95)';
       api.roundRect(ctx, x + 6, top - 4, GW - 12, 4, 2); ctx.fill();
       api.roundRect(ctx, x + 6, bot, GW - 12, 4, 2); ctx.fill();
-      const ga = 0.12 + g.glow * 0.25;
-      const rg = ctx.createRadialGradient(x + GW / 2, g.y, 0, x + GW / 2, g.y, g.g * 0.6);
-      rg.addColorStop(0, 'rgba(' + col + ',' + ga + ')'); rg.addColorStop(1, 'rgba(' + col + ',0)');
-      ctx.fillStyle = rg; ctx.fillRect(x + GW / 2 - g.g * 0.6, top, g.g * 1.2, g.g);
+      // halo bref quand le portique est franchi
+      if (g.glow > 0) {
+        const rg = ctx.createRadialGradient(x + GW / 2, g.y, 0, x + GW / 2, g.y, g.g * 0.5);
+        rg.addColorStop(0, 'rgba(' + col + ',' + (g.glow * 0.22) + ')'); rg.addColorStop(1, 'rgba(' + col + ',0)');
+        ctx.fillStyle = rg; ctx.fillRect(x + GW / 2 - g.g * 0.5, top, g.g, g.g);
+      }
     }
 
     function drawPlane(x, y, a) {
@@ -236,7 +239,7 @@ SBG.register('flappy', {
       glow.addColorStop(0, dead ? 'rgba(255,122,107,0.25)' : 'rgba(56,230,255,0.3)'); glow.addColorStop(1, 'rgba(56,230,255,0)');
       ctx.fillStyle = glow; ctx.fillRect(x - 34, y - 34, 68, 68);
       ctx.save();
-      ctx.translate(x, y); ctx.rotate(a);
+      ctx.translate(x, y); ctx.rotate(a); ctx.scale(1.2, 1.2);
       // aile basse (ombre)
       ctx.fillStyle = dead ? '#B5566B' : '#1FA9C4';
       ctx.beginPath(); ctx.moveTo(17, 0); ctx.lineTo(-13, 9); ctx.lineTo(-6, 1.5); ctx.closePath(); ctx.fill();

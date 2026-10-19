@@ -146,7 +146,7 @@ SBG.register('rps', {
     }
     function resetCards() {
       [cardYou, cardCpu].forEach((c) => c.classList.remove('win', 'lose', 'lit'));
-      gYou.innerHTML = WAIT; gCpu.innerHTML = WAIT;
+      [gYou, gCpu].forEach((g) => { if (g.getAnimations) g.getAnimations().forEach((a) => a.cancel()); g.innerHTML = WAIT; });
     }
 
     function start() {
@@ -166,12 +166,14 @@ SBG.register('rps', {
     }
     function flip(el, html, delay) {
       if (api.reduced || !el.animate) { el.innerHTML = html; return; }
+      // le contenu change sur une minuterie, pas sur onfinish : robuste même si les images ralentissent
       api.after(delay, () => {
-        el.animate([{ transform: 'rotateY(0)' }, { transform: 'rotateY(90deg)' }], { duration: 120, easing: 'ease-in' })
-          .onfinish = () => {
-            el.innerHTML = html;
-            el.animate([{ transform: 'rotateY(-90deg)', opacity: .4 }, { transform: 'rotateY(0)', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' });
-          };
+        el.animate([{ transform: 'rotateY(0)' }, { transform: 'rotateY(90deg)' }], { duration: 120, easing: 'ease-in', fill: 'forwards' });
+        api.after(120, () => {
+          el.innerHTML = html;
+          el.getAnimations().forEach((a) => a.cancel());
+          el.animate([{ transform: 'rotateY(-90deg)', opacity: 0.4 }, { transform: 'rotateY(0)', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        });
       });
     }
 
