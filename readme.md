@@ -25,6 +25,16 @@ Toutes les formes sont précalculées dans des attributs de la géométrie ; le 
 
 **Les animations.** Défilement fluide (Lenis), révélation des titres mot à mot, manifeste qui s'allume au fil du défilement, compteurs, frise qui se dessine, technologies qui défilent, curseur personnalisé, boutons magnétiques, panneaux inclinés en 3D sous la souris (GSAP et ScrollTrigger).
 
+**Les visuels.** Chaque projet a son image, dans une direction commune : un objet en verre dépoli, éclairé en cyan et violet sur fond nuit, pour répondre aux couleurs de la scène 3D.
+
+| Dossier | Contenu | Origine |
+| --- | --- | --- |
+| `assets/visuals/` | Visuels des projets mis en avant, du parcours, du labo et du contact (1200 px et 720 px) | Générés avec Figma AI, fichier « Portfolio Samy Boudaoud, assets » |
+| `assets/thumbs/` | Vignettes de l'index, affichées au survol (ordinateur) ou à l'ouverture d'une ligne (mobile) | Figma AI, sauf SeaRiders et TimeTravel (vraies images des projets) |
+| `assets/sameva/` | Trois vrais écrans de l'application, découpés de `recherche_ui.webp` | Maquettes Sameva |
+
+Toutes les images sont en WebP, chargées en différé (`loading="lazy"`) : environ 700 Ko au total, jamais au premier affichage.
+
 **Une page projet dédiée à Sameva**, en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html), avec sa propre feuille de style (`style.css`).
 
 **Seize mini-jeux** et treize succès. Tapez `s` puis `b` pour ouvrir un terminal caché.
@@ -80,7 +90,7 @@ Définis dans `vercel.json` (CSP, HSTS, `X-Frame-Options`, `nosniff`, `Referrer-
 ├── achievements.js / .css  Succès et notifications
 ├── sameva.html, Sameva.en.html, style.css   Étude de cas Sameva
 ├── 404.html                Page d'erreur
-├── assets/                 Visuels Sameva et image de partage
+├── assets/                 Visuels (visuals/, thumbs/, sameva/), mascotte Sameva, image de partage
 ├── sw.js, manifest.webmanifest, vercel.json, sitemap.xml, robots.txt, favicon.svg
 └── CV_Samy_Boudaoud.pdf    Curriculum vitae
 ```

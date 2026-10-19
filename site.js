@@ -50,6 +50,7 @@
     const en = root.lang === 'en';
     document.title = t('title');
     $$('[data-aria-fr]').forEach((el) => el.setAttribute('aria-label', el.dataset[en ? 'ariaEn' : 'ariaFr']));
+    $$('[data-l-alt-fr]').forEach((el) => { el.alt = el.dataset[en ? 'lAltEn' : 'lAltFr']; });
     updateAchievements();
   }
   $('#langBtn').addEventListener('click', () => {
@@ -128,7 +129,7 @@
     const narrow = isNarrow();
     const shape = stage >= 1 && stage <= 4;
     return {
-      ox: shape && !narrow ? 1.85 : 0,
+      ox: shape && !narrow ? 2.15 : 0,
       oy: shape && narrow ? 1.6 : 0,
       opacity: stage === 5 ? 0.55 : 1,
     };
@@ -329,6 +330,80 @@
     b.style.setProperty('--mx', (e.clientX - r.left) + 'px');
     b.style.setProperty('--my', (e.clientY - r.top) + 'px');
   });
+
+  /* ── Visuels : parallaxe au défilement et à la souris ───────── */
+  if (hasGsap && !reduce) {
+    // L'image glisse dans son cadre pendant que le cadre défile
+    $$('.feat-media > img, .job-visual img, .lab-visual img').forEach((img) => {
+      gsap.fromTo(img, { yPercent: -6 }, {
+        yPercent: 6, ease: 'none',
+        scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
+      });
+    });
+    // Sameva : les écrans s'écartent à l'arrivée, puis suivent la souris en profondeur
+    const stage = $('.sameva-stage');
+    if (stage) {
+      const layers = $$('[data-depth]', stage);
+      gsap.from($$('.phone', stage), {
+        y: 60, opacity: 0, duration: 1.4, ease: 'expo.out', stagger: .12,
+        scrollTrigger: { trigger: stage, start: 'top 80%', once: true },
+      });
+      gsap.from($('.paco', stage), {
+        y: 80, rotate: -12, opacity: 0, duration: 1.6, ease: 'elastic.out(1,.55)', delay: .35,
+        scrollTrigger: { trigger: stage, start: 'top 80%', once: true },
+      });
+      if (finePointer) {
+        const movers = layers.map((el) => ({
+          x: gsap.quickTo(el, 'x', { duration: .9, ease: 'power3' }),
+          y: gsap.quickTo(el, 'y', { duration: .9, ease: 'power3' }),
+          d: +el.dataset.depth,
+        }));
+        stage.addEventListener('pointermove', (e) => {
+          const r = stage.getBoundingClientRect();
+          const nx = (e.clientX - r.left) / r.width - .5, ny = (e.clientY - r.top) / r.height - .5;
+          movers.forEach((m) => { m.x(nx * 14 * m.d); m.y(ny * 10 * m.d); });
+        });
+        stage.addEventListener('pointerleave', () => movers.forEach((m) => { m.x(0); m.y(0); }));
+      }
+    }
+  }
+
+  /* ── Index : aperçu qui suit la souris ──────────────────────── */
+  if (finePointer) {
+    root.classList.add('has-preview');
+    const pv = document.createElement('div');
+    pv.className = 'preview';
+    pv.setAttribute('aria-hidden', 'true');
+    const pvImg = document.createElement('img');
+    pvImg.alt = '';
+    pv.appendChild(pvImg);
+    document.body.appendChild(pv);
+    let px = 0, py = 0, tx = 0, ty = 0, raf = 0;
+    const follow = () => {
+      px += (tx - px) * .16; py += (ty - py) * .16;
+      pv.style.left = (px + 28) + 'px'; pv.style.top = (py - 110) + 'px';
+      raf = Math.abs(tx - px) + Math.abs(ty - py) > .5 ? requestAnimationFrame(follow) : 0;
+    };
+    const move = (e) => { tx = e.clientX; ty = e.clientY; if (!raf) raf = requestAnimationFrame(follow); };
+    // Préchargement discret des vignettes quand l'index approche
+    new IntersectionObserver((en, obs) => {
+      if (!en[0].isIntersecting) return;
+      $$('.row[data-thumb]').forEach((r) => { const i = new Image(); i.src = r.dataset.thumb; });
+      obs.disconnect();
+    }, { rootMargin: '400px' }).observe($('#index'));
+    $$('.row summary').forEach((sm) => {
+      const row = sm.parentElement;
+      sm.addEventListener('pointerenter', (e) => {
+        if (!row.dataset.thumb) return;
+        if (pvImg.getAttribute('src') !== row.dataset.thumb) pvImg.src = row.dataset.thumb;
+        px = tx = e.clientX; py = ty = e.clientY; follow();
+        pv.classList.add('on');
+      });
+      sm.addEventListener('pointermove', move);
+      sm.addEventListener('pointerleave', () => pv.classList.remove('on'));
+    });
+    window.addEventListener('scroll', () => pv.classList.remove('on'), { passive: true });
+  }
 
   /* ── Filtres de l'index ─────────────────────────────────────── */
   const rows = $$('.row');

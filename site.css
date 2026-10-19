@@ -407,3 +407,76 @@ main,.foot{position:relative;z-index:2}
   body{background:#fff;color:#000}
   .feat{min-height:0}
 }
+
+/* ==================================================================
+   Visuels (Figma + vrais écrans)
+   ================================================================== */
+
+/* Panneaux de projet : un visuel en tête */
+.feat-panel{width:min(620px,100%)}
+.feat-media{
+  position:relative;margin:0 0 1.6rem;border-radius:20px;overflow:hidden;aspect-ratio:16/11;
+  background:#070912;border:1px solid var(--line);isolation:isolate;
+}
+.feat-media::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -60px 80px -40px rgba(5,6,10,.85)}
+.feat-media>img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.12);will-change:transform}
+
+/* Sameva : trois vrais écrans et Paco */
+.sameva-stage{
+  background:
+    radial-gradient(70% 80% at 50% 110%,rgba(47,214,190,.35),transparent 60%),
+    radial-gradient(60% 60% at 15% 0%,rgba(176,124,255,.28),transparent 70%),
+    linear-gradient(160deg,#141633,#0A0B1A);
+}
+.sameva-stage .phone{
+  position:absolute;top:9%;width:31%;aspect-ratio:402/844;border-radius:18px;overflow:hidden;
+  border:4px solid #12141C;box-shadow:0 24px 60px rgba(0,0,0,.6);will-change:transform;
+}
+.sameva-stage .phone img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.sameva-stage .p-left{left:6%;transform:rotate(-9deg) translateY(12%);opacity:.8}
+.sameva-stage .p-right{right:6%;transform:rotate(9deg) translateY(12%);opacity:.8}
+.sameva-stage .p-main{left:50%;width:35%;margin-left:-17.5%;top:6%;z-index:2;box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 0 1px rgba(56,230,255,.3)}
+.sameva-stage .paco{position:absolute;z-index:3;right:13%;bottom:-6%;width:24%;filter:drop-shadow(0 14px 28px rgba(0,0,0,.55));will-change:transform}
+
+/* Index : vignette dans le détail, et aperçu qui suit la souris */
+.row-img{width:min(420px,100%);height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:14px;border:1px solid var(--line);display:block;margin-bottom:.4rem}
+.has-preview .row-img{display:none}
+.preview{
+  position:fixed;left:0;top:0;z-index:40;width:300px;aspect-ratio:4/3;pointer-events:none;
+  border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 40px 90px rgba(0,0,0,.65);opacity:0;transform:scale(.6) rotate(-6deg);
+  transition:opacity .35s var(--ease),transform .5s var(--ease);will-change:transform,left,top;
+}
+.preview.on{opacity:1;transform:scale(1) rotate(-3deg)}
+.preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .25s}
+
+/* Parcours : la radio dans la colonne de date */
+.when-col{display:grid;gap:1.2rem;align-content:start}
+.job-visual{margin:0;border-radius:18px;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/3;max-width:14rem}
+.job-visual img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.1)}
+.job{grid-template-columns:minmax(0,16rem) minmax(0,1fr)}
+@media (max-width:860px){.job-visual{max-width:none;aspect-ratio:16/9}.job{grid-template-columns:1fr}}
+
+/* Labo : visuel à gauche, jeux à droite */
+.lab-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:1.25rem;align-items:stretch}
+.lab-visual{margin:0;border-radius:22px;overflow:hidden;border:1px solid var(--line);min-height:320px;position:relative}
+.lab-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.08)}
+.lab-layout .games{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+@media (max-width:860px){.lab-layout{grid-template-columns:1fr}.lab-visual{min-height:0;aspect-ratio:16/10}}
+
+/* Contact : l'avion en papier derrière le titre */
+.contact{position:relative;overflow:hidden}
+.contact-visual{
+  position:absolute;z-index:-1;margin:0;right:-4vw;top:2rem;width:min(62vw,860px);pointer-events:none;
+  -webkit-mask-image:radial-gradient(70% 70% at 55% 45%,#000 55%,transparent 100%);
+          mask-image:radial-gradient(70% 70% at 55% 45%,#000 55%,transparent 100%);
+}
+.contact-visual img{width:100%;height:auto;display:block;animation:glide 9s ease-in-out infinite}
+@keyframes glide{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-14px,-18px) rotate(-1.5deg)}}
+.contact .wrap{position:relative;z-index:1}
+@media (max-width:860px){.contact-visual{width:120vw;right:-30vw;top:0;opacity:.55}}
+
+@media (prefers-reduced-motion:reduce){
+  .feat-media>img,.job-visual img,.lab-visual img{transform:none}
+}
