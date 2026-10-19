@@ -406,7 +406,8 @@
         }
         if (e.key === 'Enter' || e.key === ' ') {
           if (state === 'player') { e.preventDefault(); humanDrop(sel); }
-          else if (state === 'ready') { api.hideOverlay(); start(); }
+          // sur l'écran d'accueil, le bouton du panneau a le focus et gère Entrée lui-même
+          else if (state === 'ready' && !(document.activeElement && document.activeElement.classList.contains('g-btn'))) { api.hideOverlay(); start(); }
         }
       });
 
