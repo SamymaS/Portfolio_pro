@@ -8,11 +8,55 @@ Portfolio personnel en HTML, CSS et JavaScript natifs. Aucun framework, aucune �
 
 ## Ce que contient le site
 
-**Le portfolio.** Profil, compétences, expériences, projets, formations et un formulaire de contact. Le CV est téléchargeable directement depuis la barre de navigation.
+**Le portfolio.** Une page unique, sombre : ouverture, manifeste, quatre projets mis en avant, index filtrable de tous les autres, parcours, compétences, labo de mini-jeux et contact. FR et EN sans rechargement.
 
-**Une page projet dédiée à Sameva.** Étude de cas complète de mon application Flutter de quêtes gamifiées : concept, architecture, chiffres du projet et feuille de route. Disponible en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html).
+**La scène 3D.** Un seul champ de particules Three.js, fixe derrière toute la page, qui change de forme au défilement :
 
-**Seize mini-jeux jouables dans le navigateur.** Puissance 4 et Morpion avec IA, Snake, Casse-briques, 2048, Tetris, Démineur, Taquin, Pong, Flappy, Simon, Memory, Tape-taupe, Pierre-feuille-ciseaux, un test de réflexes et un quiz technique. Treize succès déblocables sont associés, persistés en local.
+| Section | Forme |
+| --- | --- |
+| Ouverture, manifeste, contact | Vague de signal qui ondule sous la souris |
+| Sameva | Orbe |
+| TicketFlow | Quatre microservices reliés à un broker |
+| MythraSona | Anneaux sonores |
+| TikTok Live vers Minecraft | Cube de blocs et blocs en orbite |
+| Index, parcours, compétences, labo | Galaxie en spirale, atténuée |
+
+Toutes les formes sont précalculées dans des attributs de la géométrie ; le shader passe de l'une à l'autre avec un décalage par particule et un léger tourbillon, ce qui donne des transitions fluides. La scène se met en pause quand l'onglet est caché ou qu'un jeu est ouvert.
+
+**Les animations.** Défilement fluide (Lenis), révélation des titres mot à mot, manifeste qui s'allume au fil du défilement, compteurs, frise qui se dessine, technologies qui défilent, curseur personnalisé, boutons magnétiques, panneaux inclinés en 3D sous la souris (GSAP et ScrollTrigger).
+
+**Les visuels.** Chaque projet a son image, dans une direction commune : un objet en verre dépoli, éclairé en cyan et violet sur fond nuit, pour répondre aux couleurs de la scène 3D.
+
+| Dossier | Contenu | Origine |
+| --- | --- | --- |
+| `assets/visuals/` | Visuels des projets mis en avant, du parcours, du labo et du contact (1200 px et 720 px) | Générés avec Figma AI, fichier « Portfolio Samy Boudaoud, assets » |
+| `assets/thumbs/` | Vignettes de l'index, affichées au survol (ordinateur) ou à l'ouverture d'une ligne (mobile) | Figma AI, sauf SeaRiders et TimeTravel (vraies images des projets) |
+| `assets/sameva/` | Trois vrais écrans de l'application, découpés de `recherche_ui.webp` | Maquettes Sameva |
+
+Toutes les images sont en WebP, chargées en différé (`loading="lazy"`) : environ 700 Ko au total, jamais au premier affichage.
+
+**Une page projet dédiée à Sameva**, en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html), avec sa propre feuille de style (`style.css`).
+
+**Seize mini-jeux**, réécrits sur un moteur commun (`games/core.js`) : canvas net sur écran Retina, boucle à pas fixe de 1/120 s (même vitesse sur toutes les machines, rendu interpolé), clavier, souris et tactile, sons synthétisés en WebAudio (coupables), records par jeu, écrans de début et de fin. Chaque jeu vit dans son propre fichier `games/<id>.js` et n'est chargé qu'à son ouverture. Treize succès, une icône dessinée par jeu, aucun émoji. Tapez `s` puis `b` pour ouvrir un terminal caché.
+
+| Jeu | Fichier | Particularité |
+| --- | --- | --- |
+| Puissance 4 | `connect4.js` | IA minimax alpha-bêta (profondeur 5), chute des jetons avec rebond |
+| Morpion | `tictactoe.js` | IA minimax qui peut se tromper dans l'ouverture, traits animés |
+| Blocs | `tetris.js` | Rotations avec rattrapage au mur, pièce fantôme, réserve, répétition des touches gérée par le jeu |
+| Snake | `snake.js` | Serpent interpolé entre les cases, file de commandes |
+| 2048 | `2048.js` | Tuiles qui glissent, fusion animée, coup mis en file |
+| Démineur | `minesweeper.js` | Premier clic sûr, révélation en onde, drapeau à l'appui long |
+| Casse-briques | `breakout.js` | Collisions continues (la balle ne traverse jamais une brique), niveaux |
+| Pong | `pong.js` | Effet selon la vitesse de la raquette, IA battable |
+| Envol | `flappy.js` | Avion de papier, physique au pas fixe, décor en parallaxe |
+| Memory | `memory.js` | Retournement 3D, huit symboles dessinés |
+| Séquence | `simon.js` | Une note par touche, tempo croissant |
+| Taquin | `taquin.js` | Mélanges toujours solubles, lignes entières déplaçables |
+| Tape-taupe | `whack.js` | Signaux qui s'élèvent et s'éteignent, rythme croissant |
+| Pierre-feuille-ciseaux | `rps.js` | L'ordinateur prédit vos coups à partir des deux précédents |
+| Réflexes | `reflex.js` | Mesure au pointerdown, cinq essais, graphique |
+| Quiz tech | `quiz.js` | 31 questions bilingues sur la stack (TETRA, Qt, MQTT, Kubernetes…) |
 
 ---
 
@@ -20,66 +64,54 @@ Portfolio personnel en HTML, CSS et JavaScript natifs. Aucun framework, aucune �
 
 ### Pas de build
 
-Le site est du HTML, du CSS et du JavaScript écrits à la main. Pas de bundler, pas de transpilation, pas de `node_modules`. Cloner le dépôt et ouvrir `index.html` suffit pour travailler dessus.
+HTML, CSS et JavaScript écrits à la main. Les bibliothèques sont copiées dans `vendor/` et servies depuis le site (pas de CDN) :
 
-Trois ressources seulement viennent de l'extérieur : les polices Google (Syne et Space Mono), Three.js pour l'animation d'en-tête, et EmailJS pour le formulaire de contact.
+| Fichier | Rôle | Poids compressé |
+| --- | --- | --- |
+| `vendor/three.min.js` | Three.js 0.186, réduit aux classes utilisées (esbuild) | ~134 Ko |
+| `vendor/gsap.min.js`, `ScrollTrigger.min.js` | Animations | ~46 Ko |
+| `vendor/lenis.min.js` | Défilement fluide | ~5 Ko |
 
-### Thème et langue
+Three.js et `scene.js` sont des modules préchargés : le texte s'affiche avant que la 3D ne soit prête, puis la scène apparaît en fondu. Les jeux (`games.js`) ne se chargent qu'au premier clic, EmailJS qu'au premier focus dans le formulaire.
 
-Le thème sombre ou clair repose sur des variables CSS commutées par l'attribut `data-theme` sur `<html>`. Le choix est mémorisé sous la clé `sb-theme`.
+> Les fichiers de `fonts/` et `vendor/` sont mis en cache un an. Pour mettre à jour une bibliothèque, changer le nom du fichier (par exemple `three.187.min.js`).
 
-L'internationalisation français / anglais est maison : un dictionnaire dans `i18n.js`, des attributs `data-i18n` sur les éléments concernés, et la préférence stockée sous `sb-lang`. La page Sameva fonctionne différemment, avec deux fichiers HTML distincts et des liens `hreflang`, ce qui donne à chaque langue sa propre URL indexable.
+### Accessibilité et repli
+
+Si l'utilisateur préfère réduire les animations : pas de défilement fluide, pas de curseur, textes visibles d'emblée, scène 3D figée. Sans WebGL, un dégradé remplace la scène. Contrastes AA vérifiés avec axe-core, focus visible, éléments `<details>` natifs pour l'index, piège de focus dans la fenêtre des jeux.
+
+### Langue
+
+Chaque texte existe en français et en anglais dans le HTML, marqué `data-l="fr"` ou `data-l="en"`. Une règle CSS masque la langue inactive selon l'attribut `lang` de `<html>`, posé avant le premier rendu (préférence sous `sb-lang`).
 
 ### Application web progressive
 
 `manifest.webmanifest` et `sw.js` rendent le site installable et consultable hors ligne.
 
-La stratégie de cache est volontairement dissymétrique : **network-first pour le HTML**, pour qu'une page mise à jour soit toujours servie fraîche, et **cache-first avec rafraîchissement en arrière-plan pour les ressources statiques**, pour la performance.
-
-> **À ne pas oublier :** après toute modification de `style.css` ou d'un fichier `.js`, incrémenter la constante `VERSION` dans `sw.js`. Sans ça, les visiteurs récurrents verront l'ancienne version pendant une visite.
+> **À ne pas oublier :** après toute modification d'un fichier `.css` ou `.js`, incrémenter `VERSION` dans `sw.js`.
 
 ### Sécurité et en-têtes
 
-Les en-têtes HTTP sont définis dans `vercel.json` :
-
-| En-tête | Rôle |
-| --- | --- |
-| `Content-Security-Policy` | Restreint les origines de scripts, styles, polices, images et requêtes |
-| `Strict-Transport-Security` | Force HTTPS, avec `preload` |
-| `X-Frame-Options: DENY` | Bloque l'inclusion du site dans une iframe |
-| `X-Content-Type-Options: nosniff` | Empêche la réinterprétation du type MIME |
-| `Referrer-Policy` | Limite les informations transmises aux sites tiers |
-| `Permissions-Policy` | Désactive caméra, micro et géolocalisation |
-
-Toute nouvelle ressource externe doit être déclarée dans la directive CSP correspondante, sinon le navigateur la bloquera silencieusement.
-
-### Accessibilité
-
-Lien d'évitement vers le contenu, navigation au clavier, piège de focus dans les fenêtres modales des jeux, attributs ARIA sur les composants interactifs et textes alternatifs sur les images.
+Définis dans `vercel.json` (CSP, HSTS, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`). Toute nouvelle ressource externe doit être ajoutée à la CSP.
 
 ---
 
 ## Organisation des fichiers
 
 ```
-├── index.html              Page principale, toutes les sections
-├── sameva.html             Étude de cas Sameva (français)
-├── sameva.en.html          Étude de cas Sameva (anglais)
+├── index.html              Page principale (FR et EN)
+├── site.css                Styles de la page principale et du 404
+├── site.js                 Défilement, animations, filtres, jeux, formulaire, terminal
+├── scene.js                Scène 3D : formes, shaders, rendu
+├── vendor/                 Three.js, GSAP, ScrollTrigger, Lenis
+├── fonts/                  Archivo, police variable auto-hébergée
+├── games/                  Moteur commun (core.js) et un fichier par jeu, chargés à la demande
+├── achievements.js / .css  Succès et notifications
+├── sameva.html, Sameva.en.html, style.css   Étude de cas Sameva
 ├── 404.html                Page d'erreur
-├── style.css               Feuille de styles, variables et thèmes
-├── achievements.css        Styles des succès et notifications
-├── main.js                 Navigation, thème, animations, formulaire
-├── i18n.js                 Dictionnaire et bascule de langue
-├── games.js                Les seize mini-jeux
-├── achievements.js         Succès et persistance locale
-├── sw.js                   Service worker
-├── manifest.webmanifest    Manifeste de l'application web
-├── vercel.json             En-têtes HTTP et configuration de déploiement
-├── sitemap.xml             Plan du site avec alternances de langue
-├── robots.txt              Directives d'indexation
-├── favicon.svg             Icône du site
-├── CV_Samy_Boudaoud.pdf    Curriculum vitae
-└── assets/                 Images, illustrations et visuels de partage
+├── assets/                 Visuels (visuals/, thumbs/, sameva/), logos des entreprises (logos/), mascotte Sameva, image de partage
+├── sw.js, manifest.webmanifest, vercel.json, sitemap.xml, robots.txt, favicon.svg
+└── CV_Samy_Boudaoud.pdf    Curriculum vitae
 ```
 
 ---
