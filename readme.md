@@ -36,7 +36,7 @@ Portfolio personnel en HTML, CSS et JavaScript natifs. Aucun framework, aucune �
 
 Toutes les images sont en WebP, chargées en différé (`loading="lazy"`) : environ 700 Ko au total, jamais au premier affichage.
 
-**Une page projet dédiée à Sameva**, en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html), avec sa propre feuille de style (`style.css`).
+**Une page projet dédiée à Sameva**, en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html), dans la même DA : elle charge `site.css` puis `sameva.css` pour ses blocs propres.
 
 **Seize mini-jeux**, réécrits sur un moteur commun (`games/core.js`) : canvas net sur écran Retina, boucle à pas fixe de 1/120 s (même vitesse sur toutes les machines, rendu interpolé), clavier, souris et tactile, sons synthétisés en WebAudio (coupables), records par jeu, écrans de début et de fin. Chaque jeu vit dans son propre fichier `games/<id>.js` et n'est chargé qu'à son ouverture. Treize succès, une icône dessinée par jeu, aucun émoji. Tapez `s` puis `b` pour ouvrir un terminal caché.
 
@@ -108,7 +108,7 @@ Définis dans `vercel.json` (CSP, HSTS, `X-Frame-Options`, `nosniff`, `Referrer-
 ├── fonts/                  Tiny5, JetBrains Mono et Geist, auto-hébergées
 ├── games/                  Moteur commun (core.js) et un fichier par jeu, chargés à la demande
 ├── achievements.js / .css  Succès et notifications
-├── sameva.html, Sameva.en.html, style.css   Étude de cas Sameva
+├── sameva.html, sameva.en.html, sameva.css   Étude de cas Sameva
 ├── 404.html                Page d'erreur
 ├── assets/                 Skin et icônes (mougi/), visuels (visuals/, thumbs/, sameva/), logos (logos/), image de partage
 ├── sw.js, manifest.webmanifest, vercel.json, sitemap.xml, robots.txt

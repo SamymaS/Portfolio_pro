@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sameva · gamified habit-tracking mobile app · Samy Boudaoud</title>
 <meta name="description" content="Sameva: a Flutter mobile app that turns everyday habits into RPG quests, with photo proof scored by a vision model. v1.0.4 MVP in acceptance testing, MVVM architecture, Supabase, CI/CD. Built for the RNCP 39583 certification.">
-<meta name="theme-color" content="#080b10">
+<meta name="theme-color" content="#0D1117">
 <link rel="canonical" href="https://samy-boudaoud.com/sameva.en.html">
 <link rel="alternate" hreflang="fr" href="https://samy-boudaoud.com/sameva.html">
 <link rel="alternate" hreflang="en" href="https://samy-boudaoud.com/sameva.en.html">
@@ -28,154 +28,34 @@
 <meta name="twitter:title" content="Sameva: turn your habits into RPG quests">
 <meta name="twitter:description" content="A Flutter mobile app with proof validation by a vision model. v1.0.4 MVP, offline-first MVVM architecture.">
 <meta name="twitter:image" content="https://samy-boudaoud.com/assets/og_sameva_en.jpg">
-<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("sb-theme")==="light"?"light":"dark");if(localStorage.getItem("sb-lang")==="fr")location.replace("sameva.html");}catch(e){}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-/* Sameva page: local styles, built on the portfolio design tokens */
-.sv-hero{
-  padding:3.2rem 0 2.5rem;
-  background:
-    radial-gradient(700px 380px at 12% -10%, rgba(124,58,237,.18), transparent 60%),
-    radial-gradient(620px 360px at 95% 0%, rgba(0,229,255,.12), transparent 55%);
-}
-.sv-back{
-  display:inline-flex;align-items:center;gap:.4rem;
-  font-family:var(--fm);font-size:.72rem;color:var(--muted);
-  margin-bottom:1.6rem;transition:color .2s;
-}
-.sv-back:hover{color:var(--accent)}
-.sv-topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.6rem}
-.sv-topbar .sv-back{margin-bottom:0}
-.sv-lang{font-family:var(--fm);font-size:.68rem;font-weight:700;letter-spacing:.1em;
-  color:var(--muted);border:1px solid var(--border);border-radius:var(--r-sm);
-  padding:.35rem .7rem;transition:all .2s;flex-shrink:0}
-.sv-lang:hover{border-color:var(--accent);color:var(--accent)}
-.sv-kicker{
-  display:inline-flex;align-items:center;gap:.5rem;
-  font-family:var(--fm);font-size:.66rem;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;color:#000;background:var(--accent);
-  padding:.35rem .75rem;border-radius:var(--r-sm);
-}
-.sv-h1{font-size:clamp(1.95rem,6vw,3.2rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:1.1rem 0 .8rem}
-.sv-h1 em{font-style:normal;color:var(--accent2)}
-.sv-lead{max-width:680px;color:var(--dim);font-size:1.05rem;line-height:1.6}
-.sv-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
-.sv-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
-
-/* hero en 2 colonnes */
-.sv-hero-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;align-items:center}
-.sv-hero-art{justify-self:center}
-.sv-hero-art img{width:100%;max-width:150px;margin:0 auto;filter:drop-shadow(0 18px 40px rgba(0,0,0,.55))}
-@media(min-width:900px){
-  .sv-hero-grid{grid-template-columns:1.35fr .65fr;gap:2rem}
-  .sv-hero-art img{max-width:280px}
-}
-
-/* chiffres */
-.sv-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.8rem;margin-bottom:2rem}
-.sv-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.2rem}
-.sv-stat b{display:block;white-space:nowrap;font-size:clamp(1.4rem,3.2vw,1.7rem);font-weight:800;letter-spacing:-.02em;color:var(--accent);line-height:1.1}
-.sv-stat span{display:block;font-family:var(--fm);font-size:.66rem;color:var(--muted);margin-top:.35rem;letter-spacing:.05em}
-.sv-stat-note{font-family:var(--fm);font-size:.68rem;color:var(--muted);margin-top:-1.2rem;margin-bottom:2rem}
-
-/* cartes */
-.sv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:.5rem}
-.sv-grid.cols3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.sv-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
-  padding:1.4rem;transition:border-color .25s,transform .25s;
-}
-.sv-card:hover{border-color:rgba(0,229,255,.3);transform:translateY(-3px)}
-.sv-card h3{font-size:1.05rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:.55rem}
-.sv-card p{color:var(--muted);font-size:.92rem;line-height:1.55}
-.sv-card p + p{margin-top:.7rem}
-.sv-ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;
-  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2)}
-.sv-ic svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2}
-
-/* pipeline de validation */
-.sv-flow{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.4rem 0 .4rem}
-.sv-step{
-  flex:1 1 150px;background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:.85rem .9rem;
-}
-.sv-step .n{font-family:var(--fm);font-size:.62rem;color:var(--accent);letter-spacing:.12em}
-.sv-step p{font-size:.85rem;color:var(--dim);line-height:1.45;margin-top:.3rem}
-
-/* statut livré / prévu */
-.sv-status{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:.5rem}
-.sv-col{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem}
-.sv-col h3{font-family:var(--fm);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1rem}
-.sv-col.done h3{color:var(--ok)}
-.sv-col.wip h3{color:var(--warn)}
-.sv-col.next h3{color:var(--muted)}
-.sv-col li{position:relative;padding-left:1.3rem;font-size:.9rem;color:var(--dim);line-height:1.5;margin-bottom:.65rem}
-.sv-col li::before{position:absolute;left:0;top:0;font-family:var(--fm);font-size:.8rem}
-.sv-col.done li::before{content:"✓";color:var(--ok)}
-.sv-col.wip li::before{content:"◐";color:var(--warn)}
-.sv-col.next li::before{content:"○";color:var(--muted)}
-
-/* palette DA */
-.sv-palette{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.2rem}
-.sw{display:flex;align-items:center;gap:.55rem;font-family:var(--fm);font-size:.72rem;color:var(--dim);
-  background:var(--surface);border:1px solid var(--border);padding:.5rem .8rem;border-radius:99px}
-.sw .chip{width:16px;height:16px;border-radius:5px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.1) inset}
-
-/* vitrine assets */
-.sv-assets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-top:1.6rem}
-.sv-asset{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
-  padding:1.2rem;text-align:center;transition:border-color .25s}
-.sv-asset:hover{border-color:rgba(0,229,255,.3)}
-.sv-asset img{margin:0 auto .8rem;max-height:130px;width:auto}
-.sv-asset b{display:block;font-size:.9rem;font-weight:700}
-.sv-asset span{display:block;font-family:var(--fm);font-size:.66rem;color:var(--muted);margin-top:.25rem;line-height:1.4}
-.sv-items{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:1.4rem}
-.sv-items img{height:74px;width:auto;background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:.6rem}
-
-/* figure */
-.sv-figure{margin-top:1.4rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg2)}
-.sv-figure img{width:100%;height:auto;display:block}
-.sv-cap{font-family:var(--fm);font-size:.72rem;color:var(--muted);padding:.9rem 1.1rem;border-top:1px solid var(--border);text-align:center;line-height:1.6}
-
-/* captures d'écran */
-.sv-shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:1.4rem}
-.sv-shot{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.sv-shot img{width:100%;height:auto;display:block}
-.sv-shot figcaption{font-family:var(--fm);font-size:.68rem;color:var(--muted);padding:.7rem .8rem;border-top:1px solid var(--border)}
-
-/* jalons certification */
-.sv-tl{margin-top:.5rem;border-left:2px solid var(--border);padding-left:1.3rem}
-.sv-tl li{position:relative;padding-bottom:1.3rem}
-.sv-tl li::before{content:"";position:absolute;left:calc(-1.3rem - 6px);top:.35rem;
-  width:10px;height:10px;border-radius:50%;background:var(--bg2);border:2px solid var(--muted)}
-.sv-tl li.ok::before{background:var(--ok);border-color:var(--ok)}
-.sv-tl li.up::before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px rgba(0,229,255,.15)}
-.sv-tl .d{font-family:var(--fm);font-size:.66rem;color:var(--accent);letter-spacing:.08em}
-.sv-tl b{display:block;font-size:.98rem;font-weight:700;margin:.2rem 0 .2rem}
-.sv-tl p{font-size:.88rem;color:var(--muted);line-height:1.5}
-
-.sv-note{margin-top:1.4rem;font-size:.85rem;color:var(--muted);font-style:italic;line-height:1.6}
-</style>
+<link rel="preload" href="fonts/tiny5.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="sameva.css">
 </head>
 <body>
 
 <a class="skip-link" href="#sv-content">Skip to content</a>
 
+<div class="xp" aria-hidden="true"></div>
+<header class="top solid" id="top">
+  <a class="mark" href="index.html" aria-label="Samy Boudaoud, back to the portfolio"><img src="assets/mougi/icon-96.png" width="34" height="34" alt=""><b>samy</b><span>.boudaoud</span></a>
+  <span class="lvl" aria-hidden="true">./sameva</span>
+  <div class="tools">
+    <a class="tool" href="sameva.html" hreflang="fr" lang="fr" data-setlang="fr" aria-label="Lire cette page en français">FR</a>
+    <a class="tool tool-cv tool-back" href="index.html#sameva">Portfolio</a>
+  </div>
+</header>
+
 <!-- ═══════════════ HERO ═══════════════ -->
-<header class="sv-hero">
-  <div class="container" id="sv-content">
-    <div class="sv-topbar">
-      <a class="sv-back" href="index.html#sameva">← Back to portfolio</a>
-      <a class="sv-lang" id="svLang" href="sameva.html" hreflang="fr" lang="fr" aria-label="Lire cette page en français">FR</a>
-    </div>
+<main id="sv-content">
+<div class="sv-hero">
+  <div class="container">
     <div class="sv-hero-grid">
       <div>
         <span class="sv-kicker">v1.0.4 · MVP in acceptance testing</span>
-        <h1 class="sv-h1">Sam<em>eva</em>: habits become RPG quests</h1>
+        <h1 class="sv-h1"><span class="sv-name">Sameva</span><span class="sv-sub">Habits become RPG quests</span></h1>
         <p class="sv-lead">
           A <strong>Flutter</strong> mobile app that turns everyday habits into RPG quests.
           The user photographs their proof, a vision model scores it, and the reward lands as XP, gold and items.
@@ -200,7 +80,7 @@
       </div>
     </div>
   </div>
-</header>
+</div>
 
 <!-- ═══════════════ 01 · CONCEPT ═══════════════ -->
 <section class="section">
@@ -483,7 +363,7 @@
     <div class="section-header"><span class="section-num">06</span><h2 class="section-title">Certification context</h2></div>
     <p class="sv-lead">
       Sameva is the project behind the <strong>Expert en développement logiciel</strong> qualification, EQF level 7,
-      RNCP 39583, taken at YNOV Campus in the 2025-2026 cohort. It is run as an engagement for a fictional client,
+      RNCP 39583, earned at YNOV Campus with the 2025-2026 cohort. It is run as an engagement for a fictional client,
       which means holding every role single-handedly: scoping, architecture, development, quality, deployment
       and project management.
     </p>
@@ -504,21 +384,37 @@
         <b>Unit 4 · operations and maintenance</b>
         <p>Written report submitted. Delivery pipeline, monitoring, security and operational upkeep.</p>
       </li>
-      <li class="up">
-        <span class="d">10 September 2026</span>
+      <li class="ok">
+        <span class="d">September 2026</span>
         <b>Unit 3 · project management</b>
-        <p>Upcoming oral defence, with a live demonstration of the working application.</p>
+        <p>Oral defence, with a live demonstration of the working application.</p>
+      </li>
+      <li class="final">
+        <span class="d">September 2026</span>
+        <b>Qualification earned</b>
+        <p>Expert en développement logiciel, EQF level 7 (RNCP 39583). Sameva carries on after the certification, as a real product.</p>
       </li>
     </ul>
 
     <div class="sv-actions" style="margin-top:2.5rem">
       <a class="btn btn-primary" href="https://github.com/SamymaS/Sameva" target="_blank" rel="noopener">GitHub repository</a>
-      <a class="btn btn-secondary" href="index.html#sameva">← Back to portfolio</a>
+      <a class="btn" href="index.html#sameva">Back to portfolio</a>
     </div>
   </div>
 </section>
 
-<script>document.getElementById("svLang")?.addEventListener("click",function(){try{localStorage.setItem("sb-lang","fr")}catch(e){}});</script>
 
+</main>
+
+<footer class="sv-foot">
+  <div class="container">
+    <p>© 2026 Samy Boudaoud, Aix-en-Provence</p>
+    <p><a href="index.html">← back to the portfolio</a></p>
+  </div>
+</footer>
+<script>
+(function(){var x=document.querySelector('.xp');function u(){var m=document.documentElement.scrollHeight-innerHeight;x.style.setProperty('--p',m>0?(scrollY/m).toFixed(4):0)}addEventListener('scroll',u,{passive:true});u();
+document.querySelectorAll('[data-setlang]').forEach(function(a){a.addEventListener('click',function(){try{localStorage.setItem('sb-lang',a.dataset.setlang)}catch(e){}})})})();
+</script>
 </body>
 </html>
