@@ -96,18 +96,120 @@ d.lang=l;d.classList.add('js')})();
   </div>
 </section>
 
-<!-- ═══ MANIFESTE ═══════════════════════════════════════════════ -->
-<section class="manifesto" id="manifeste">
+<!-- ═══ FICHE JOUEUR ════════════════════════════════════════════ -->
+<section class="block profile" id="manifeste" aria-labelledby="profil-h">
   <div class="wrap">
-    <p class="cmt" data-reveal>README.md</p>
-    <p class="big" data-scrub data-l="fr">Six ans d'alternance et d'entreprise, du support informatique à la radio critique. Diplômé du Mastère Expert Développement Logiciel, Mobile et IoT, aujourd'hui en CDI chez CS GROUP. J'aime les systèmes qui ne tombent pas, les interfaces qui donnent envie et le code qu'on peut relire.</p>
-    <p class="big" data-scrub data-l="en">Six years of work-study and industry, from IT support to mission-critical radio. Master's graduate in Software, Mobile and IoT Engineering, now in a permanent role at CS GROUP. I like systems that don't fall over, interfaces people enjoy, and code you can read twice.</p>
-    <dl class="stats">
-      <div data-reveal><dt><span data-l="fr">projets livrés ou en cours</span><span data-l="en">projects shipped or in progress</span></dt><dd data-count="22">22</dd></div>
-      <div data-reveal><dt><span data-l="fr">années en entreprise</span><span data-l="en">years in industry</span></dt><dd data-count="6">6</dd></div>
-      <div data-reveal><dt><span data-l="fr">tests sur Sameva</span><span data-l="en">tests on Sameva</span></dt><dd data-count="505">505</dd></div>
-      <div data-reveal><dt><span data-l="fr">jeux jouables ici</span><span data-l="en">games playable here</span></dt><dd data-count="16">16</dd></div>
-    </dl>
+    <div class="block-head">
+      <div><p class="cmt">00 · <span data-l="fr">profil</span><span data-l="en">profile</span></p>
+      <h2 id="profil-h" class="h2" data-split><span data-l="fr">Fiche joueur</span><span data-l="en">Player card</span></h2></div>
+      <p class="muted" data-reveal data-l="fr">Qui je suis, ce que je sais faire et où je vais. Les chiffres sont vrais, sauf dans l'onglet Fun.</p>
+      <p class="muted" data-reveal data-l="en">Who I am, what I do well and where I am heading. The numbers are real, except in the Fun tab.</p>
+    </div>
+
+    <div class="pf-grid">
+      <article class="win pcard" data-reveal>
+        <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>player.dat<span class="tag"><span class="on" aria-hidden="true"></span><span data-l="fr">en ligne</span><span data-l="en">online</span></span></div>
+        <div class="pcard-in">
+          <div class="pcard-id">
+            <img src="assets/mougi/icon-192.png" width="96" height="96" loading="lazy" decoding="async" alt="">
+            <div><p class="pcard-name">Samy<br>Boudaoud</p><p class="pcard-title"><span data-l="fr">Ingénieur logiciel</span><span data-l="en">Software engineer</span></p></div>
+          </div>
+          <dl class="pcard-meta">
+            <div><dt><span data-l="fr">Classe</span><span data-l="en">Class</span></dt><dd><span data-l="fr">Ingénieur, statut cadre</span><span data-l="en">Engineer</span></dd></div>
+            <div><dt><span data-l="fr">Guilde</span><span data-l="en">Guild</span></dt><dd>CS GROUP</dd></div>
+            <div><dt>Spawn</dt><dd>Aix-en-Provence</dd></div>
+            <div><dt><span data-l="fr">Spécialité</span><span data-l="en">Main skill</span></dt><dd><span data-l="fr">logiciel critique, mobile, IoT</span><span data-l="en">critical software, mobile, IoT</span></dd></div>
+          </dl>
+          <p class="pcard-bio" data-l="fr">Du support informatique à la radio critique, je construis des logiciels qui tiennent en conditions réelles, et des interfaces qu'on a envie d'utiliser.</p>
+          <p class="pcard-bio" data-l="en">From IT support to mission-critical radio, I build software that holds up in the real world, and interfaces people want to use.</p>
+          <ul class="hud">
+            <li><b data-count="22">22</b><span><span data-l="fr">projets</span><span data-l="en">projects</span></span></li>
+            <li><b data-count="4">4</b><span><span data-l="fr">entreprises</span><span data-l="en">companies</span></span></li>
+            <li><b data-count="24">24</b><span><span data-l="fr">dépôts</span><span data-l="en">repos</span></span></li>
+            <li><b>Bac+5</b><span>RNCP 7</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <div class="win pstats" data-reveal>
+        <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span data-l="fr">statistiques</span><span data-l="en">statistics</span><span class="tag">F3</span></div>
+        <div class="st-tabs" role="tablist" data-aria-fr="Catégories de statistiques" data-aria-en="Statistics categories"><button type="button" role="tab" id="tab-general" aria-controls="pane-general" aria-selected="true"><span data-l="fr">Général</span><span data-l="en">General</span></button><button type="button" role="tab" id="tab-projects" aria-controls="pane-projects" aria-selected="false" tabindex="-1"><span data-l="fr">Projets</span><span data-l="en">Projects</span></button><button type="button" role="tab" id="tab-site" aria-controls="pane-site" aria-selected="false" tabindex="-1"><span data-l="fr">Ce site</span><span data-l="en">This site</span></button><button type="button" role="tab" id="tab-offline" aria-controls="pane-offline" aria-selected="false" tabindex="-1"><span data-l="fr">Hors-jeu</span><span data-l="en">Offline</span></button><button type="button" role="tab" id="tab-fun" aria-controls="pane-fun" aria-selected="false" tabindex="-1">Fun</button></div>
+        <div class="st-pane" role="tabpanel" id="pane-general" aria-labelledby="tab-general" tabindex="0">
+          <dl class="st-row"><dt><span data-l="fr">Code depuis</span><span data-l="en">Coding since</span></dt><dd>2019</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">En entreprise depuis</span><span data-l="en">In industry since</span></dt><dd>2020</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Entreprises</span><span data-l="en">Companies</span></dt><dd>4</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Diplômes</span><span data-l="en">Degrees</span></dt><dd><span data-l="fr">3, jusqu'au Bac+5</span><span data-l="en">3, up to a Master's</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Titre</span><span data-l="en">Certification</span></dt><dd><span data-l="fr">RNCP niveau 7</span><span data-l="en">French level 7 (RNCP)</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Langages pratiqués</span><span data-l="en">Languages used</span></dt><dd>10</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Langues</span><span data-l="en">Spoken</span></dt><dd><span data-l="fr">français, anglais C2</span><span data-l="en">French, English C2</span></dd></dl>
+        </div>
+        <div class="st-pane" role="tabpanel" id="pane-projects" aria-labelledby="tab-projects" tabindex="0" hidden>
+          <dl class="st-row"><dt><span data-l="fr">Projets au portfolio</span><span data-l="en">Projects in this portfolio</span></dt><dd>22</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Projets perso en cours</span><span data-l="en">Personal projects in progress</span></dt><dd>3</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Dépôts GitHub</span><span data-l="en">GitHub repositories</span></dt><dd>24</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Plus gros projet</span><span data-l="en">Largest project</span></dt><dd><span data-l="fr">Sameva, 29&nbsp;000 lignes</span><span data-l="en">Sameva, 29,000 lines</span></dd></dl>
+          <p class="st-sub"><span data-l="fr">Par domaine (un projet peut en couvrir plusieurs)</span><span data-l="en">By domain (a project can cover several)</span></p>
+          <dl class="st-row st-bar"><dt>Web &amp; cloud</dt><dd><i style="--w:100%"></i><b>9</b></dd></dl>
+          <dl class="st-row st-bar"><dt><span data-l="fr">Back-end &amp; logiciel</span><span data-l="en">Back end &amp; software</span></dt><dd><i style="--w:89%"></i><b>8</b></dd></dl>
+          <dl class="st-row st-bar"><dt>Mobile</dt><dd><i style="--w:78%"></i><b>7</b></dd></dl>
+          <dl class="st-row st-bar"><dt>IoT</dt><dd><i style="--w:44%"></i><b>4</b></dd></dl>
+        </div>
+        <div class="st-pane" role="tabpanel" id="pane-site" aria-labelledby="tab-site" tabindex="0" hidden>
+          <dl class="st-row"><dt><span data-l="fr">Jeux jouables</span><span data-l="en">Playable games</span></dt><dd>16</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Succès débloqués par vous</span><span data-l="en">Achievements you unlocked</span></dt><dd><b id="pfAch">0</b>/13</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Lignes écrites à la main</span><span data-l="en">Hand-written lines</span></dt><dd><span data-l="fr">~8&nbsp;000</span><span data-l="en">~8,000</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Frameworks</span><span data-l="en">Frameworks</span></dt><dd>0</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Blocs dans l'avatar</span><span data-l="en">Blocks in the avatar</span></dt><dd><span data-l="fr">12, une texture 64×64</span><span data-l="en">12, one 64×64 texture</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Terminal caché</span><span data-l="en">Hidden terminal</span></dt><dd><kbd>s</kbd> + <kbd>b</kbd></dd></dl>
+        </div>
+        <div class="st-pane" role="tabpanel" id="pane-offline" aria-labelledby="tab-offline" tabindex="0" hidden>
+          <dl class="st-row"><dt><span data-l="fr">Serveur Minecraft</span><span data-l="en">Minecraft server</span></dt><dd>MougiCraft, Fabric 26.3</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Ambiance</span><span data-l="en">Vibe</span></dt><dd><span data-l="fr">chill, entre potes</span><span data-l="en">chill, with friends</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Hébergement</span><span data-l="en">Hosting</span></dt><dd><span data-l="fr">NAS maison, conteneurs Docker</span><span data-l="en">home NAS, Docker containers</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Aussi sur le NAS</span><span data-l="en">Also on the NAS</span></dt><dd>MythraSona</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Plugin maison</span><span data-l="en">Home-made plugin</span></dt><dd><span data-l="fr">TikTok Live vers Minecraft</span><span data-l="en">TikTok Live to Minecraft</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Plus gros modpack hébergé</span><span data-l="en">Largest modpack hosted</span></dt><dd>360 mods</dd></dl>
+        </div>
+        <div class="st-pane" role="tabpanel" id="pane-fun" aria-labelledby="tab-fun" tabindex="0" hidden>
+          <p class="st-sub"><span data-l="fr">Statistiques non contractuelles.</span><span data-l="en">Figures not legally binding.</span></p>
+          <dl class="st-row"><dt><span data-l="fr">Cafés par commit</span><span data-l="en">Coffees per commit</span></dt><dd><span data-l="fr">0,5 (estimation)</span><span data-l="en">0.5 (estimate)</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Onglets ouverts</span><span data-l="en">Open tabs</span></dt><dd>47</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">« Ça marche chez moi »</span><span data-l="en">"Works on my machine"</span></dt><dd><span data-l="fr">1 fois, le jour de la démo</span><span data-l="en">once, on demo day</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Creepers ayant visité la base</span><span data-l="en">Creepers who visited the base</span></dt><dd><span data-l="fr">on ne compte plus</span><span data-l="en">we stopped counting</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Points-virgules oubliés</span><span data-l="en">Forgotten semicolons</span></dt><dd><span data-l="fr">le compilateur s'en souvient</span><span data-l="en">the compiler remembers</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Bugs corrigés / bugs créés</span><span data-l="en">Bugs fixed / bugs created</span></dt><dd><span data-l="fr">&gt; 1, on y travaille</span><span data-l="en">&gt; 1, working on it</span></dd></dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf-grid pf-low">
+      <div class="win perks" data-reveal>
+        <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span data-l="fr">attributs</span><span data-l="en">attributes</span><span class="tag"><span data-l="fr">enchantements</span><span data-l="en">enchantments</span></span></div>
+        <ul class="perk-list">
+          <li><b><span data-l="fr">Solidité III</span><span data-l="en">Unbreaking III</span></b><span><span data-l="fr">Des systèmes qui ne tombent pas&nbsp;: temps réel et haute disponibilité, radio critique TETRA.</span><span data-l="en">Systems that stay up: real time and high availability, TETRA mission-critical radio.</span></span></li>
+          <li><b><span data-l="fr">Efficacité IV</span><span data-l="en">Efficiency IV</span></b><span><span data-l="fr">De l'ESP32 à Kubernetes, du C++ à Flutter&nbsp;: je change d'outil sans changer d'exigence.</span><span data-l="en">From ESP32 to Kubernetes, from C++ to Flutter: new tools, same standards.</span></span></li>
+          <li><b><span data-l="fr">Toucher de soie</span><span data-l="en">Silk Touch</span></b><span><span data-l="fr">Des interfaces qu'on a envie d'utiliser, pensées dans Figma avant d'être codées.</span><span data-l="en">Interfaces people enjoy, designed in Figma before they are coded.</span></span></li>
+          <li><b><span data-l="fr">Raccommodage</span><span data-l="en">Mending</span></b><span><span data-l="fr">Du code qu'on peut relire et réparer&nbsp;: tests, revues, décisions écrites.</span><span data-l="en">Code you can read and repair: tests, reviews, written decisions.</span></span></li>
+          <li><b><span data-l="fr">Fortune II</span><span data-l="en">Fortune II</span></b><span><span data-l="fr">Curieux&nbsp;: chaque projet perso me fait apprendre une nouvelle techno.</span><span data-l="en">Curious: every side project teaches me a new technology.</span></span></li>
+        </ul>
+      </div>
+      <div class="win quests" data-reveal>
+        <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span data-l="fr">journal de quêtes</span><span data-l="en">quest log</span><span class="tag"><span data-l="fr">progression</span><span data-l="en">progress</span></span></div>
+        <div class="quest-in">
+          <p class="quest-main"><small><span data-l="fr">Quête principale</span><span data-l="en">Main quest</span></small><span data-l="fr">Créer mes propres produits, du mobile au cloud, avec de l'IA vraiment utile.</span><span data-l="en">Build my own products, from mobile to cloud, with AI that is genuinely useful.</span></p>
+          <ul class="quest-list">
+          <li class="done"><span><span data-l="fr">BTS Systèmes Numériques</span><span data-l="en">Digital Systems degree</span></span><small>2021</small></li>
+          <li class="done"><span><span data-l="fr">Bachelor Ingénierie Logiciel</span><span data-l="en">Software Engineering Bachelor</span></span><small>2022</small></li>
+          <li class="done"><span><span data-l="fr">Mastère Expert, RNCP 7</span><span data-l="en">Master's, RNCP level 7</span></span><small>2026</small></li>
+          <li class="done"><span><span data-l="fr">Ingénieur logiciel en CDI</span><span data-l="en">Full-time software engineer</span></span><small>2026</small></li>
+          <li><span><span data-l="fr">Faire sortir Sameva de la recette</span><span data-l="en">Take Sameva out of acceptance testing</span></span><small><span data-l="fr">en cours</span><span data-l="en">ongoing</span></small></li>
+          <li><span><span data-l="fr">Ouvrir MythraSona à la famille</span><span data-l="en">Open MythraSona to the family</span></span><small><span data-l="fr">en cours</span><span data-l="en">ongoing</span></small></li>
+          <li><span><span data-l="fr">Devenir référent sur les systèmes critiques</span><span data-l="en">Become a go-to person for critical systems</span></span><small><span data-l="fr">en cours</span><span data-l="en">ongoing</span></small></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div class="clients" data-reveal>
       <p class="clients-title"><span data-l="fr">git log --employeurs</span><span data-l="en">git log --employers</span></p>
       <ul class="clients-list">
