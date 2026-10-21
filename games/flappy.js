@@ -76,7 +76,7 @@ SBG.register('flappy', {
       if (state !== 'play') return;
       plane.vy = LIFT;
       api.tone(560, 0.07, 'sine', 0.28, 1.35);
-      fx.burst(PX - 14, plane.y + 3, { n: Math.round(4 * MANY), color: 'rgba(56,230,255,0.8)', speed: 60, life: 0.35, size: 1.5 });
+      fx.burst(PX - 14, plane.y + 3, { n: Math.round(4 * MANY), color: 'rgba(56,189,248,0.8)', speed: 60, life: 0.35, size: 1.5 });
     }
 
     function crash() {
@@ -193,7 +193,7 @@ SBG.register('flappy', {
           ctx.lineCap = 'round'; ctx.lineJoin = 'round';
           for (let i = 1; i < trail.length; i++) {
             const k = i / trail.length;
-            ctx.strokeStyle = 'rgba(56,230,255,' + (k * k * 0.35) + ')';
+            ctx.strokeStyle = 'rgba(56,189,248,' + (k * k * 0.35) + ')';
             ctx.lineWidth = 0.5 + k * 2.5;
             ctx.beginPath(); ctx.moveTo(trail[i - 1].x + shift, trail[i - 1].y); ctx.lineTo(trail[i].x + shift, trail[i].y); ctx.stroke();
           }
@@ -215,7 +215,7 @@ SBG.register('flappy', {
 
     function drawGate(x, g) {
       const top = g.y - g.g / 2, bot = g.y + g.g / 2;
-      const col = g.passed ? '120,140,255' : '176,124,255';
+      const col = g.passed ? '120,140,255' : '210,168,255';
       // piliers
       const grad = ctx.createLinearGradient(x, 0, x + GW, 0);
       grad.addColorStop(0, 'rgba(' + col + ',0.16)'); grad.addColorStop(0.5, 'rgba(' + col + ',0.28)'); grad.addColorStop(1, 'rgba(' + col + ',0.12)');
@@ -240,7 +240,7 @@ SBG.register('flappy', {
     function drawPlane(x, y, a) {
       const dead = state === 'dead';
       const glow = ctx.createRadialGradient(x, y, 0, x, y, 34);
-      glow.addColorStop(0, dead ? 'rgba(255,122,107,0.25)' : 'rgba(56,230,255,0.3)'); glow.addColorStop(1, 'rgba(56,230,255,0)');
+      glow.addColorStop(0, dead ? 'rgba(255,123,114,0.25)' : 'rgba(56,189,248,0.3)'); glow.addColorStop(1, 'rgba(56,189,248,0)');
       ctx.fillStyle = glow; ctx.fillRect(x - 34, y - 34, 68, 68);
       ctx.save();
       ctx.translate(x, y); ctx.rotate(a); ctx.scale(1.2, 1.2);
@@ -248,10 +248,10 @@ SBG.register('flappy', {
       ctx.fillStyle = dead ? '#B5566B' : '#1FA9C4';
       ctx.beginPath(); ctx.moveTo(17, 0); ctx.lineTo(-13, 9); ctx.lineTo(-6, 1.5); ctx.closePath(); ctx.fill();
       // aile haute
-      ctx.fillStyle = dead ? C.bad : '#BDF6FF';
+      ctx.fillStyle = dead ? C.bad : '#BAE6FD';
       ctx.beginPath(); ctx.moveTo(17, 0); ctx.lineTo(-14, -10); ctx.lineTo(-6, 1.5); ctx.closePath(); ctx.fill();
       // pli central
-      ctx.strokeStyle = dead ? 'rgba(255,255,255,0.4)' : 'rgba(56,230,255,0.9)'; ctx.lineWidth = 1.2; ctx.lineJoin = 'round';
+      ctx.strokeStyle = dead ? 'rgba(255,255,255,0.4)' : 'rgba(56,189,248,0.9)'; ctx.lineWidth = 1.2; ctx.lineJoin = 'round';
       ctx.beginPath(); ctx.moveTo(17, 0); ctx.lineTo(-6, 1.5); ctx.lineTo(-11, 4); ctx.stroke();
       ctx.restore();
     }

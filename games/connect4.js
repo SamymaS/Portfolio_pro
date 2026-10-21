@@ -285,7 +285,7 @@
           if (state === 'player' && ghostA > 0) {
             ctx.globalAlpha = ghostA * 0.6;
             const grad = ctx.createLinearGradient(0, TOP, 0, TOP + BH);
-            grad.addColorStop(0, 'rgba(56,230,255,0.10)'); grad.addColorStop(1, 'rgba(56,230,255,0.02)');
+            grad.addColorStop(0, 'rgba(56,189,248,0.10)'); grad.addColorStop(1, 'rgba(56,189,248,0.02)');
             ctx.fillStyle = grad;
             api.roundRect(ctx, ghostX - CELL / 2 + 3, TOP - 6, CELL - 6, BH + 12, 14); ctx.fill();
             ctx.globalAlpha = 1;
@@ -306,7 +306,7 @@
             if (d.glow <= 0) continue;
             const x = cx(d.c), y = cy(d.r), R = CELL * 0.75;
             const g = ctx.createRadialGradient(x, y, HOLE * 0.8, x, y, R);
-            const rgb = d.who === HUMAN ? '56,230,255' : '176,124,255';
+            const rgb = d.who === HUMAN ? '56,189,248' : '210,168,255';
             g.addColorStop(0, `rgba(${rgb},${0.28 * d.glow})`); g.addColorStop(1, `rgba(${rgb},0)`);
             ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill();
           }
@@ -380,7 +380,7 @@
         else { g.addColorStop(0, '#D9C2FF'); g.addColorStop(0.55, base); g.addColorStop(1, '#7E4FD6'); }
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = 'rgba(7,9,18,0.22)'; ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(13,17,23,0.22)'; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(x, y, R * 0.66, 0, Math.PI * 2); ctx.stroke();
       }
 

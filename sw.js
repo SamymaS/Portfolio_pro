@@ -3,7 +3,7 @@
    Stratégie : network-first pour la navigation (HTML toujours frais),
    cache-first pour les assets statiques (perf + offline).
    ================================================================ */
-const VERSION = 'v6';
+const VERSION = 'v7';
 const CACHE = 'sb-portfolio-' + VERSION;
 
 // Ressources de base pré-cachées à l'installation
@@ -12,16 +12,19 @@ const PRECACHE = [
   '/index.html',
   '/site.css',
   '/site.js',
-  '/scene.js',
-  '/vendor/three.min.js',
+  '/avatar.js',
+  '/vendor/three-r186b.min.js',
+  '/assets/mougi/skin.png',
+  '/assets/mougi/icon-96.png',
   '/vendor/gsap.min.js',
   '/vendor/ScrollTrigger.min.js',
   '/vendor/lenis.min.js',
   '/achievements.css',
   '/achievements.js',
   '/games/core.js',
-  '/fonts/archivo-latin.woff2',
-  '/favicon.svg',
+  '/fonts/tiny5.woff2',
+  '/fonts/jetbrains-mono.woff2',
+  '/fonts/geist.woff2',
   '/manifest.webmanifest',
   '/404.html',
 ];

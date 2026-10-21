@@ -257,7 +257,7 @@ SBG.register('breakout', {
         const sq = pad.squash;
         const pw = PADW * (1 + sq * 0.06), ph = PADH * (1 - sq * 0.25);
         const glow = ctx.createRadialGradient(px, PADY + PADH / 2, 0, px, PADY + PADH / 2, PADW * 0.8);
-        glow.addColorStop(0, 'rgba(56,230,255,0.18)'); glow.addColorStop(1, 'rgba(56,230,255,0)');
+        glow.addColorStop(0, 'rgba(56,189,248,0.18)'); glow.addColorStop(1, 'rgba(56,189,248,0)');
         ctx.fillStyle = glow; ctx.fillRect(px - PADW, PADY - 40, PADW * 2, 80);
         ctx.fillStyle = C.cyan;
         api.roundRect(ctx, px - pw / 2, PADY + (PADH - ph), pw, ph, ph / 2); ctx.fill();
@@ -274,7 +274,7 @@ SBG.register('breakout', {
           }
           ctx.globalAlpha = 1;
           const bg = ctx.createRadialGradient(bx, by, 0, bx, by, R * 4);
-          bg.addColorStop(0, 'rgba(56,230,255,0.28)'); bg.addColorStop(1, 'rgba(56,230,255,0)');
+          bg.addColorStop(0, 'rgba(56,189,248,0.28)'); bg.addColorStop(1, 'rgba(56,189,248,0)');
           ctx.fillStyle = bg; ctx.fillRect(bx - R * 4, by - R * 4, R * 8, R * 8);
           ctx.fillStyle = '#E9FCFF';
           ctx.beginPath(); ctx.arc(bx, by, R, 0, Math.PI * 2); ctx.fill();

@@ -37,12 +37,12 @@
 
   /* ── Palette commune ─────────────────────────────────────────── */
   const C = {
-    bg: '#070912', bg2: '#0C0F1C', panel: '#111527', line: 'rgba(255,255,255,0.08)',
-    grid: 'rgba(255,255,255,0.045)', ink: '#EEF1F7', muted: '#9AA1B4', faint: '#5D6477',
-    cyan: '#38E6FF', violet: '#B07CFF', blue: '#6E8BFF',
-    good: '#5FE3A1', bad: '#FF7A6B', warm: '#FFC56B',
+    bg: '#0D1117', bg2: '#11161D', panel: '#161B22', line: 'rgba(240,246,252,0.10)',
+    grid: 'rgba(240,246,252,0.04)', ink: '#E6EDF3', muted: '#8B949E', faint: '#6E7681',
+    cyan: '#38BDF8', violet: '#D2A8FF', blue: '#1F6FEB',
+    good: '#3FB950', bad: '#FF7B72', warm: '#FFA657',
   };
-  const FONT = "'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif";
+  const FONT = "'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif";
 
   /* ── Catalogue : titres, consignes ───────────────────────────── */
   const GAMES = {
@@ -255,7 +255,7 @@
 
       hud(o) {
         if (o.score !== undefined) { el.score.textContent = o.score; bump(el.score); }
-        if (o.best !== undefined) el.best.textContent = o.best || '–';
+        if (o.best !== undefined) el.best.textContent = o.best || '-';
         if (o.scoreLabel) el.score.previousElementSibling.textContent = o.scoreLabel;
       },
       get best() { const v = store.get(bestKey); return v === null ? null : +v; },
@@ -393,7 +393,7 @@
       el.body.innerHTML = '';
       const ctl = makeApi(id);
       const b = ctl.api.best;
-      el.best.textContent = b === null ? '–' : b;
+      el.best.textContent = b === null ? '-' : b;
       current = { id, ctl, inst: null };
       try { current.inst = def.create(ctl.api) || {}; }
       catch (err) { el.body.innerHTML = '<p class="g-error">' + t('Ce jeu n\'a pas pu démarrer.', 'This game could not start.') + '</p>'; console.error(err); }

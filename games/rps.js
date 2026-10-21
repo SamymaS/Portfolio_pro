@@ -48,19 +48,19 @@ SBG.register('rps', {
 .rps-card svg{width:100%;height:100%;display:block}
 .rps-card.you.lit .rps-g{color:var(--c2)}
 .rps-card.cpu.lit .rps-g{color:var(--c3)}
-.rps-card.win{border-color:rgba(56,230,255,.55);background:rgba(56,230,255,.06);box-shadow:0 0 34px rgba(56,230,255,.14)}
-.rps-card.cpu.win{border-color:rgba(176,124,255,.55);background:rgba(176,124,255,.07);box-shadow:0 0 34px rgba(176,124,255,.14)}
+.rps-card.win{border-color:rgba(56,189,248,.55);background:rgba(56,189,248,.06);box-shadow:0 0 34px rgba(56,189,248,.14)}
+.rps-card.cpu.win{border-color:rgba(210,168,255,.55);background:rgba(210,168,255,.07);box-shadow:0 0 34px rgba(210,168,255,.14)}
 .rps-card.lose{opacity:.55}
 .rps-tag{position:absolute;left:.8rem;top:.6rem;font-size:.72rem;color:var(--faint);font-weight:600}
 .rps-card.cpu .rps-tag{left:auto;right:.8rem}
 .rps-line{text-align:center;min-height:1.6em;font-size:1.08rem;font-weight:650;color:var(--ink);transition:opacity .2s}
-.rps-line.good{color:var(--c2)}.rps-line.bad{color:#FF7A6B}.rps-line.even{color:var(--muted)}
+.rps-line.good{color:var(--c2)}.rps-line.bad{color:#FF7B72}.rps-line.even{color:var(--muted)}
 .rps-picks{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
 .rps-pick{position:relative;display:grid;justify-items:center;gap:.35rem;padding:.9rem .4rem .75rem;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);font-weight:600;font-size:.92rem;transition:border-color .2s,background .2s,transform .2s cubic-bezier(.2,.8,.2,1)}
 .rps-pick svg{width:44px;height:44px;color:var(--muted);transition:color .2s}
-.rps-pick:hover:not(:disabled){border-color:rgba(56,230,255,.5);background:rgba(56,230,255,.06);transform:translateY(-2px)}
+.rps-pick:hover:not(:disabled){border-color:rgba(56,189,248,.5);background:rgba(56,189,248,.06);transform:translateY(-2px)}
 .rps-pick:hover:not(:disabled) svg,.rps-pick.on svg{color:var(--c2)}
-.rps-pick.on{border-color:var(--c2);background:rgba(56,230,255,.08)}
+.rps-pick.on{border-color:var(--c2);background:rgba(56,189,248,.08)}
 .rps-pick:disabled{cursor:default}
 .rps-pick:disabled:not(.on){opacity:.5}
 .rps-pick kbd{position:absolute;top:.45rem;right:.5rem;font-size:.7rem;color:var(--faint);padding:0 .35em}

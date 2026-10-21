@@ -114,7 +114,7 @@ SBG.register('snake', {
         const fxp = food.x * CELL + CELL / 2, fyp = food.y * CELL + CELL / 2;
         const pulse = 1 + Math.sin(food.t * 5) * 0.08;
         const glow = ctx.createRadialGradient(fxp, fyp, 0, fxp, fyp, CELL * 1.2);
-        glow.addColorStop(0, 'rgba(176,124,255,0.45)'); glow.addColorStop(1, 'rgba(176,124,255,0)');
+        glow.addColorStop(0, 'rgba(210,168,255,0.45)'); glow.addColorStop(1, 'rgba(210,168,255,0)');
         ctx.fillStyle = glow; ctx.fillRect(fxp - CELL * 1.2, fyp - CELL * 1.2, CELL * 2.4, CELL * 2.4);
         ctx.fillStyle = C.violet;
         ctx.beginPath(); ctx.arc(fxp, fyp, CELL * 0.27 * pulse, 0, Math.PI * 2); ctx.fill();
@@ -138,7 +138,7 @@ SBG.register('snake', {
         }
         // tête et yeux
         const h = pts[0];
-        ctx.fillStyle = state === 'dead' ? C.bad : '#BDF6FF';
+        ctx.fillStyle = state === 'dead' ? C.bad : '#BAE6FD';
         ctx.beginPath(); ctx.arc(h.x, h.y, CELL * 0.38, 0, Math.PI * 2); ctx.fill();
         const ex = dir.y !== 0 ? 5 : 0, ey = dir.x !== 0 ? 5 : 0;
         ctx.fillStyle = C.bg;

@@ -252,7 +252,7 @@ SBG.register('simon', {
         // points de lecture
         const n = seq.length, shown = showIdx;
         const k = n ? shown / n : 0;
-        ctx.strokeStyle = 'rgba(176,124,255,0.6)';
+        ctx.strokeStyle = 'rgba(210,168,255,0.6)';
         ctx.lineWidth = 3; ctx.lineCap = 'round';
         if (k > 0) { ctx.beginPath(); ctx.arc(CX, CY, r - 6, -Math.PI / 2, -Math.PI / 2 + k * Math.PI * 2); ctx.stroke(); }
       }

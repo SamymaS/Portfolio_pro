@@ -190,8 +190,8 @@ SBG.register('whack', {
     const baseSpr = () => spr('base', BASE_W, BASE_H, (g) => {
       // disque de sol
       const floor = g.createRadialGradient(0, 4, 0, 0, 4, PRX + 22);
-      floor.addColorStop(0, 'rgba(110,139,255,0.10)');
-      floor.addColorStop(1, 'rgba(110,139,255,0)');
+      floor.addColorStop(0, 'rgba(31,111,235,0.10)');
+      floor.addColorStop(1, 'rgba(31,111,235,0)');
       g.fillStyle = floor;
       g.beginPath(); g.ellipse(0, 4, PRX + 22, PRY + 12, 0, 0, Math.PI * 2); g.fill();
       // épaisseur du dôme
@@ -206,14 +206,14 @@ SBG.register('whack', {
     const wellGlow = () => spr('wellglow', PRX * 2, PRY * 2, (g) => {
       g.scale(1, PRY / PRX);
       const gl = g.createRadialGradient(0, 0, 0, 0, 0, PRX);
-      gl.addColorStop(0, 'rgba(56,230,255,0.4)');
-      gl.addColorStop(1, 'rgba(56,230,255,0)');
+      gl.addColorStop(0, 'rgba(56,189,248,0.4)');
+      gl.addColorStop(1, 'rgba(56,189,248,0)');
       g.fillStyle = gl;
       g.beginPath(); g.arc(0, 0, PRX, 0, Math.PI * 2); g.fill();
     });
     const ORB_BOX = ORB * 5.6;
     const orbSpr = (hit) => spr(hit ? 'orbhit' : 'orb', ORB_BOX, ORB_BOX, (g) => {
-      const hc = hit ? '255,255,255' : '56,230,255';
+      const hc = hit ? '255,255,255' : '56,189,248';
       const halo = g.createRadialGradient(0, 0, 0, 0, 0, ORB * 2.7);
       halo.addColorStop(0, 'rgba(' + hc + ',0.45)');
       halo.addColorStop(1, 'rgba(' + hc + ',0)');
@@ -258,8 +258,8 @@ SBG.register('whack', {
         ctx.globalAlpha = fade;
         // colonne de lumière qui relie le signal au puits
         const col = ctx.createLinearGradient(0, oy, 0, p.y);
-        col.addColorStop(0, 'rgba(56,230,255,0.28)');
-        col.addColorStop(1, 'rgba(56,230,255,0.02)');
+        col.addColorStop(0, 'rgba(56,189,248,0.28)');
+        col.addColorStop(1, 'rgba(56,189,248,0.02)');
         ctx.fillStyle = col;
         ctx.fillRect(p.x - ORB * 0.55, oy, ORB * 1.1, Math.max(0, p.y - oy));
         // orbe (grossit et blanchit quand il est touché)
@@ -268,7 +268,7 @@ SBG.register('whack', {
         ctx.drawImage(o.c, p.x - (o.w / 2) * sc, oy - (o.h / 2) * sc, o.w * sc, o.h * sc);
         // anneau d'urgence : se referme avant l'extinction
         if (urgency > 0 && !api.reduced) {
-          ctx.strokeStyle = 'rgba(176,124,255,0.85)';
+          ctx.strokeStyle = 'rgba(210,168,255,0.85)';
           ctx.lineWidth = 2; ctx.lineCap = 'round';
           ctx.beginPath(); ctx.arc(p.x, oy, ORB + 6, -Math.PI / 2, -Math.PI / 2 + (1 - urgency) * Math.PI * 2); ctx.stroke();
         }
@@ -278,12 +278,12 @@ SBG.register('whack', {
       // lèvre du port (par-dessus le signal)
       const rx = PRX + press * 2, ry = PRY + press;
       if (p.flash > 0 || isCursor) {
-        ctx.strokeStyle = p.flash > 0 ? 'rgba(255,122,107,' + (0.18 * p.flash) + ')' : 'rgba(56,230,255,0.2)';
+        ctx.strokeStyle = p.flash > 0 ? 'rgba(255,123,114,' + (0.18 * p.flash) + ')' : 'rgba(56,189,248,0.2)';
         ctx.lineWidth = 7;
         ctx.beginPath(); ctx.ellipse(p.x, p.y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
       }
-      ctx.strokeStyle = p.flash > 0 ? 'rgba(255,122,107,' + (0.25 + 0.6 * p.flash) + ')'
-        : isHover || isCursor ? 'rgba(56,230,255,0.65)' : 'rgba(255,255,255,0.13)';
+      ctx.strokeStyle = p.flash > 0 ? 'rgba(255,123,114,' + (0.25 + 0.6 * p.flash) + ')'
+        : isHover || isCursor ? 'rgba(56,189,248,0.65)' : 'rgba(255,255,255,0.13)';
       ctx.lineWidth = 2 + press * 1.5;
       ctx.beginPath(); ctx.ellipse(p.x, p.y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
 
