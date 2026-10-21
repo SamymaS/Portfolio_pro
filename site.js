@@ -1,7 +1,8 @@
 /* ==================================================================
    site.js · Portfolio Samy Boudaoud
    Défilement fluide (Lenis), animations (GSAP + ScrollTrigger),
-   scène 3D (scene.js, chargée en module), et tout le reste : langue,
+   avatar 3D tiré du skin (avatar.js, chargé en module), barre d'XP,
+   et tout le reste : langue,
    filtres, jeux chargés à la demande, formulaire, terminal caché.
    ================================================================== */
 (function () {
@@ -87,7 +88,7 @@
 
   /* ── En-tête : verre au défilement, masqué en descendant ────── */
   const top = $('#top');
-  const bar = $('.progress');
+  const bar = $('.xp');
   let lastY = 0;
   function onScroll() {
     const y = window.scrollY;
@@ -110,72 +111,33 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
   onScroll();
 
+  // Section courante : lien actif et niveau affiché dans l'en-tête
   const navLinks = $$('.nav a');
+  const lvl = $('#lvl');
+  const sections = $$('main section');
   const spy = new IntersectionObserver((entries) => {
     entries.forEach((en) => {
       if (!en.isIntersecting) return;
       const id = en.target.id === 'index-projets' ? 'projets' : en.target.id;
       navLinks.forEach((a) => a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + id)));
+      if (lvl) lvl.textContent = 'LVL ' + String(sections.indexOf(en.target) + 1).padStart(2, '0');
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
-  $$('main section[id]').forEach((s) => spy.observe(s));
+  sections.forEach((s) => spy.observe(s));
 
-  /* ── Scène 3D ───────────────────────────────────────────────── */
-  let scene = null;
-  let currentStage = 0;
-  const canvas = $('#gl');
-
-  function stageLayout(stage) {
-    const narrow = isNarrow();
-    const shape = stage >= 1 && stage <= 4;
-    return {
-      ox: shape && !narrow ? 2.15 : 0,
-      oy: shape && narrow ? 1.6 : 0,
-      opacity: stage === 5 ? 0.55 : 1,
-    };
-  }
-  function goStage(stage) {
-    currentStage = stage;
-    if (!scene) return;
-    const L = stageLayout(stage);
-    if (reduce || !hasGsap) {
-      Object.assign(scene.state, { morph: stage }, L);
-      scene.renderOnce();
-      return;
-    }
-    gsap.to(scene.state, { morph: stage, duration: 2.2, ease: 'power3.inOut', overwrite: 'auto' });
-    gsap.to(scene.state, { ox: L.ox, oy: L.oy, opacity: L.opacity, duration: 1.6, ease: 'power3.inOut', overwrite: false });
-  }
-
+  /* ── Avatar 3D ──────────────────────────────────────────────── */
+  let avatar = null;
   function webglOK() {
     try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); }
     catch (e) { return false; }
   }
-
-  if (webglOK()) {
-    import('./scene.js').then(({ createScene }) => {
-      scene = createScene(canvas, { reduceMotion: reduce });
-      Object.assign(scene.state, { morph: currentStage }, stageLayout(currentStage));
-      canvas.classList.add('ready');
-      if (reduce) { scene.renderOnce(); return; }
-      scene.start();
-      if (hasGsap) gsap.to(scene.state, { intro: 1, duration: 2.6, ease: 'power3.out', delay: .1 });
-      else scene.state.intro = 1;
-      document.addEventListener('visibilitychange', () => (document.hidden ? scene.stop() : scene.start()));
-      window.addEventListener('resize', () => goStage(currentStage));
+  const avatarEl = $('#avatar');
+  if (avatarEl && webglOK()) {
+    import('./avatar.js').then(({ createAvatar }) => {
+      avatar = createAvatar(avatarEl, { reduceMotion: reduce });
     }).catch(() => root.classList.add('no-gl'));
   } else {
     root.classList.add('no-gl');
-  }
-
-  if (hasGsap) {
-    $$('[data-stage]').forEach((el) => {
-      const stage = +el.dataset.stage;
-      ST.create({
-        trigger: el, start: 'top 60%', end: 'bottom 40%',
-        onToggle: (self) => { if (self.isActive) goStage(stage); },
-      });
-    });
   }
 
   /* ── Découpage du texte en mots ─────────────────────────────── */
@@ -203,19 +165,23 @@
 
   /* ── Animations ─────────────────────────────────────────────── */
   if (hasGsap && !reduce) {
-    // Ouverture : lettres du nom, puis le reste
+    // Ouverture : lettres du nom par paliers (façon pixel), puis le reste,
+    // et le code s'écrit ligne par ligne
     const chars = $$('.name .c');
     const intro = $$('[data-intro]');
-    gsap.set(chars, { yPercent: 115, rotate: 6 });
-    gsap.set(intro, { y: 24, opacity: 0 });
+    const lines = $$('#heroCode .ln');
+    gsap.set(chars, { yPercent: 110 });
+    gsap.set(intro, { y: 20, opacity: 0 });
+    gsap.set(lines, { opacity: 0 });
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
-      gsap.timeline({ delay: .15 })
-        .to(chars, { yPercent: 0, rotate: 0, duration: 1.4, ease: 'expo.out', stagger: .045 })
-        .to(intro, { y: 0, opacity: 1, duration: 1.1, ease: 'expo.out', stagger: .09 }, '-=1.0');
+      gsap.timeline({ delay: .1 })
+        .to(chars, { yPercent: 0, duration: .9, ease: 'steps(6)', stagger: .04 })
+        .to(intro, { y: 0, opacity: 1, duration: .9, ease: 'expo.out', stagger: .08 }, '-=.6')
+        .to(lines, { opacity: 1, duration: .01, stagger: .11 }, '-=.9');
     });
-    // Le nom s'éloigne doucement quand on quitte l'ouverture
-    gsap.to('.hero-in', {
-      yPercent: -18, opacity: .15, ease: 'none',
+    // L'ouverture s'efface doucement quand on la quitte
+    gsap.to('.hero-copy', {
+      yPercent: -10, opacity: .2, ease: 'none',
       scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
     });
 
@@ -271,21 +237,6 @@
     });
     $$('.job').forEach((job) => ST.create({ trigger: job, start: 'top 62%', onEnter: () => job.classList.add('lit'), onLeaveBack: () => job.classList.remove('lit') }));
 
-    // Panneaux de projet : légère inclinaison en 3D sous la souris
-    if (finePointer) {
-      $$('.feat-panel').forEach((panel) => {
-        const rx = gsap.quickTo(panel, 'rotationX', { duration: .8, ease: 'power3' });
-        const ry = gsap.quickTo(panel, 'rotationY', { duration: .8, ease: 'power3' });
-        gsap.set(panel, { transformPerspective: 1200 });
-        panel.addEventListener('pointermove', (e) => {
-          const r = panel.getBoundingClientRect();
-          ry(((e.clientX - r.left) / r.width - .5) * 6);
-          rx(-((e.clientY - r.top) / r.height - .5) * 6);
-        });
-        panel.addEventListener('pointerleave', () => { rx(0); ry(0); });
-      });
-    }
-
     // Les ouvertures de lignes changent la hauteur de page
     let refreshT;
     $$('.row').forEach((d) => d.addEventListener('toggle', () => { clearTimeout(refreshT); refreshT = setTimeout(() => ST.refresh(), 650); }));
@@ -297,47 +248,13 @@
   // Défilement infini des technologies : on double le contenu
   $$('.marquee-track').forEach((tr) => { tr.innerHTML += tr.innerHTML; });
 
-  /* ── Curseur et boutons magnétiques ─────────────────────────── */
-  if (finePointer && !reduce && hasGsap) {
-    root.classList.add('has-cursor');
-    const cur = $('.cursor');
-    const dot = $('.cursor-dot'), ring = $('.cursor-ring');
-    const dx = gsap.quickTo(dot, 'x', { duration: .12, ease: 'power3' });
-    const dy = gsap.quickTo(dot, 'y', { duration: .12, ease: 'power3' });
-    const rx = gsap.quickTo(ring, 'x', { duration: .5, ease: 'power3' });
-    const ry = gsap.quickTo(ring, 'y', { duration: .5, ease: 'power3' });
-    window.addEventListener('pointermove', (e) => { dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY); cur.classList.remove('hidden'); }, { passive: true });
-    document.addEventListener('pointerleave', () => cur.classList.add('hidden'));
-    const HOVER = 'a,button,summary,input,textarea,label';
-    document.addEventListener('pointerover', (e) => cur.classList.toggle('hover', !!e.target.closest(HOVER)));
-
-    $$('.magnetic').forEach((el) => {
-      const mx = gsap.quickTo(el, 'x', { duration: .6, ease: 'power3' });
-      const my = gsap.quickTo(el, 'y', { duration: .6, ease: 'power3' });
-      el.addEventListener('pointermove', (e) => {
-        const r = el.getBoundingClientRect();
-        mx((e.clientX - r.left - r.width / 2) * .3);
-        my((e.clientY - r.top - r.height / 2) * .4);
-      });
-      el.addEventListener('pointerleave', () => { gsap.to(el, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1,.4)' }); });
-    });
-  }
-
-  // Halo qui suit la souris sur les cartes de jeux
-  $('#games').addEventListener('pointermove', (e) => {
-    const b = e.target.closest('button'); if (!b) return;
-    const r = b.getBoundingClientRect();
-    b.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-    b.style.setProperty('--my', (e.clientY - r.top) + 'px');
-  });
-
   /* ── Visuels : parallaxe au défilement et à la souris ───────── */
   if (hasGsap && !reduce) {
     // L'image glisse dans son cadre pendant que le cadre défile
-    $$('.feat-media > img, .job-visual img, .lab-visual img').forEach((img) => {
+    $$('.feat-media .shot > img:not(.paco), .job-visual img').forEach((img) => {
       gsap.fromTo(img, { yPercent: -6 }, {
         yPercent: 6, ease: 'none',
-        scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
+        scrollTrigger: { trigger: img.closest('figure'), start: 'top bottom', end: 'bottom top', scrub: true },
       });
     });
     // Sameva : les écrans s'écartent à l'arrivée, puis suivent la souris en profondeur
@@ -461,7 +378,7 @@
   new MutationObserver(() => {
     const open = !modal.classList.contains('hidden');
     if (lenis) open ? lenis.stop() : lenis.start();
-    if (scene) open ? scene.stop() : (!reduce && scene.start());
+    if (avatar) open ? avatar.stop() : avatar.start();
   }).observe(modal, { attributes: true, attributeFilter: ['class'] });
 
   /* ── Succès ─────────────────────────────────────────────────── */
@@ -473,8 +390,11 @@
   function updateAchievements() {
     const a = window.achievements, out = $('#achCount');
     if (!a || !out) return;
-    const n = a.unlockedCount();
-    out.textContent = n ? t('ach')(n, a.total()) : '';
+    const n = a.unlockedCount(), tot = a.total();
+    out.textContent = n ? t('ach')(n, tot) : '';
+    const barEl = $('#achBar'), line = $('#achLine');
+    if (barEl) barEl.style.setProperty('--a', (tot ? (n / tot) * 100 : 0) + '%');
+    if (line) line.innerHTML = '<b>' + n + '</b>/' + tot + (root.lang === 'en' ? ' unlocked' : ' débloqués');
     $$('[data-game]').forEach((b) => b.classList.toggle('won', !!(GAME_ACH[b.dataset.game] && a.has(GAME_ACH[b.dataset.game]))));
   }
   if (window.achievements) {

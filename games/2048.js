@@ -17,11 +17,11 @@ SBG.register('2048', {
 
     // tons : du bleu nuit au cyan, puis violet, puis chaud pour 2048
     const TILE = {
-      2: ['#283253', C.ink], 4: ['#2F3D68', C.ink], 8: ['#1F5279', '#fff'], 16: ['#18678F', '#fff'],
-      32: ['#1280A8', '#fff'], 64: ['#0E9AC4', '#fff'], 128: ['#38C9E6', '#06202A'], 256: ['#6E8BFF', '#0B1030'],
-      512: ['#8F7CFF', '#fff'], 1024: ['#B07CFF', '#fff'], 2048: ['#FFC56B', '#2A1A00'],
+      2: ['#21262D', C.ink], 4: ['#283241', C.ink], 8: ['#1B3A5C', '#fff'], 16: ['#1D4F85', '#fff'],
+      32: ['#1F6FEB', '#fff'], 64: ['#2F81F7', '#fff'], 128: ['#38BDF8', '#06202A'], 256: ['#79C0FF', '#06202A'],
+      512: ['#A371F7', '#fff'], 1024: ['#D2A8FF', '#2A1240'], 2048: ['#FFA657', '#2A1A00'],
     };
-    const tileStyle = (v) => TILE[v] || ['#FF7A6B', '#2A0A06'];
+    const tileStyle = (v) => TILE[v] || ['#FF7B72', '#2A0A06'];
 
     let tiles, grid, score, state, animT, queued, nextId, floats, reached, startBest, moved;
 
@@ -203,7 +203,7 @@ SBG.register('2048', {
           const p = f.t / 0.8;
           const y = Math.max(20, f.y - 22 - api.ease.out(p) * 34);
           ctx.globalAlpha = (1 - p * p) * 0.95;
-          ctx.fillStyle = 'rgba(7,9,18,0.55)';
+          ctx.fillStyle = 'rgba(13,17,23,0.55)';
           api.roundRect(ctx, f.x - 26, y - 13, 52, 26, 13); ctx.fill();
           ctx.fillStyle = C.warm;
           ctx.fillText(f.text, f.x, y + 1);

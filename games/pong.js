@@ -173,8 +173,8 @@ SBG.register('pong', {
         // chiffres du score en filigrane
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.font = '800 170px ' + api.font;
-        ctx.fillStyle = 'rgba(56,230,255,0.055)'; ctx.fillText(String(ps), W / 4, H / 2 + 8);
-        ctx.fillStyle = 'rgba(176,124,255,0.06)'; ctx.fillText(String(as), W * 3 / 4, H / 2 + 8);
+        ctx.fillStyle = 'rgba(56,189,248,0.055)'; ctx.fillText(String(ps), W / 4, H / 2 + 8);
+        ctx.fillStyle = 'rgba(210,168,255,0.06)'; ctx.fillText(String(as), W * 3 / 4, H / 2 + 8);
         // filet
         ctx.fillStyle = C.line;
         for (let y = 8; y < H; y += 22) { api.roundRect(ctx, W / 2 - 1.5, y, 3, 11, 1.5); ctx.fill(); }
@@ -182,8 +182,8 @@ SBG.register('pong', {
         ctx.beginPath(); ctx.moveTo(0, 0.5); ctx.lineTo(W, 0.5); ctx.moveTo(0, H - 0.5); ctx.lineTo(W, H - 0.5); ctx.stroke();
 
         const my = prevMe + (me.y - prevMe) * alpha, ay = prevAi + (ai.y - prevAi) * alpha;
-        paddle(LX, my, C.cyan, '56,230,255', flashL);
-        paddle(RX, ay, C.violet, '176,124,255', flashR);
+        paddle(LX, my, C.cyan, '56,189,248', flashL);
+        paddle(RX, ay, C.violet, '210,168,255', flashR);
 
         // balle
         if (state === 'play' || state === 'serve') {

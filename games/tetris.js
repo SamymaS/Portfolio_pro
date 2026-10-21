@@ -312,7 +312,7 @@ SBG.register('tetris', {
       ctx.fill();
       ctx.fillStyle = 'rgba(255,255,255,0.22)';
       ctx.fillRect(x + sz * 0.24, y + 3.5, sz * 0.52, Math.max(1.5, sz * 0.07));
-      ctx.fillStyle = 'rgba(7,9,18,0.18)';
+      ctx.fillStyle = 'rgba(13,17,23,0.18)';
       ctx.fillRect(x + 3, y + sz - 5, sz - 6, 2);
       ctx.globalAlpha = 1;
     }
@@ -361,7 +361,7 @@ SBG.register('tetris', {
         if (isClear) {
           const g = ctx.createLinearGradient(BX, 0, BX + BW, 0);
           const a = 0.5 * (1 - ck);
-          g.addColorStop(0, 'rgba(56,230,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,' + a + ')'); g.addColorStop(1, 'rgba(176,124,255,0)');
+          g.addColorStop(0, 'rgba(56,189,248,0)'); g.addColorStop(0.5, 'rgba(255,255,255,' + a + ')'); g.addColorStop(1, 'rgba(210,168,255,0)');
           ctx.fillStyle = g; ctx.fillRect(BX, py + CELL / 2 - 2, BW, 4);
         }
       }

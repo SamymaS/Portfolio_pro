@@ -8,7 +8,7 @@
 <meta name="author" content="Samy Boudaoud">
 <link rel="canonical" href="https://samy-boudaoud.com/">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#05060A">
+<meta name="theme-color" content="#0D1117">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Samy Boudaoud">
 <meta property="og:title" content="Samy Boudaoud, ingénieur logiciel">
@@ -20,12 +20,16 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:locale:alternate" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="icon" href="assets/mougi/icon-48.png" sizes="48x48" type="image/png">
+<link rel="icon" href="assets/mougi/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/mougi/icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="modulepreload" href="vendor/three.min.js">
-<link rel="modulepreload" href="scene.js">
+<link rel="preload" href="fonts/tiny5.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="modulepreload" href="vendor/three-r186b.min.js">
+<link rel="modulepreload" href="avatar.js">
+<link rel="preload" href="assets/mougi/skin.png" as="image">
 <script>
 (function(){var d=document.documentElement,l;try{l=localStorage.getItem('sb-lang')}catch(e){}
 if(l!=='fr'&&l!=='en'){l=(navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en'}
@@ -40,21 +44,17 @@ d.lang=l;d.classList.add('js')})();
 <body>
 <a class="skip" href="#main"><span data-l="fr">Aller au contenu</span><span data-l="en">Skip to content</span></a>
 
-<!-- Scène 3D, fixe derrière toute la page -->
-<canvas id="gl" aria-hidden="true"></canvas>
-<div class="veil" aria-hidden="true"></div>
-<div class="grain" aria-hidden="true"></div>
-<div class="cursor" aria-hidden="true"><span class="cursor-dot"></span><span class="cursor-ring"></span></div>
-<div class="progress" aria-hidden="true"></div>
+<div class="xp" aria-hidden="true"></div>
 
 <header class="top" id="top">
-  <a class="mark" href="#main" aria-label="Samy Boudaoud">SB</a>
+  <a class="mark" href="#main" aria-label="Samy Boudaoud"><img src="assets/mougi/icon-96.png" width="34" height="34" alt=""><b>samy</b><span>.boudaoud</span></a>
+  <span class="lvl" id="lvl" aria-hidden="true">LVL 01</span>
   <nav class="nav" id="nav" aria-label="Navigation principale">
-    <a href="#projets"><span data-l="fr">Projets</span><span data-l="en">Work</span></a>
-    <a href="#parcours"><span data-l="fr">Parcours</span><span data-l="en">Experience</span></a>
-    <a href="#competences"><span data-l="fr">Compétences</span><span data-l="en">Skills</span></a>
-    <a href="#labo"><span data-l="fr">Labo</span><span data-l="en">Lab</span></a>
-    <a href="#contact">Contact</a>
+    <a href="#projets"><span data-l="fr">projets</span><span data-l="en">work</span></a>
+    <a href="#parcours"><span data-l="fr">parcours</span><span data-l="en">experience</span></a>
+    <a href="#competences"><span data-l="fr">inventaire</span><span data-l="en">inventory</span></a>
+    <a href="#labo">arcade</a>
+    <a href="#contact">contact</a>
   </nav>
   <div class="tools">
     <button class="tool" id="langBtn" type="button" data-aria-fr="Switch to English" data-aria-en="Passer en français"><span data-l="fr">EN</span><span data-l="en">FR</span></button>
@@ -66,28 +66,40 @@ d.lang=l;d.classList.add('js')})();
 <main id="main">
 
 <!-- ═══ OUVERTURE ═══════════════════════════════════════════════ -->
-<section class="hero" data-stage="0" aria-labelledby="name">
+<section class="hero" aria-labelledby="name">
+  <div class="aura" aria-hidden="true"></div>
   <div class="hero-in">
-    <p class="hero-kicker" data-intro><span class="pulse" aria-hidden="true"></span><span data-l="fr">Ingénieur logiciel chez CS GROUP, Aix-en-Provence</span><span data-l="en">Software engineer at CS GROUP, Aix-en-Provence</span></p>
-    <h1 id="name" class="name" aria-label="Samy Boudaoud">
-      <span class="w" aria-hidden="true"><span class="c">S</span><span class="c">a</span><span class="c">m</span><span class="c">y</span></span>
-      <span class="w" aria-hidden="true"><span class="c">B</span><span class="c">o</span><span class="c">u</span><span class="c">d</span><span class="c">a</span><span class="c">o</span><span class="c">u</span><span class="c">d</span></span>
-    </h1>
-    <div class="hero-foot">
+    <div class="hero-copy">
+      <p class="tagline" data-intro><span class="p1">P1</span><span data-l="fr">Ingénieur logiciel chez CS GROUP</span><span data-l="en">Software engineer at CS GROUP</span><span class="pulse" aria-hidden="true"></span></p>
+      <h1 id="name" class="name" aria-label="Samy Boudaoud">
+        <span class="w" aria-hidden="true"><span class="c">S</span><span class="c">a</span><span class="c">m</span><span class="c">y</span></span>
+        <span class="w" aria-hidden="true"><span class="c">B</span><span class="c">o</span><span class="c">u</span><span class="c">d</span><span class="c">a</span><span class="c">o</span><span class="c">u</span><span class="c">d</span></span>
+      </h1>
+      <p class="hero-sub" data-intro><span class="sl">//</span> build<span class="dot">·</span>debug<span class="dot">·</span>ship</p>
+      <div class="win" data-intro>
+        <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>Samy.java<span class="tag">UTF-8 · Java</span></div>
+<pre class="code" id="heroCode"><span class="ln"><span class="kw">public class</span> <span class="ty">Samy</span> <span class="kw">extends</span> <span class="ty">Engineer</span> {</span><span class="ln">    <span class="cm" data-l="fr">// radio critique, mobile, IoT</span><span class="cm" data-l="en">// critical radio, mobile, IoT</span></span><span class="ln">    <span class="ty">String</span> <span data-l="fr">poste</span><span data-l="en">role</span> = <span class="st" data-l="fr">"Ingénieur logiciel"</span><span class="st" data-l="en">"Software engineer"</span>;</span><span class="ln">    <span class="ty">String</span> <span data-l="fr">ville</span><span data-l="en">city</span> = <span class="st">"Aix-en-Provence"</span>;</span><span class="ln">    <span class="ty">String</span>[] stack = {<span class="st">"C++"</span>, <span class="st">"Qt"</span>, <span class="st">"Dart"</span>};</span><span class="ln">    <span class="kw">int</span> <span data-l="fr">projets</span><span data-l="en">projects</span> = <span class="cs">22</span>;</span><span class="ln"></span><span class="ln">    <span class="kw">void</span> <span class="fn">tick</span>() {</span><span class="ln">        <span class="fn">build</span>(); <span class="fn">debug</span>(); <span class="fn">ship</span>();</span><span class="ln">    }</span><span class="ln">}<span class="caret" aria-hidden="true"></span></span></pre>
+      </div>
       <p class="lede" data-intro data-l="fr">Je construis des logiciels qui doivent tenir en conditions réelles&nbsp;: radio critique pour le transport, applications mobiles, objets connectés et services cloud.</p>
       <p class="lede" data-intro data-l="en">I build software that has to hold up in the real world: mission-critical radio for public transport, mobile apps, connected devices and cloud services.</p>
       <div class="ctas" data-intro>
-        <a class="btn btn-solid magnetic" href="#projets"><span data-l="fr">Voir les projets</span><span data-l="en">See the work</span></a>
-        <a class="btn magnetic" href="#contact"><span data-l="fr">Me contacter</span><span data-l="en">Get in touch</span></a>
+        <a class="btn btn-solid" href="#projets"><span class="k">▶</span><span data-l="fr">Voir les projets</span><span data-l="en">See the work</span></a>
+        <a class="btn" href="#contact"><span class="k">$</span><span data-l="fr">Me contacter</span><span data-l="en">Get in touch</span></a>
       </div>
     </div>
+    <div class="avatar" id="avatar" role="img" data-aria-fr="Le personnage 3D de Samy, en style voxel" data-aria-en="Samy's 3D voxel character">
+      <span class="avatar-fallback" aria-hidden="true"></span>
+      <div class="dim dim-h" aria-hidden="true"><span>h = 1.8</span></div>
+      <div class="dim dim-w" aria-hidden="true"><span>w = 0.6</span></div>
+      <p class="avatar-hint" aria-hidden="true"><span data-l="fr">glisser pour tourner</span><span data-l="en">drag to spin</span></p>
+    </div>
   </div>
-  <a class="scroll-cue" href="#manifeste" data-intro><span class="scroll-line" aria-hidden="true"></span><span data-l="fr">Défiler</span><span data-l="en">Scroll</span></a>
 </section>
 
 <!-- ═══ MANIFESTE ═══════════════════════════════════════════════ -->
-<section class="manifesto" id="manifeste" data-stage="0">
+<section class="manifesto" id="manifeste">
   <div class="wrap">
+    <p class="cmt" data-reveal>README.md</p>
     <p class="big" data-scrub data-l="fr">Six ans d'alternance et d'entreprise, du support informatique à la radio critique. Diplômé du Mastère Expert Développement Logiciel, Mobile et IoT, aujourd'hui en CDI chez CS GROUP. J'aime les systèmes qui ne tombent pas, les interfaces qui donnent envie et le code qu'on peut relire.</p>
     <p class="big" data-scrub data-l="en">Six years of work-study and industry, from IT support to mission-critical radio. Master's graduate in Software, Mobile and IoT Engineering, now in a permanent role at CS GROUP. I like systems that don't fall over, interfaces people enjoy, and code you can read twice.</p>
     <dl class="stats">
@@ -97,9 +109,9 @@ d.lang=l;d.classList.add('js')})();
       <div data-reveal><dt><span data-l="fr">jeux jouables ici</span><span data-l="en">games playable here</span></dt><dd data-count="16">16</dd></div>
     </dl>
     <div class="clients" data-reveal>
-      <p class="clients-title"><span data-l="fr">Là où j'ai travaillé</span><span data-l="en">Where I have worked</span></p>
+      <p class="clients-title"><span data-l="fr">git log --employeurs</span><span data-l="en">git log --employers</span></p>
       <ul class="clients-list">
-        <li><span class="logo-tile l-cs"><img src="assets/logos/cs-group.svg" alt="CS GROUP" width="108" height="48" loading="lazy" decoding="async"></span><span class="clients-meta"><b>CS GROUP</b><small data-l="fr">Depuis 2024, CDI cadre</small><small data-l="en">Since 2024, permanent</small></span></li>
+        <li><span class="logo-tile l-cs"><img src="assets/logos/cs-group.svg" alt="CS GROUP" width="108" height="48" loading="lazy" decoding="async"></span><span class="clients-meta"><b>CS GROUP</b><small data-l="fr">depuis 2024, CDI cadre</small><small data-l="en">since 2024, permanent</small></span></li>
         <li><span class="logo-tile l-niji"><img src="assets/logos/niji.svg" alt="Niji" width="80" height="80" loading="lazy" decoding="async"></span><span class="clients-meta"><b>Niji</b><small>2022-2023</small></span></li>
         <li><span class="logo-tile l-rezzo"><img src="assets/logos/rezzo.png" alt="REZZO Telecom" width="139" height="39" loading="lazy" decoding="async"></span><span class="clients-meta"><b>REZZO Telecom</b><small>2021-2022</small></span></li>
         <li><span class="logo-tile l-ortec"><img src="assets/logos/ortec.webp" alt="Groupe ORTEC" width="160" height="160" loading="lazy" decoding="async"></span><span class="clients-meta"><b>Groupe ORTEC</b><small>2020</small></span></li>
@@ -110,20 +122,23 @@ d.lang=l;d.classList.add('js')})();
 
 <!-- ═══ PROJETS MIS EN AVANT ════════════════════════════════════ -->
 <section id="projets" class="work" aria-labelledby="projets-h">
-  <div class="wrap work-head" data-stage="0">
-    <h2 id="projets-h" class="h2" data-split><span data-l="fr">Projets choisis</span><span data-l="en">Selected work</span></h2>
-    <p class="muted" data-reveal data-l="fr">Quatre projets récents, chacun avec sa forme. Faites défiler, la scène suit.</p>
-    <p class="muted" data-reveal data-l="en">Four recent projects, each with its own shape. Scroll and the scene follows.</p>
+  <div class="wrap">
+  <div class="block-head">
+    <div><p class="cmt">01 · <span data-l="fr">projets choisis</span><span data-l="en">selected work</span></p>
+    <h2 id="projets-h" class="h2" data-split><span data-l="fr">Projets</span><span data-l="en">Projects</span></h2></div>
+    <p class="muted" data-reveal data-l="fr">Quatre projets récents, du produit mobile à l'infrastructure cloud.</p>
+    <p class="muted" data-reveal data-l="en">Four recent projects, from a mobile product to cloud infrastructure.</p>
   </div>
+  <div class="work-list">
 
-  <article class="feat" id="sameva" data-stage="1">
-    <div class="feat-panel">
-      <figure class="feat-media sameva-stage" data-reveal aria-label="Trois écrans de l'application Sameva et Paco, la mascotte">
+  <article class="feat" id="sameva">
+          <figure class="feat-media sameva-stage" data-reveal aria-label="Trois écrans de l'application Sameva et Paco, la mascotte"><div class="win"><div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>sameva.apk<span class="tag">Flutter</span></div><div class="shot">
         <div class="phone p-left" data-depth="0.5"><img src="assets/sameva/validation.webp" width="402" height="844" loading="lazy" decoding="async" alt=""></div>
         <div class="phone p-right" data-depth="0.5"><img src="assets/sameva/recompense.webp" width="402" height="844" loading="lazy" decoding="async" alt=""></div>
         <div class="phone p-main" data-depth="1"><img src="assets/sameva/quetes.webp" width="402" height="842" loading="lazy" decoding="async" alt=""></div>
         <img class="paco" data-depth="1.8" src="assets/paco_celebrate.webp" width="316" height="560" loading="lazy" decoding="async" alt="">
-      </figure>
+      </div></div></figure>
+    <div class="feat-panel">
       <p class="feat-no" data-reveal><span>01</span> / 04</p>
       <h3 class="feat-title" data-split>Sameva</h3>
       <p class="feat-meta" data-reveal><span data-l="fr">2025-2026. Projet personnel et projet de certification du Mastère.</span><span data-l="en">2025-2026. Personal project and Master's capstone.</span> <span class="badge"><span data-l="fr">MVP v1.0.4 en recette</span><span data-l="en">MVP v1.0.4 in acceptance</span></span></p>
@@ -147,11 +162,11 @@ d.lang=l;d.classList.add('js')})();
     </div>
   </article>
 
-  <article class="feat" data-stage="2">
-    <div class="feat-panel">
-      <figure class="feat-media" data-reveal>
+  <article class="feat">
+          <figure class="feat-media" data-reveal><div class="win"><div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>ticketflow<span class="tag">Kubernetes</span></div><div class="shot">
         <img src="assets/visuals/ticketflow-sm.webp" srcset="assets/visuals/ticketflow-sm.webp 720w, assets/visuals/ticketflow.webp 1200w" sizes="(max-width: 860px) 92vw, 620px" width="1200" height="896" loading="lazy" decoding="async" alt="" data-l-alt-fr="Billet en verre relié à des microservices" data-l-alt-en="Glass ticket linked to microservices">
-      </figure>
+      </div></div></figure>
+    <div class="feat-panel">
       <p class="feat-no" data-reveal><span>02</span> / 04</p>
       <h3 class="feat-title" data-split>TicketFlow</h3>
       <p class="feat-meta" data-reveal><span data-l="fr">2026. Projet de Mastère cloud-native&nbsp;: architecture, back-end, infrastructure.</span><span data-l="en">2026. Master's cloud-native project: architecture, back end, infrastructure.</span></p>
@@ -172,11 +187,11 @@ d.lang=l;d.classList.add('js')})();
     </div>
   </article>
 
-  <article class="feat" data-stage="3">
-    <div class="feat-panel">
-      <figure class="feat-media" data-reveal>
+  <article class="feat">
+          <figure class="feat-media" data-reveal><div class="win"><div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>mythrasona<span class="tag">FastAPI</span></div><div class="shot">
         <img src="assets/visuals/mythrasona-sm.webp" srcset="assets/visuals/mythrasona-sm.webp 720w, assets/visuals/mythrasona.webp 1200w" sizes="(max-width: 860px) 92vw, 620px" width="1200" height="896" loading="lazy" decoding="async" alt="" data-l-alt-fr="Livre ouvert d'où montent des ondes sonores" data-l-alt-en="Open book with rising sound waves">
-      </figure>
+      </div></div></figure>
+    <div class="feat-panel">
       <p class="feat-no" data-reveal><span>03</span> / 04</p>
       <h3 class="feat-title" data-split>MythraSona</h3>
       <p class="feat-meta" data-reveal><span data-l="fr">2026. Projet personnel, auto-hébergé sur mon NAS.</span><span data-l="en">2026. Personal project, self-hosted on my NAS.</span> <span class="badge"><span data-l="fr">Sprint 1, socle déployé</span><span data-l="en">Sprint 1, foundation live</span></span></p>
@@ -197,11 +212,11 @@ d.lang=l;d.classList.add('js')})();
     </div>
   </article>
 
-  <article class="feat" data-stage="4">
-    <div class="feat-panel">
-      <figure class="feat-media" data-reveal>
+  <article class="feat">
+          <figure class="feat-media" data-reveal><div class="win"><div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>live-bridge<span class="tag">Node · Java</span></div><div class="shot">
         <img src="assets/visuals/tiktok-minecraft-sm.webp" srcset="assets/visuals/tiktok-minecraft-sm.webp 720w, assets/visuals/tiktok-minecraft.webp 1200w" sizes="(max-width: 860px) 92vw, 620px" width="1200" height="896" loading="lazy" decoding="async" alt="" data-l-alt-fr="Téléphone d'où s'échappent des blocs" data-l-alt-en="Phone releasing voxel blocks">
-      </figure>
+      </div></div></figure>
+    <div class="feat-panel">
       <p class="feat-no" data-reveal><span>04</span> / 04</p>
       <h3 class="feat-title" data-split><span data-l="fr">TikTok Live vers Minecraft</span><span data-l="en">TikTok Live to Minecraft</span></h3>
       <p class="feat-meta" data-reveal><span data-l="fr">2025-2026. Projet personnel, temps réel.</span><span data-l="en">2025-2026. Personal real-time project.</span> <span class="badge"><span data-l="fr">Plugin v0.1 fonctionnel</span><span data-l="en">Plugin v0.1 working</span></span></p>
@@ -221,13 +236,16 @@ d.lang=l;d.classList.add('js')})();
       <p class="links" data-reveal><span class="private" data-l="fr">Dépôt privé</span><span class="private" data-l="en">Private repository</span></p>
     </div>
   </article>
+  </div>
+  </div>
 </section>
 
 <!-- ═══ INDEX ═══════════════════════════════════════════════════ -->
-<section class="block" id="index-projets" data-stage="5" aria-labelledby="index-h">
+<section class="block" id="index-projets" aria-labelledby="index-h">
   <div class="wrap">
     <div class="block-head">
-      <h2 id="index-h" class="h2" data-split><span data-l="fr">Tous les projets</span><span data-l="en">Everything else</span></h2>
+      <div><p class="cmt">02 · <span data-l="fr">tous les projets</span><span data-l="en">everything else</span></p>
+      <h2 id="index-h" class="h2" data-split><span data-l="fr">Archives</span><span data-l="en">Archive</span></h2></div>
       <div class="filters" role="group" data-aria-fr="Filtrer les projets" data-aria-en="Filter projects" data-reveal>
         <button type="button" class="chip-btn" data-filter="all" aria-pressed="true"><span data-l="fr">Tous</span><span data-l="en">All</span></button>
         <button type="button" class="chip-btn" data-filter="mobile" aria-pressed="false">Mobile</button>
@@ -238,6 +256,7 @@ d.lang=l;d.classList.add('js')})();
     </div>
 
     <div class="index" id="index">
+      <div class="index-bar" aria-hidden="true"><span data-l="fr">année</span><span data-l="en">year</span><span data-l="fr">nom</span><span data-l="en">name</span><span data-l="fr">description</span><span data-l="en">summary</span><span style="justify-self:end">stack</span><span></span></div>
 
       <details class="row" data-thumb="assets/thumbs/quizzup.webp" data-dom="mobile">
         <summary><span class="y">2026</span><span class="n">QuizzUp</span><span class="s" data-l="fr">Quiz mobile par catégories, jouable hors ligne</span><span class="s" data-l="en">Category quiz app that works offline</span><span class="t">Flutter</span><span class="plus" aria-hidden="true"></span></summary>
@@ -439,15 +458,18 @@ d.lang=l;d.classList.add('js')})();
 </section>
 
 <!-- ═══ PARCOURS ════════════════════════════════════════════════ -->
-<section class="block" id="parcours" data-stage="5" aria-labelledby="parcours-h">
+<section class="block" id="parcours" aria-labelledby="parcours-h">
   <div class="wrap">
     <div class="block-head">
-      <h2 id="parcours-h" class="h2" data-split><span data-l="fr">Parcours</span><span data-l="en">Experience</span></h2>
+      <div><p class="cmt">03 · git log --graph</p>
+      <h2 id="parcours-h" class="h2" data-split><span data-l="fr">Parcours</span><span data-l="en">Experience</span></h2></div>
+      <p class="muted" data-reveal data-l="fr">Six ans en alternance puis en CDI, de l'infrastructure au logiciel critique.</p>
+      <p class="muted" data-reveal data-l="en">Six years of work-study then full time, from infrastructure to critical software.</p>
     </div>
     <ol class="timeline">
       <li class="job" data-reveal>
         <div class="when-col">
-          <p class="when"><span data-l="fr">2024 à aujourd'hui</span><span data-l="en">2024 to now</span></p>
+          <p class="when"><span data-l="fr">2024 à aujourd'hui</span><span data-l="en">2024 to now</span><span class="hash">a7c3f2e · main</span></p>
           <figure class="job-visual"><img src="assets/visuals/tetra-radio-sm.webp" width="720" height="538" loading="lazy" decoding="async" alt=""></figure>
         </div>
         <div class="what">
@@ -466,7 +488,7 @@ d.lang=l;d.classList.add('js')})();
         </div>
       </li>
       <li class="job" data-reveal>
-        <p class="when">2022-2023</p>
+        <p class="when">2022-2023<span class="hash">5e91b0d</span></p>
         <div class="what">
           <h3><span class="logo-tile sm l-niji" aria-hidden="true"><img src="assets/logos/niji.svg" alt="" width="80" height="80" loading="lazy" decoding="async"></span>Niji</h3>
           <p class="role"><span data-l="fr">Développeur full-stack Salesforce en alternance</span><span data-l="en">Full-stack Salesforce developer, work-study</span></p>
@@ -476,7 +498,7 @@ d.lang=l;d.classList.add('js')})();
         </div>
       </li>
       <li class="job" data-reveal>
-        <p class="when">2021-2022</p>
+        <p class="when">2021-2022<span class="hash">3b2d8c4</span></p>
         <div class="what">
           <h3><span class="logo-tile sm l-rezzo" aria-hidden="true"><img src="assets/logos/rezzo.png" alt="" width="139" height="39" loading="lazy" decoding="async"></span>REZZO Telecom</h3>
           <p class="role"><span data-l="fr">Développeur logiciel full-stack en alternance</span><span data-l="en">Full-stack software developer, work-study</span></p>
@@ -486,7 +508,7 @@ d.lang=l;d.classList.add('js')})();
         </div>
       </li>
       <li class="job" data-reveal>
-        <p class="when">2020</p>
+        <p class="when">2020<span class="hash">1f04a9e</span></p>
         <div class="what">
           <h3><span class="logo-tile sm l-ortec" aria-hidden="true"><img src="assets/logos/ortec.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></span>Groupe ORTEC</h3>
           <p class="role"><span data-l="fr">Technicien informatique, stage</span><span data-l="en">IT technician, internship</span></p>
@@ -507,10 +529,13 @@ d.lang=l;d.classList.add('js')})();
 </section>
 
 <!-- ═══ COMPÉTENCES ═════════════════════════════════════════════ -->
-<section class="block" id="competences" data-stage="5" aria-labelledby="competences-h">
+<section class="block" id="competences" aria-labelledby="competences-h">
   <div class="wrap">
     <div class="block-head">
-      <h2 id="competences-h" class="h2" data-split><span data-l="fr">Compétences</span><span data-l="en">Skills</span></h2>
+      <div><p class="cmt">04 · <span data-l="fr">compétences</span><span data-l="en">skills</span></p>
+      <h2 id="competences-h" class="h2" data-split><span data-l="fr">Inventaire</span><span data-l="en">Inventory</span></h2></div>
+      <p class="muted" data-reveal data-l="fr">Chaque case renvoie à des projets réels, pas à une liste de mots-clés.</p>
+      <p class="muted" data-reveal data-l="en">Every slot points to real projects, not a keyword list.</p>
     </div>
   </div>
   <div class="marquee" aria-hidden="true">
@@ -519,7 +544,7 @@ d.lang=l;d.classList.add('js')})();
   </div>
   <div class="wrap">
     <dl class="skills">
-      <div class="skill" data-reveal><dt><span data-l="fr">Langages</span><span data-l="en">Languages</span></dt>
+      <div class="skill" data-reveal><dt data-n="×6"><span data-l="fr">Langages</span><span data-l="en">Languages</span></dt>
         <dd><b>C++</b> <i>Qt, CS GROUP, REZZO</i></dd>
         <dd><b>Java, Kotlin</b> <i>MobilitX, plugin Paper</i></dd>
         <dd><b>Dart</b> <i>Sameva, QuizzUp, MythraSona</i></dd>
@@ -527,31 +552,31 @@ d.lang=l;d.classList.add('js')})();
         <dd><b>TypeScript, JavaScript</b> <i>Express, React</i></dd>
         <dd><b>C#, PHP, SQL</b> <i>.NET, ORM, PL/SQL</i></dd>
       </div>
-      <div class="skill" data-reveal><dt>Mobile</dt>
+      <div class="skill" data-reveal><dt data-n="×4">Mobile</dt>
         <dd><b>Flutter</b> <i data-l="fr">MVVM, Hive, hors ligne</i><i data-l="en">MVVM, Hive, offline</i></dd>
         <dd><b>React Native, Expo</b></dd>
         <dd><b>Ionic, Capacitor</b></dd>
         <dd><b>Stripe</b> <i>Google Pay, Apple Pay</i></dd>
       </div>
-      <div class="skill" data-reveal><dt><span data-l="fr">Back-end et données</span><span data-l="en">Back end and data</span></dt>
+      <div class="skill" data-reveal><dt data-n="×4"><span data-l="fr">Back-end et données</span><span data-l="en">Back end and data</span></dt>
         <dd><b>Express, FastAPI, Flask, Spring</b></dd>
         <dd><b>PostgreSQL, MySQL</b> <i>RLS, PL/SQL</i></dd>
         <dd><b>Supabase</b> <i>Auth, Edge Functions</i></dd>
         <dd><b>Redis, BullMQ</b> <i data-l="fr">verrous, files</i><i data-l="en">locks, queues</i></dd>
       </div>
-      <div class="skill" data-reveal><dt><span data-l="fr">Cloud et DevOps</span><span data-l="en">Cloud and DevOps</span></dt>
+      <div class="skill" data-reveal><dt data-n="×4"><span data-l="fr">Cloud et DevOps</span><span data-l="en">Cloud and DevOps</span></dt>
         <dd><b>Docker, Kubernetes</b> <i>AKS</i></dd>
         <dd><b>Terraform</b> <i>Azure</i></dd>
         <dd><b>GitHub Actions, GitLab CI</b></dd>
         <dd><b>Ansible, Caddy, Tailscale</b></dd>
       </div>
-      <div class="skill" data-reveal><dt><span data-l="fr">IoT et embarqué</span><span data-l="en">IoT and embedded</span></dt>
+      <div class="skill" data-reveal><dt data-n="×4"><span data-l="fr">IoT et embarqué</span><span data-l="en">IoT and embedded</span></dt>
         <dd><b>ESP32, Arduino, Raspberry Pi</b></dd>
         <dd><b>Modbus RTU, UART, I2C</b></dd>
         <dd><b>MQTT sur TLS, Bluetooth LE</b></dd>
         <dd><b>Linux</b></dd>
       </div>
-      <div class="skill" data-reveal><dt><span data-l="fr">Méthode</span><span data-l="en">Practice</span></dt>
+      <div class="skill" data-reveal><dt data-n="×4"><span data-l="fr">Méthode</span><span data-l="en">Practice</span></dt>
         <dd><b>Architecture</b> <i data-l="fr">microservices, événementiel, ADR</i><i data-l="en">microservices, event-driven, ADRs</i></dd>
         <dd><b data-l="fr">Tests</b><b data-l="en">Testing</b> <i data-l="fr">unitaires, intégration</i><i data-l="en">unit, integration</i></dd>
         <dd><b>UX</b> <i>Figma, Rive</i></dd>
@@ -561,16 +586,28 @@ d.lang=l;d.classList.add('js')})();
   </div>
 </section>
 
-<!-- ═══ LABO ════════════════════════════════════════════════════ -->
-<section class="block" id="labo" data-stage="5" aria-labelledby="labo-h">
+<!-- ═══ ARCADE ══════════════════════════════════════════════════ -->
+<section class="block" id="labo" aria-labelledby="labo-h">
   <div class="wrap">
     <div class="block-head">
-      <h2 id="labo-h" class="h2" data-split><span data-l="fr">Labo</span><span data-l="en">Lab</span></h2>
-      <p class="muted" data-reveal data-l="fr">Seize jeux écrits à la main en JavaScript, sans bibliothèque. Le Puissance 4 joue avec un minimax à élagage alpha-bêta. Treize succès à débloquer.</p>
-      <p class="muted" data-reveal data-l="en">Sixteen games hand-written in plain JavaScript. The Connect Four AI uses minimax with alpha-beta pruning. Thirteen achievements to unlock.</p>
+      <div><p class="cmt">05 · <span data-l="fr">labo</span><span data-l="en">lab</span></p>
+      <h2 id="labo-h" class="h2" data-split>Arcade</h2></div>
+      <p class="muted" data-reveal data-l="fr">Seize jeux écrits à la main en JavaScript, sans bibliothèque, sur un moteur commun à 120 pas par seconde.</p>
+      <p class="muted" data-reveal data-l="en">Sixteen games hand-written in plain JavaScript, on a shared engine running at 120 steps per second.</p>
     </div>
-    <div class="lab-layout">
-    <figure class="lab-visual" data-reveal><img src="assets/visuals/labo-sm.webp" srcset="assets/visuals/labo-sm.webp 720w, assets/visuals/labo.webp 1200w" sizes="(max-width: 860px) 92vw, 40vw" width="1200" height="896" loading="lazy" decoding="async" alt=""></figure>
+    <div class="arcade">
+      <div class="arcade-side">
+        <div class="arcade-card" data-reveal>
+          <h3><span data-l="fr">Succès</span><span data-l="en">Achievements</span></h3>
+          <div class="ach-meter" aria-hidden="true"><i id="achBar"></i></div>
+          <p class="ach-line" id="achLine"><b>0</b>/13</p>
+        </div>
+        <div class="arcade-card" data-reveal>
+          <h3>README</h3>
+          <p data-l="fr">Les jeux marqués <span class="ai">IA</span> jouent contre vous&nbsp;: le Puissance 4 cherche ses coups en minimax avec élagage alpha-bêta. Records gardés dans votre navigateur.</p>
+          <p data-l="en">Games marked <span class="ai">IA</span> play against you: Connect Four searches its moves with minimax and alpha-beta pruning. Best scores stay in your browser.</p>
+        </div>
+      </div>
     <div class="games" id="games">
       <button type="button" data-game="connect4"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="14" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="a2" cx="12" cy="14" r="2"/><circle class="a1" cx="16" cy="14" r="2"/><circle class="a1" cx="12" cy="9" r="2"/></svg><span class="g-name"><span data-l="fr">Puissance 4</span><span data-l="en">Connect Four</span></span><i>IA</i></button>
       <button type="button" data-game="tetris"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12v4H4zM8 13h4v4H8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a1" x="14.5" y="13.5" width="5" height="5" rx="1"/><rect class="a2" x="14.5" y="4.5" width="5" height="5" rx="1"/><path d="M4 21h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Blocs</span><span data-l="en">Blocks</span></span></button>
@@ -582,44 +619,48 @@ d.lang=l;d.classList.add('js')})();
       <button type="button" data-game="flappy"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v6M5 15v6M19 3v3M19 12v9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><path class="a1" d="M8.5 13.5l8-4-3.4 6.3-1.6-2.2z"/><path d="M8.5 13.5l3 .6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Envol</span><span data-l="en">Glide</span></span></button>
       <button type="button" data-game="tictactoe"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v16M15 4v16M4 9h16M4 15h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="s1" d="M5.3 5.3l2.4 2.4M7.7 5.3L5.3 7.7" fill="none" stroke-width="1.8" stroke-linecap="round"/><circle class="s2" cx="12" cy="12" r="1.6" fill="none" stroke-width="1.8"/><path class="s1" d="M16.3 16.3l2.4 2.4M18.7 16.3l-2.4 2.4" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg><span class="g-name"><span data-l="fr">Morpion</span><span data-l="en">Tic-tac-toe</span></span><i>IA</i></button>
       <button type="button" data-game="memory"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="10" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-8 9 13)"/><rect x="10" y="4" width="10" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a1" d="M15 8.2l1.1 2.2 2.4.3-1.8 1.6.5 2.4-2.2-1.2-2.2 1.2.5-2.4-1.8-1.6 2.4-.3z"/></svg><span class="g-name">Memory</span></button>
-      <button type="button" data-game="simon"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3.5v17M3.5 12h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a1" d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5H12z"/><circle cx="12" cy="12" r="2.6" fill="#05060A" stroke="currentColor" stroke-width="1.6"/></svg><span class="g-name"><span data-l="fr">Séquence</span><span data-l="en">Sequence</span></span></button>
+      <button type="button" data-game="simon"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3.5v17M3.5 12h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a1" d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5H12z"/><circle cx="12" cy="12" r="2.6" fill="#0F141A" stroke="currentColor" stroke-width="1.6"/></svg><span class="g-name"><span data-l="fr">Séquence</span><span data-l="en">Sequence</span></span></button>
       <button type="button" data-game="taquin"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM9.3 4v16M14.7 4v10.7M4 9.3h16M4 14.7h10.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a1" x="15.4" y="15.4" width="4" height="4" rx=".6"/><path d="M17.4 12.4v1.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Taquin</span><span data-l="en">15 puzzle</span></span></button>
       <button type="button" data-game="whack"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19a3 3 0 0 1 6 0M13 19a3 3 0 0 1 6 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="a1" cx="16" cy="12" r="2.2"/><path d="M12.2 8.8a5 5 0 0 1 7.6 0M10.3 6.6a8 8 0 0 1 11.4 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".75"/></svg><span class="g-name"><span data-l="fr">Tape-taupe</span><span data-l="en">Whack-a-mole</span></span></button>
       <button type="button" data-game="rps"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="7.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a2" x="13.5" y="4.3" width="6.5" height="7.4" rx="1.2"/><circle cx="7" cy="17.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12.5" cy="17.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="s1" d="M8.4 16.4L17.5 13M13.9 16.2L18.5 19.5" fill="none" stroke-width="1.6" stroke-linecap="round"/></svg><span class="g-name"><span data-l="fr">Pierre-feuille-ciseaux</span><span data-l="en">Rock paper scissors</span></span></button>
       <button type="button" data-game="reflex"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 3h4M12 3v3M18.2 6.8l1.3-1.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a1" d="M13 8.5l-3.6 5.6h3l-1 4.4 3.6-5.6h-3z"/></svg><span class="g-name"><span data-l="fr">Réflexes</span><span data-l="en">Reaction time</span></span></button>
       <button type="button" data-game="quiz"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="s1" d="M8.6 10.3l2.2 2.2 4.6-4.6" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name">Quiz tech</span></button>
     </div>
+
     </div>
     <p class="lab-foot" data-reveal><span id="achCount"></span> <span data-l="fr">Tapez <kbd>s</kbd> puis <kbd>b</kbd> n'importe où pour ouvrir un terminal.</span><span data-l="en">Type <kbd>s</kbd> then <kbd>b</kbd> anywhere to open a terminal.</span></p>
   </div>
 </section>
 
 <!-- ═══ CONTACT ═════════════════════════════════════════════════ -->
-<section class="block contact" id="contact" data-stage="0" aria-labelledby="contact-h">
-  <figure class="contact-visual" aria-hidden="true"><img src="assets/visuals/contact.webp" width="1200" height="896" loading="lazy" decoding="async" alt=""></figure>
+<section class="block contact" id="contact" aria-labelledby="contact-h">
   <div class="wrap">
-    <h2 id="contact-h" class="h2 huge" data-split><span data-l="fr">Parlons&#8209;en.</span><span data-l="en">Let's talk.</span></h2>
     <div class="contact-grid">
-      <div class="reach" data-reveal>
-        <p class="muted" data-l="fr">Un projet, une question technique ou simplement l'envie d'échanger&nbsp;: j'aime les messages précis et j'y réponds.</p>
-        <p class="muted" data-l="en">A project, a technical question or just a chat: I like specific messages and I answer them.</p>
-        <a class="mail" href="mailto:samyboudaoud95@gmail.com">samyboudaoud95<wbr>@gmail.com</a>
-        <button type="button" class="copy" id="copyMail" data-mail="samyboudaoud95@gmail.com"><span data-l="fr">Copier l'adresse</span><span data-l="en">Copy address</span></button>
-        <ul class="elsewhere">
+      <div class="reach">
+        <div><p class="cmt">06 · contact</p>
+        <h2 id="contact-h" class="h2" data-split><span data-l="fr">Parlons&#8209;en</span><span data-l="en">Let's talk</span></h2></div>
+        <p class="muted" data-reveal data-l="fr">Un projet, une question technique ou simplement l'envie d'échanger&nbsp;: j'aime les messages précis et j'y réponds.</p>
+        <p class="muted" data-reveal data-l="en">A project, a technical question or just a chat: I like specific messages and I answer them.</p>
+        <a class="mail" href="mailto:samyboudaoud95@gmail.com" data-reveal>samyboudaoud95<wbr>@gmail.com</a>
+        <button type="button" class="copy" id="copyMail" data-mail="samyboudaoud95@gmail.com" data-reveal><span data-l="fr">copier l'adresse</span><span data-l="en">copy address</span></button>
+        <ul class="elsewhere" data-reveal>
           <li><a class="arrow" href="https://www.linkedin.com/in/samy-boudaoud" rel="noopener" target="_blank">LinkedIn</a></li>
           <li><a class="arrow" href="https://github.com/SamymaS" rel="noopener" target="_blank">GitHub</a></li>
         </ul>
       </div>
-      <form class="form" id="contactForm" novalidate data-reveal>
-        <label><span data-l="fr">Votre nom</span><span data-l="en">Your name</span>
+      <div class="win" data-reveal>
+        <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>contact.sh<span class="tag">bash</span></div>
+      <form class="form" id="contactForm" novalidate>
+        <label><span><span data-l="fr">nom</span><span data-l="en">name</span></span>
           <input name="name" type="text" autocomplete="name" required maxlength="120"></label>
-        <label><span data-l="fr">Votre e-mail</span><span data-l="en">Your email</span>
+        <label><span>e-mail</span>
           <input name="email" type="email" autocomplete="email" required maxlength="200"></label>
-        <label><span data-l="fr">Message</span><span data-l="en">Message</span>
+        <label><span>message</span>
           <textarea name="message" rows="5" required maxlength="5000"></textarea></label>
         <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
-        <button class="btn btn-solid magnetic" type="submit"><span data-l="fr">Envoyer le message</span><span data-l="en">Send message</span></button>
+        <button class="btn btn-solid" type="submit"><span class="k">↵</span><span data-l="fr">Envoyer</span><span data-l="en">Send</span></button>
       </form>
+      </div>
     </div>
   </div>
 </section>
@@ -628,7 +669,7 @@ d.lang=l;d.classList.add('js')})();
 
 <footer class="foot">
   <div class="wrap foot-in">
-    <p>© 2026 Samy Boudaoud, Aix-en-Provence</p>
+    <p><img src="assets/mougi/icon-48.png" width="20" height="20" alt="">© 2026 Samy Boudaoud, Aix-en-Provence</p>
     <p><a href="https://github.com/SamymaS/Portfolio_pro" rel="noopener" target="_blank"><span data-l="fr">Code source du site</span><span data-l="en">Site source code</span></a></p>
   </div>
 </footer>
@@ -641,7 +682,7 @@ d.lang=l;d.classList.add('js')})();
       <span id="gameTitle" class="game-modal-title"></span>
       <div class="g-chips" aria-live="polite">
         <span class="g-chip"><small>Score</small><b id="gameScore">0</b></span>
-        <span class="g-chip"><small data-l="fr">Record</small><small data-l="en">Best</small><b id="gameBest">–</b></span>
+        <span class="g-chip"><small data-l="fr">Record</small><small data-l="en">Best</small><b id="gameBest">-</b></span>
       </div>
       <div class="g-actions">
         <button id="gameRestart" class="g-icon-btn" type="button" data-aria-fr="Recommencer" data-aria-en="Restart"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>

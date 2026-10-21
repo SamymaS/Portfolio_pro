@@ -219,7 +219,7 @@ SBG.register('minesweeper', {
         if (kbd && state === 'play') {
           const px = PAD + cursor.x * CELL, py = PAD + cursor.y * CELL;
           api.roundRect(ctx, px + 1.5, py + 1.5, CELL - 3, CELL - 3, 9);
-          ctx.strokeStyle = 'rgba(56,230,255,0.22)'; ctx.lineWidth = 6; ctx.stroke();
+          ctx.strokeStyle = 'rgba(56,189,248,0.22)'; ctx.lineWidth = 6; ctx.stroke();
           ctx.strokeStyle = C.cyan; ctx.lineWidth = 2; ctx.stroke();
         }
         fx.draw(ctx);
@@ -243,7 +243,7 @@ SBG.register('minesweeper', {
           const d = Math.hypot(c.x - 4.5, c.y - 4.5);
           const g = Math.max(0, 1 - Math.abs(d - r) / 1.6);
           if (g > 0) {
-            ctx.fillStyle = 'rgba(56,230,255,' + (0.22 * g) + ')';
+            ctx.fillStyle = 'rgba(56,189,248,' + (0.22 * g) + ')';
             api.roundRect(ctx, px + 2, py + 2, s, s, 8); ctx.fill();
           }
         }
@@ -267,7 +267,7 @@ SBG.register('minesweeper', {
       if (state === 'lost' && c.mine && !c.flag) {
         const boomed = c.boomAt >= 0 && clock >= c.boomAt;
         const bk = boomed ? api.clamp((clock - c.boomAt) / 0.3, 0, 1) : 0;
-        ctx.fillStyle = boomed ? 'rgba(255,122,107,' + (0.1 + 0.18 * (1 - bk) + 0.08) + ')' : 'rgba(255,255,255,0.03)';
+        ctx.fillStyle = boomed ? 'rgba(255,123,114,' + (0.1 + 0.18 * (1 - bk) + 0.08) + ')' : 'rgba(255,255,255,0.03)';
         api.roundRect(ctx, px + 2, py + 2, s, s, 8); ctx.fill();
         if (boomed) {
           ctx.save();
@@ -288,7 +288,7 @@ SBG.register('minesweeper', {
         const al = c.open ? 1 - k : 1;
         drawClosed(c, px, py, s, sc, al);
         if (c.open && k > 0 && k < 1 && !api.reduced) {
-          ctx.strokeStyle = 'rgba(56,230,255,' + (0.4 * (1 - k) * (1 - k)) + ')';
+          ctx.strokeStyle = 'rgba(56,189,248,' + (0.4 * (1 - k) * (1 - k)) + ')';
           ctx.lineWidth = 1.5;
           api.roundRect(ctx, px + 2, py + 2, s, s, 8); ctx.stroke();
         }
@@ -311,14 +311,14 @@ SBG.register('minesweeper', {
         gr.addColorStop(1, isHover ? '#161D33' : '#121829');
         g.fillStyle = gr;
         api.roundRect(g, -s / 2 + 0.5, -s / 2 + 0.5, s - 1, s - 1, 8); g.fill();
-        g.strokeStyle = isHover ? 'rgba(56,230,255,0.4)' : 'rgba(255,255,255,0.07)';
+        g.strokeStyle = isHover ? 'rgba(56,189,248,0.4)' : 'rgba(255,255,255,0.07)';
         g.lineWidth = 1; g.stroke();
         // reflet supérieur
         g.fillStyle = 'rgba(255,255,255,0.05)';
         api.roundRect(g, -s / 2 + 4, -s / 2 + 2.5, s - 8, 2, 1); g.fill();
       }));
       if (nudge) {
-        ctx.strokeStyle = 'rgba(255,197,107,' + (0.6 * nudge) + ')';
+        ctx.strokeStyle = 'rgba(255,166,87,' + (0.6 * nudge) + ')';
         api.roundRect(ctx, -s / 2, -s / 2, s, s, 8); ctx.stroke();
       }
       if (c.flag) drawFlag(c);

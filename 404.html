@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Page introuvable, Samy Boudaoud</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="theme-color" content="#0D1117">
+<link rel="icon" href="/assets/mougi/icon-48.png" sizes="48x48" type="image/png">
+<link rel="preload" href="/fonts/tiny5.woff2" as="font" type="font/woff2" crossorigin>
 <script>
 (function(){var d=document.documentElement,l;try{l=localStorage.getItem('sb-lang')}catch(e){}
 if(l!=='fr'&&l!=='en'){l=(navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en'}
@@ -14,24 +15,27 @@ d.lang=l})();
 </script>
 <link rel="stylesheet" href="/site.css">
 <style>
-  .lost{min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:1.5rem;padding-block:3rem}
-  .lost h1{font-size:clamp(4rem,18vw,12rem);font-weight:800;font-stretch:125%;line-height:.9;letter-spacing:-.04em}
-  .lost p{font-size:1.2rem;max-width:34em}
-  .flat{height:80px;border:1px solid var(--line);border-radius:16px;background:var(--glass);position:relative;overflow:hidden}
-  .flat::after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;background:var(--grad);box-shadow:0 0 18px #38E6FF}
-  .path{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.95rem;overflow-wrap:anywhere}
+  .lost{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:1.4rem;padding-block:3rem}
+  .lost h1{font:400 clamp(5rem,22vw,14rem)/.85 var(--fp);text-shadow:.06em .06em 0 var(--blue)}
+  .lost .head{width:96px;height:96px;image-rendering:pixelated;border-radius:8px;box-shadow:5px 5px 0 var(--blue);animation:bob 2.4s steps(4) infinite}
+  @keyframes bob{50%{transform:translateY(-6px)}}
+  .lost .win{width:min(640px,100%)}
+  .lost p{max-width:36em}
 </style>
 </head>
 <body>
 <main class="wrap lost">
+  <img class="head" src="/assets/mougi/icon-192.png" width="96" height="96" alt="">
   <h1>404</h1>
-  <div class="flat" aria-hidden="true"></div>
-  <p data-l="fr">Aucun signal à cette adresse. La page a peut-être été déplacée, ou l'URL contient une faute de frappe.</p>
-  <p data-l="en">No signal at this address. The page may have moved, or the URL has a typo.</p>
-  <p class="path muted" id="path"></p>
-  <p style="display:flex;gap:.6rem;flex-wrap:wrap">
-    <a class="btn btn-solid" href="/"><span data-l="fr">Retour à l'accueil</span><span data-l="en">Back to home</span></a>
-    <a class="btn" href="/#projets"><span data-l="fr">Voir les projets</span><span data-l="en">See the work</span></a>
+  <div class="win">
+    <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>bash</div>
+    <pre class="code"><span class="ln"><span class="ok">$</span> cd <span id="path" class="st"></span></span><span class="ln"><span class="kw">bash: cd: No such file or directory</span></span><span class="ln"><span class="ok">$</span> <span class="caret" aria-hidden="true"></span></span></pre>
+  </div>
+  <p class="muted" data-l="fr">Aucun bloc à cette adresse. La page a peut-être été déplacée, ou l'URL contient une faute de frappe.</p>
+  <p class="muted" data-l="en">No block at this address. The page may have moved, or the URL has a typo.</p>
+  <p style="display:flex;gap:.9rem;flex-wrap:wrap">
+    <a class="btn btn-solid" href="/"><span class="k">▶</span><span data-l="fr">Retour à l'accueil</span><span data-l="en">Back to home</span></a>
+    <a class="btn" href="/#projets"><span class="k">$</span><span data-l="fr">Voir les projets</span><span data-l="en">See the work</span></a>
   </p>
 </main>
 <script>document.getElementById('path').textContent=location.pathname;</script>

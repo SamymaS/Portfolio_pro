@@ -211,9 +211,9 @@
           // curseur de case
           if (curA > 0.01) {
             ctx.globalAlpha = curA;
-            ctx.strokeStyle = 'rgba(56,230,255,0.55)'; ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(56,189,248,0.55)'; ctx.lineWidth = 1.5;
             api.roundRect(ctx, curX - CELL / 2 + 10, curY - CELL / 2 + 10, CELL - 20, CELL - 20, 16); ctx.stroke();
-            ctx.fillStyle = 'rgba(56,230,255,0.05)'; ctx.fill();
+            ctx.fillStyle = 'rgba(56,189,248,0.05)'; ctx.fill();
             if (!board[focus] && state === 'player') {
               ctx.globalAlpha = curA * 0.22;
               drawX(cellX(focus), cellY(focus), 1);
@@ -229,7 +229,7 @@
             const inWin = winLine && winLine.includes(m.i);
             ctx.globalAlpha = inWin ? 1 : 1 - dim * 0.6;
             // halo doux
-            const rgb = m.who === HUMAN ? '56,230,255' : '176,124,255';
+            const rgb = m.who === HUMAN ? '56,189,248' : '210,168,255';
             const g = ctx.createRadialGradient(x, y, 0, x, y, CELL * 0.55);
             g.addColorStop(0, `rgba(${rgb},${0.13 * api.ease.out(k)})`); g.addColorStop(1, `rgba(${rgb},0)`);
             ctx.fillStyle = g; ctx.fillRect(x - CELL / 2, y - CELL / 2, CELL, CELL);

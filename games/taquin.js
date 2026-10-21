@@ -179,7 +179,7 @@ SBG.register('taquin', {
       sheen.addColorStop(0, 'rgba(255,255,255,0.08)'); sheen.addColorStop(0.55, 'rgba(255,255,255,0)');
       ctx.fillStyle = sheen; ctx.fill();
       ctx.lineWidth = 1.2;
-      ctx.strokeStyle = inPlace ? 'rgba(56,230,255,0.45)' : hot ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)';
+      ctx.strokeStyle = inPlace ? 'rgba(56,189,248,0.45)' : hot ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)';
       api.roundRect(ctx, cx - w / 2 + 0.6, cy - w / 2 + 0.6, w - 1.2, w - 1.2, 12 * s); ctx.stroke();
       ctx.fillStyle = inPlace ? C.cyan : C.ink;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';

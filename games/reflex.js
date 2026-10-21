@@ -20,20 +20,20 @@ SBG.register('reflex', {
 .rx-root{width:100%;max-width:560px;margin-block:auto;display:grid;gap:1.2rem;user-select:none;-webkit-user-select:none}
 .rx-pad{position:relative;height:clamp(200px,38svh,280px);border-radius:26px;border:1px solid var(--line);background:rgba(255,255,255,.025);display:grid;place-items:center;align-content:center;gap:.4rem;text-align:center;padding:1rem;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow:hidden;outline:none;transition:background .35s ease-out,border-color .35s ease-out,box-shadow .35s ease-out}
 .rx-pad:focus-visible{border-color:rgba(238,241,247,.28)}
-.rx-pad::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(60% 70% at 50% 50%,rgba(56,230,255,.35),rgba(56,230,255,0) 70%);opacity:0;transition:opacity .3s ease-out}
+.rx-pad::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(60% 70% at 50% 50%,rgba(56,189,248,.35),rgba(56,189,248,0) 70%);opacity:0;transition:opacity .3s ease-out}
 .rx-big{position:relative;font-size:clamp(1.7rem,6vw,2.6rem);font-weight:800;font-stretch:118%;letter-spacing:-.02em;line-height:1.05;color:var(--ink);font-variant-numeric:tabular-nums}
 .rx-small{position:relative;font-size:.92rem;color:var(--muted)}
 .rx-dot{position:relative;width:10px;height:10px;border-radius:50%;background:var(--faint);margin:0 auto .5rem;opacity:.8}
 .rx-pad.wait .rx-dot{animation:rx-breathe 1.6s ease-in-out infinite}
 @keyframes rx-breathe{50%{opacity:.25}}
 .rx-pad.wait .rx-big{color:var(--muted)}
-.rx-pad.go{transition:none;background:rgba(56,230,255,.16);border-color:var(--c2);box-shadow:0 0 0 1px var(--c2),0 0 60px rgba(56,230,255,.35)}
+.rx-pad.go{transition:none;background:rgba(56,189,248,.16);border-color:var(--c2);box-shadow:0 0 0 1px var(--c2),0 0 60px rgba(56,189,248,.35)}
 .rx-pad.go::before{transition:none;opacity:1}
 .rx-pad.go .rx-dot{background:var(--c2);box-shadow:0 0 14px var(--c2)}
 .rx-pad.go .rx-big{color:#fff}
-.rx-pad.early{border-color:rgba(255,122,107,.6);background:rgba(255,122,107,.07)}
-.rx-pad.early .rx-big{color:#FF7A6B}
-.rx-pad.early .rx-dot{background:#FF7A6B}
+.rx-pad.early{border-color:rgba(255,123,114,.6);background:rgba(255,123,114,.07)}
+.rx-pad.early .rx-big{color:#FF7B72}
+.rx-pad.early .rx-dot{background:#FF7B72}
 .rx-pad.done .rx-big{color:var(--c2)}
 .rx-pad.done .rx-dot{background:var(--c2)}
 .rx-pad.fast .rx-big{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -41,10 +41,10 @@ SBG.register('reflex', {
 .rx-meta b{color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
 .rx-chart{--ch:112px;position:relative;box-sizing:content-box;display:grid;grid-template-columns:repeat(${TRIES},1fr);gap:.7rem;height:var(--ch);padding:1.5rem .2rem 0;border-bottom:1px solid var(--line)}
 .rx-col{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
-.rx-bar{width:100%;max-width:56px;height:100%;border-radius:10px 10px 3px 3px;background:linear-gradient(180deg,rgba(176,124,255,.55),rgba(176,124,255,.18));transform-origin:50% 100%;transform:scaleY(0);transition:transform .45s cubic-bezier(.2,.8,.2,1),background .3s}
-.rx-col.best .rx-bar{background:linear-gradient(180deg,var(--c2),rgba(56,230,255,.25))}
+.rx-bar{width:100%;max-width:56px;height:100%;border-radius:10px 10px 3px 3px;background:linear-gradient(180deg,rgba(210,168,255,.55),rgba(210,168,255,.18));transform-origin:50% 100%;transform:scaleY(0);transition:transform .45s cubic-bezier(.2,.8,.2,1),background .3s}
+.rx-col.best .rx-bar{background:linear-gradient(180deg,var(--c2),rgba(56,189,248,.25))}
 .rx-col.slot .rx-bar{transform:scaleY(.03);background:rgba(255,255,255,.12)}
-.rx-col.now .rx-bar{background:rgba(56,230,255,.35)}
+.rx-col.now .rx-bar{background:rgba(56,189,248,.35)}
 .rx-val{position:absolute;bottom:calc(var(--h,0) * 100% + 6px);font-size:.78rem;font-weight:650;color:var(--muted);font-variant-numeric:tabular-nums;opacity:0;transition:opacity .3s ease-out .15s}
 .rx-col.has .rx-val{opacity:1}
 .rx-col.best .rx-val{color:var(--c2)}

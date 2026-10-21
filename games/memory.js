@@ -217,7 +217,7 @@ SBG.register('memory', {
       if (isCursor) {
         ctx.strokeStyle = C.cyan; ctx.lineWidth = 2;
         api.roundRect(ctx, -CW / 2 - 4, -CH / 2 - 4, CW + 8, CH + 8, 17); ctx.stroke();
-        ctx.strokeStyle = 'rgba(56,230,255,0.25)'; ctx.lineWidth = 6;
+        ctx.strokeStyle = 'rgba(56,189,248,0.25)'; ctx.lineWidth = 6;
         api.roundRect(ctx, -CW / 2 - 4, -CH / 2 - 4, CW + 8, CH + 8, 17); ctx.stroke();
       }
       ctx.restore();
@@ -229,7 +229,7 @@ SBG.register('memory', {
       gr.addColorStop(1, '#0F1324');
       g.fillStyle = gr;
       api.roundRect(g, -CW / 2, -CH / 2, CW, CH, 14); g.fill();
-      g.strokeStyle = isHover ? 'rgba(56,230,255,0.4)' : 'rgba(255,255,255,0.08)';
+      g.strokeStyle = isHover ? 'rgba(56,189,248,0.4)' : 'rgba(255,255,255,0.08)';
       g.lineWidth = 1; g.stroke();
       // motif : fines diagonales, coupées au cadre
       g.save();
@@ -245,9 +245,9 @@ SBG.register('memory', {
       // emblème central : pastille et quatre points (neutre, ne ressemble à aucun glyphe)
       g.fillStyle = C.bg2;
       api.roundRect(g, -13, -13, 26, 26, 8); g.fill();
-      g.strokeStyle = isHover ? 'rgba(56,230,255,0.55)' : 'rgba(255,255,255,0.08)';
+      g.strokeStyle = isHover ? 'rgba(56,189,248,0.55)' : 'rgba(255,255,255,0.08)';
       g.lineWidth = 1; g.stroke();
-      g.fillStyle = isHover ? 'rgba(56,230,255,0.9)' : 'rgba(56,230,255,0.45)';
+      g.fillStyle = isHover ? 'rgba(56,189,248,0.9)' : 'rgba(56,189,248,0.45)';
       for (const [px, py] of [[-4, -4], [4, -4], [-4, 4], [4, 4]]) {
         g.beginPath(); g.arc(px, py, 1.9, 0, Math.PI * 2); g.fill();
       }
