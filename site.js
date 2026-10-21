@@ -322,6 +322,29 @@
     window.addEventListener('scroll', () => pv.classList.remove('on'), { passive: true });
   }
 
+  /* ── Fiche joueur : onglets de statistiques ─────────────────── */
+  const tabs = $$('.st-tabs [role=tab]');
+  function selectTab(tab, focus) {
+    tabs.forEach((b) => {
+      const on = b === tab;
+      b.setAttribute('aria-selected', String(on));
+      b.tabIndex = on ? 0 : -1;
+      $('#' + b.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (focus) tab.focus();
+    const pane = $('#' + tab.getAttribute('aria-controls'));
+    if (hasGsap && !reduce) gsap.fromTo($$('.st-row, .st-sub', pane), { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: .35, ease: 'power2.out', stagger: .03 });
+  }
+  tabs.forEach((b, i) => {
+    b.addEventListener('click', () => selectTab(b));
+    b.addEventListener('keydown', (e) => {
+      const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (k) { e.preventDefault(); selectTab(tabs[(i + k + tabs.length) % tabs.length], true); }
+      else if (e.key === 'Home') { e.preventDefault(); selectTab(tabs[0], true); }
+      else if (e.key === 'End') { e.preventDefault(); selectTab(tabs[tabs.length - 1], true); }
+    });
+  });
+
   /* ── Filtres de l'index ─────────────────────────────────────── */
   const rows = $$('.row');
   $$('.chip-btn').forEach((c) => c.addEventListener('click', () => {
@@ -394,6 +417,7 @@
     out.textContent = n ? t('ach')(n, tot) : '';
     const barEl = $('#achBar'), line = $('#achLine');
     if (barEl) barEl.style.setProperty('--a', (tot ? (n / tot) * 100 : 0) + '%');
+    const pf = $('#pfAch'); if (pf) pf.textContent = n;
     if (line) line.innerHTML = '<b>' + n + '</b>/' + tot + (root.lang === 'en' ? ' unlocked' : ' débloqués');
     $$('[data-game]').forEach((b) => b.classList.toggle('won', !!(GAME_ACH[b.dataset.game] && a.has(GAME_ACH[b.dataset.game]))));
   }

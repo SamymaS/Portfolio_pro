@@ -8,7 +8,7 @@ Portfolio personnel en HTML, CSS et JavaScript natifs. Aucun framework, aucune �
 
 ## Ce que contient le site
 
-**Le portfolio.** Une page unique : ouverture, README, quatre projets mis en avant, archives filtrables, parcours, inventaire de compétences, arcade de mini-jeux et contact. FR et EN sans rechargement.
+**Le portfolio.** Une page unique : ouverture, fiche joueur (carte, statistiques à onglets, attributs, journal de quêtes), quatre projets mis en avant, archives filtrables, parcours, inventaire de compétences, arcade de mini-jeux et contact. FR et EN sans rechargement.
 
 **La direction artistique « MougiCraft ».** Elle reprend la bannière et le skin Minecraft de Samy :
 
