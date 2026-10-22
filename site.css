@@ -229,6 +229,8 @@ main,.foot{position:relative;z-index:2}
 @media (max-width:560px){
   .avatar{height:56svh;min-height:340px}
   .code{font-size:.7rem}
+  .dim-h span{left:auto;right:12px}
+  .avatar{overflow-x:clip}
   .name{font-size:clamp(3.1rem,16.5vw,5rem)}
   .code .ln{padding-left:2.6rem}
   .code .ln::before{width:1.8rem}
@@ -293,6 +295,8 @@ main,.foot{position:relative;z-index:2}
 .quest-list li.done{color:var(--muted)}
 .quest-list li.done::before{border-color:var(--ok);background:var(--ok);box-shadow:inset 0 0 0 2px var(--panel)}
 .quest-list li:not(.done)::before{border-color:var(--cyan);animation:blink 1.6s steps(1) infinite}
+.quest-list li.paused{color:var(--muted)}
+.quest-list li.paused::before{border-color:var(--ty);animation:none;background:repeating-linear-gradient(90deg,var(--ty) 0 2px,transparent 2px 4px)}
 .quest-list small{margin-left:auto;font:500 .72rem var(--fm);color:var(--faint);white-space:nowrap}
 
 @media (max-width:960px){.pf-grid,.pf-low{grid-template-columns:1fr}}
@@ -344,6 +348,8 @@ main,.foot{position:relative;z-index:2}
 .feat-meta{color:var(--muted);font-size:.92rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .75rem}
 .badge{display:inline-flex;align-items:center;gap:.4rem;padding:.15rem .55rem;border-radius:4px;font:600 .72rem var(--fm);color:var(--ok);border:1px solid rgba(63,185,80,.4);background:rgba(63,185,80,.08)}
 .badge::before{content:'';width:6px;height:6px;background:currentColor}
+.badge.pause{color:var(--ty);border-color:rgba(255,166,87,.45);background:rgba(255,166,87,.08)}
+.badge.done{color:var(--blue-hi);border-color:rgba(88,166,255,.45);background:rgba(88,166,255,.08)}
 .feat-pitch{margin-top:1.1rem;font-size:clamp(1.02rem,1.3vw,1.12rem);line-height:1.6;color:var(--soft)}
 .facts{margin-top:1.1rem;display:grid;gap:.6rem}
 .facts li{position:relative;padding-left:1.4rem;color:var(--muted);font-size:.96rem}

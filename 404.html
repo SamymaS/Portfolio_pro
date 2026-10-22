@@ -14,6 +14,8 @@ if(l!=='fr'&&l!=='en'){l=(navigator.language||'fr').toLowerCase().indexOf('fr')=
 d.lang=l})();
 </script>
 <link rel="stylesheet" href="/site.css">
+<link rel="stylesheet" href="/achievements.css">
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};if(/(^|\.)samy-boudaoud\.com$/.test(location.hostname)){var va=document.createElement('script');va.defer=true;va.src='/_vercel/insights/script.js';document.head.appendChild(va)}</script>
 <style>
   .lost{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:1.4rem;padding-block:3rem}
   .lost h1{font:400 clamp(5rem,22vw,14rem)/.85 var(--fp);text-shadow:.06em .06em 0 var(--blue)}
@@ -39,5 +41,7 @@ d.lang=l})();
   </p>
 </main>
 <script>document.getElementById('path').textContent=location.pathname;</script>
+<script src="/achievements.js"></script>
+<script>setTimeout(function(){window.achievements&&window.achievements.unlock('lost')},900)</script>
 </body>
 </html>

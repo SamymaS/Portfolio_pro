@@ -147,3 +147,43 @@ strong{font-weight:650;color:var(--ink)}
 .sv-foot a:hover{color:var(--ink)}
 
 @media (prefers-reduced-motion:reduce){.sv-hero-art img{animation:none}}
+
+/* ==================================================================
+   Étude de cas TicketFlow (mêmes blocs, quelques ajouts)
+   ================================================================== */
+.sv-kicker.done{color:var(--blue-hi);border-color:rgba(88,166,255,.45);background:rgba(88,166,255,.08)}
+.sv-lead code,.sv-card code,.sv-step code,.sv-note code{font:500 .86em var(--fm);color:var(--str);background:#0F141A;border:1px solid #262C34;border-radius:3px;padding:.05em .3em}
+.tf-av{width:38px;height:38px;flex:none;display:grid;place-items:center;font:400 1.2rem var(--fp);color:#06202A;background:var(--cyan);border-radius:5px;box-shadow:3px 3px 0 var(--blue)}
+.tf-role{font:600 .78rem var(--fm);color:var(--ty)}
+.tf-file{margin-top:auto;padding-top:.4rem;font:500 .74rem var(--fm)!important;color:var(--faint)!important}
+.tf-file::before{content:'→ ';color:var(--cyan)}
+.tf-no{font:400 1.1rem var(--fp);color:var(--cyan);text-shadow:2px 2px 0 var(--blue)}
+
+/* Schéma d'architecture */
+.tf-fig{margin-top:1.6rem}
+.tf-scroll{overflow-x:auto;padding:1rem}
+.tf-arch{display:block;width:100%;min-width:680px;height:auto}
+.tf-arch .cl{fill:rgba(31,111,235,.05);stroke:rgba(56,189,248,.35);stroke-dasharray:6 6}
+.tf-arch .clt{font:600 13px var(--fm);fill:var(--cyan)}
+.tf-arch .n rect{fill:#0F141A;stroke:#30363D;stroke-width:1.5}
+.tf-arch .n.hot rect{stroke:var(--cyan);filter:drop-shadow(4px 4px 0 rgba(31,111,235,.9))}
+.tf-arch .t{font:700 15px var(--fm);fill:var(--ink)}
+.tf-arch .s{font:500 12px var(--fm);fill:var(--muted)}
+.tf-arch .e line{stroke:var(--cyan);stroke-width:1.6;opacity:.75}
+.tf-arch marker path{fill:var(--cyan)}
+.tf-arch .l{font:500 11.5px var(--fm);fill:var(--ty)}
+
+/* Visuel d'ouverture : un billet en pixels */
+.tf-hero-art{justify-self:center;width:100%;max-width:300px;perspective:900px}
+.tf-ticket{position:relative;display:grid;gap:.7rem;justify-items:start;padding:1.4rem 1.4rem 1.6rem;background:var(--panel);border:2px solid var(--cyan);border-radius:8px;box-shadow:8px 8px 0 var(--blue);transform:rotate(-4deg);animation:sv-float 5s ease-in-out infinite;
+  -webkit-mask:radial-gradient(circle 12px at 0 62%,transparent 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 12px at 100% 62%,transparent 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(circle 12px at 0 62%,transparent 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 12px at 100% 62%,transparent 98%,#000) right/51% 100% no-repeat}
+.tf-t1{font:400 1.5rem var(--fp);color:var(--ink);text-shadow:2px 2px 0 var(--blue)}
+.tf-t2{font:500 .8rem var(--fm);color:var(--str)}
+.tf-t3{font:500 .74rem var(--fm);color:var(--ok)}
+.tf-qr{width:132px;height:132px;image-rendering:pixelated;border:6px solid #E6EDF3;background:#E6EDF3 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 21 21' shape-rendering='crispEdges'%3E%3Cpath fill='%230D1117' d='M0 0h7v7H0zM14 0h7v7h-7zM0 14h7v7H0z'/%3E%3Cpath fill='%23E6EDF3' d='M1 1h5v5H1zM15 1h5v5h-5zM1 15h5v5H1z'/%3E%3Cpath fill='%230D1117' d='M2 2h3v3H2zM16 2h3v3h-3zM2 16h3v3H2zM8 0h1v2H8zM10 1h2v1h-2zM9 3h3v1H9zM8 5h1v3H8zM11 5h2v2h-2zM0 8h2v1H0zM3 8h3v1H3zM9 9h3v3H9zM13 8h2v2h-2zM16 8h3v1h-3zM19 10h2v2h-2zM14 11h1v3h-1zM8 13h2v2H8zM11 14h3v1h-3zM16 13h2v2h-2zM8 16h1v3H8zM10 17h3v1h-3zM14 16h2v2h-2zM17 17h4v1h-4zM15 19h2v2h-2zM18 19h1v2h-1zM10 19h2v2h-2zM1 10h2v2H1zM5 10h2v2H5z'/%3E%3C/svg%3E") center/100% no-repeat}
+@media (max-width:860px){.tf-hero-art{max-width:220px;order:-1;justify-self:start}.tf-qr{width:96px;height:96px}}
+.tf .sv-name{font-size:clamp(3rem,6.6vw,6rem)}
+.sv-kicker.pause{color:var(--ty);border-color:rgba(255,166,87,.45);background:rgba(255,166,87,.08)}
+.sv-col.wip h3{color:var(--ty)}
+.sv-col.wip li::before{border-color:var(--ty);animation:none;background:repeating-linear-gradient(90deg,var(--ty) 0 2px,transparent 2px 4px)}

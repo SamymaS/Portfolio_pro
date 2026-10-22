@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TicketFlow · billetterie cloud-native sur Kubernetes · Samy Boudaoud</title>
+<meta name="description" content="TicketFlow : billetterie cloud-native en microservices, déployée sur Kubernetes (AKS) avec Terraform et GitHub Actions. Verrous Redis, disjoncteur, broker BullMQ, worker idempotent. Projet de Mastère réalisé en 48 heures.">
+<meta name="theme-color" content="#0D1117">
+<link rel="canonical" href="https://samy-boudaoud.com/ticketflow.html">
+<link rel="alternate" hreflang="fr" href="https://samy-boudaoud.com/ticketflow.html">
+<link rel="alternate" hreflang="en" href="https://samy-boudaoud.com/ticketflow.en.html">
+<link rel="alternate" hreflang="x-default" href="https://samy-boudaoud.com/ticketflow.html">
+<link rel="icon" href="assets/mougi/icon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="assets/mougi/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Samy Boudaoud">
+<meta property="og:title" content="TicketFlow · Billetterie cloud-native sur Kubernetes">
+<meta property="og:description" content="TicketFlow : billetterie cloud-native en microservices, déployée sur Kubernetes (AKS) avec Terraform et GitHub Actions. Verrous Redis, disjoncteur, broker BullMQ, worker idempotent. Projet de Mastère réalisé en 48 heures.">
+<meta property="og:url" content="https://samy-boudaoud.com/ticketflow.html">
+<meta property="og:image" content="https://samy-boudaoud.com/assets/og_portfolio.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="fonts/tiny5.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="sameva.css">
+<link rel="stylesheet" href="achievements.css">
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};if(/(^|\.)samy-boudaoud\.com$/.test(location.hostname)){var va=document.createElement('script');va.defer=true;va.src='/_vercel/insights/script.js';document.head.appendChild(va)}</script>
+</head>
+<body class="tf">
+
+<a class="skip-link" href="#sv-content">Aller au contenu</a>
+
+<div class="xp" aria-hidden="true"></div>
+<header class="top solid" id="top">
+  <a class="mark" href="index.html" aria-label="Samy Boudaoud, retour au portfolio"><img src="assets/mougi/icon-96.png" width="34" height="34" alt=""><b>samy</b><span>.boudaoud</span></a>
+  <span class="lvl" aria-hidden="true">./ticketflow</span>
+  <div class="tools">
+    <a class="tool" href="ticketflow.en.html" hreflang="en" lang="en" data-setlang="en" aria-label="Read this page in English">EN</a>
+    <a class="tool tool-cv" href="index.html#projets">Portfolio</a>
+  </div>
+</header>
+
+<main id="sv-content">
+<div class="sv-hero">
+  <div class="container">
+    <div class="sv-hero-grid">
+      <div>
+        <span class="sv-kicker done">Terminé, juin 2026</span>
+        <h1 class="sv-h1"><span class="sv-name">TicketFlow</span><span class="sv-sub">Billetterie cloud-native sur Kubernetes</span></h1>
+        <p class="sv-lead">Une plateforme de billetterie avec réservation de sièges, paiement et billets QR en PDF, découpée en microservices et déployée sur <strong>Kubernetes</strong> chez Azure. Projet de Mastère en équipe de trois, construit en <strong>48 heures</strong>&nbsp;: j'ai porté le back-end, l'infrastructure et la chaîne de livraison.</p>
+        <div class="sv-meta">
+          <span class="tag main">Node.js · Express</span><span class="tag">React</span><span class="tag">PostgreSQL</span><span class="tag">Redis · BullMQ</span><span class="tag">Kubernetes (AKS)</span><span class="tag">Terraform</span><span class="tag">GitHub Actions</span>
+        </div>
+        <div class="sv-actions">
+          <a class="btn btn-primary" href="https://github.com/SamymaS/ticketflow" target="_blank" rel="noopener">Voir le code GitHub</a>
+          <a class="btn" href="#tf-arch">L'architecture</a>
+        </div>
+      </div>
+      <div class="tf-hero-art" aria-hidden="true">
+        <div class="tf-ticket">
+          <span class="tf-t1">TICKET · A-12</span>
+          <span class="tf-t2">reservation.paid</span>
+          <span class="tf-qr"></span>
+          <span class="tf-t3">200 OK · 201 Created</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">01</span><h2 class="section-title">Le projet</h2></div>
+    <p class="sv-lead">Le sujet imposait de démontrer dix concepts cloud-native sur une application réelle, avec une URL publique, une infrastructure en code et un déploiement continu. Nous avons choisi une billetterie, parce qu'elle concentre les vrais problèmes d'un système distribué&nbsp;: deux personnes qui veulent le même siège, un paiement qui ne répond pas, un billet qui doit être généré une fois et une seule.</p>
+    <div class="sv-grid">
+      <div class="sv-card"><h3><span class="tf-av">S</span>Samy</h3><p><b class="tf-role">Back-end, infrastructure, CI/CD</b></p><p>API, worker, passerelle de paiement, Terraform, manifestes Kubernetes, pipelines.</p></div>
+      <div class="sv-card"><h3><span class="tf-av">F</span>Fayrouz</h3><p><b class="tf-role">Front-end</b></p><p>Application React&nbsp;: catalogue, plan de salle, panier, billets.</p></div>
+      <div class="sv-card"><h3><span class="tf-av">M</span>Melvin</h3><p><b class="tf-role">Documentation et oral</b></p><p>Dossier, script de démonstration, refonte du rendu des billets.</p></div>
+    </div>
+    <div class="sv-stats" style="margin-top:1.6rem">
+      <div class="sv-stat"><b>48 h</b><span>de la page blanche à la démo</span></div>
+      <div class="sv-stat"><b>4</b><span>images déployées à chaque push</span></div>
+      <div class="sv-stat"><b>10</b><span>concepts cloud-native démontrés</span></div>
+      <div class="sv-stat"><b>3</b><span>personnes dans l'équipe</span></div>
+      <div class="sv-stat"><b>3</b><span>décisions écrites (ADR)</span></div>
+      <div class="sv-stat"><b>0</b><span>double réservation possible</span></div>
+    </div>
+    <p class="sv-stat-note">Chiffres tirés du dépôt GitHub.</p>
+  </div>
+</section>
+
+<section class="section dark-section" id="tf-arch">
+  <div class="container">
+    <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Architecture</h2></div>
+    <p class="sv-lead">Tout tourne dans un cluster AKS. Traefik reçoit le trafic et l'aiguille vers le front ou l'API&nbsp;; l'API reste sans état, ce qui permet d'en lancer autant de copies que nécessaire.</p>
+    <figure class="win tf-fig">
+      <div class="win-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>infra/k8s-aks/ticketflow.yaml<span class="tag">Schéma simplifié du déploiement de production.</span></div>
+      <div class="tf-scroll" tabindex="0" role="region" aria-label="Architecture">
+<svg class="tf-arch" viewBox="0 0 900 520" role="img" aria-labelledby="archT">
+  <title id="archT">Azure AKS (Kubernetes): Traefik, frontend, api, payment-gateway, Redis, PostgreSQL, worker, MinIO</title>
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"/></marker></defs>
+  <rect class="cl" x="196" y="20" width="690" height="490" rx="10"/>
+  <text class="clt" x="212" y="44">Azure AKS (Kubernetes)</text>
+  <g class="e">
+  <line x1="160" y1="232" x2="212" y2="232" marker-end="url(#ar)"/><text x="164" y="222" class="l">HTTP</text>
+  <line x1="362" y1="218" x2="420" y2="128" marker-end="url(#ar)"/><text x="398" y="166" class="l">/</text>
+  <line x1="362" y1="246" x2="420" y2="306" marker-end="url(#ar)"/><text x="404" y="270" class="l">/api</text>
+  <line x1="590" y1="296" x2="660" y2="128" marker-end="url(#ar)"/><text x="620" y="196" class="l">checkout</text>
+  <line x1="590" y1="322" x2="660" y2="256" marker-end="url(#ar)"/><text x="588" y="334" class="l">SET NX EX</text>
+  <line x1="590" y1="344" x2="660" y2="386" marker-end="url(#ar)"/><text x="598" y="376" class="l">SQL</text>
+  <line x1="700" y1="284" x2="560" y2="428" marker-end="url(#ar)"/><text x="676" y="330" class="l">tâche</text>
+  <line x1="590" y1="462" x2="660" y2="462" marker-end="url(#ar)"/>
+  <line x1="560" y1="428" x2="690" y2="414" marker-end="url(#ar)"/>
+  </g>
+  <g class="n"><rect x="28" y="204" width="132" height="56" rx="6"/><text x="42" y="228" class="t">Utilisateur</text></g>
+  <g class="n"><rect x="212" y="204" width="150" height="56" rx="6"/><text x="226" y="228" class="t">Traefik</text><text x="226" y="247" class="s">Ingress</text></g>
+  <g class="n"><rect x="420" y="100" width="170" height="56" rx="6"/><text x="434" y="124" class="t">frontend</text><text x="434" y="143" class="s">React + nginx</text></g>
+  <g class="n hot"><rect x="420" y="290" width="170" height="56" rx="6"/><text x="434" y="314" class="t">api</text><text x="434" y="333" class="s">Express · JWT</text></g>
+  <g class="n"><rect x="660" y="100" width="200" height="56" rx="6"/><text x="674" y="124" class="t">payment-gateway</text><text x="674" y="143" class="s">via disjoncteur</text></g>
+  <g class="n"><rect x="660" y="228" width="200" height="56" rx="6"/><text x="674" y="252" class="t">Redis</text><text x="674" y="271" class="s">verrous + broker</text></g>
+  <g class="n"><rect x="660" y="358" width="200" height="56" rx="6"/><text x="674" y="382" class="t">PostgreSQL</text><text x="674" y="401" class="s">StatefulSet + PVC</text></g>
+  <g class="n"><rect x="420" y="434" width="170" height="56" rx="6"/><text x="434" y="458" class="t">worker</text><text x="434" y="477" class="s">consommateur BullMQ</text></g>
+  <g class="n"><rect x="660" y="434" width="200" height="56" rx="6"/><text x="674" y="458" class="t">MinIO / Blob</text><text x="674" y="477" class="s">QR + PDF</text></g>
+</svg>
+      </div>
+    </figure>
+    <div class="sv-flow" style="margin-top:1.6rem">
+      <div class="sv-step"><span class="n">01</span><p>L'utilisateur choisit ses sièges&nbsp;: l'API pose un verrou Redis de quelques minutes sur chacun.</p></div>
+      <div class="sv-step"><span class="n">02</span><p>Au paiement, l'API appelle la passerelle à travers un disjoncteur, avec délai maximal et repli.</p></div>
+      <div class="sv-step"><span class="n">03</span><p>Paiement accepté&nbsp;: l'API publie l'événement <code>reservation.paid</code> dans la file BullMQ.</p></div>
+      <div class="sv-step"><span class="n">04</span><p>Le worker génère le QR code et le PDF, les dépose dans le stockage objet, puis acquitte.</p></div>
+      <div class="sv-step"><span class="n">05</span><p>L'API sert le PDF et la page de vérification du QR, sans jamais exposer le stockage.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">03</span><h2 class="section-title">Les patterns, et où ils vivent</h2></div>
+    <p class="sv-lead">Chaque concept est vérifiable dans le code. Voici les plus importants.</p>
+    <div class="sv-grid cols3">
+      <div class="sv-card"><h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M6 11h12v9H6z"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></svg></span>Pas de double réservation</h3><p>Verrou atomique <code>SET NX EX</code> sur chaque siège&nbsp;: le premier gagne, le second reçoit un 409, et le verrou expire seul si l'utilisateur abandonne.</p><p class="tf-file">api/src/holds.js</p></div>
+      <div class="sv-card"><h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></span>Un paiement lent ne fait pas tomber le site</h3><p>Disjoncteur opossum avec délai maximal et repli&nbsp;: après trop d'échecs, l'API répond tout de suite au lieu d'empiler les requêtes.</p><p class="tf-file">api/src/payment.js</p></div>
+      <div class="sv-card"><h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>Un message n'est jamais perdu</h3><p>File BullMQ avec cinq tentatives, attente exponentielle et file des échecs conservée. Le worker n'acquitte qu'une fois le travail fait.</p><p class="tf-file">api/src/queue.js · worker/src/index.js</p></div>
+      <div class="sv-card"><h3><span class="sv-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M10 10l2-2"/></svg></span>Un billet, une seule fois</h3><p>Worker idempotent&nbsp;: garde en entrée, <code>ON CONFLICT DO NOTHING</code> et contrainte d'unicité réservation-siège en base.</p><p class="tf-file">worker/src/handlers/reservationPaid.js</p></div>
+      <div class="sv-card"><h3><span class="sv-ic"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></span>Une base qui survit aux redémarrages</h3><p>PostgreSQL en StatefulSet avec volume persistant, service headless et sondes de disponibilité.</p><p class="tf-file">infra/k8s-aks/ticketflow.yaml</p></div>
+      <div class="sv-card"><h3><span class="sv-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>Prêt pour la production</h3><p>Routes <code>/healthz</code> et <code>/readyz</code>, journaux structurés pino, arrêt propre sur SIGTERM, sondes Kubernetes partout.</p><p class="tf-file">api/src/health.js · server.js</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section dark-section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">Choix assumés</h2></div>
+    <p class="sv-lead">Trois décisions défendues devant le jury plutôt que subies.</p>
+    <div class="sv-grid cols3">
+      <div class="sv-card"><h3><span class="tf-no">01</span>AKS plutôt qu'Azure Container Apps</h3><p>Container Apps masque Kubernetes. Un vrai cluster permettait de démontrer StatefulSet, Ingress, sondes et haute disponibilité. En contrepartie, un coût à surveiller et un repli sur minikube prévu pour la démo.</p></div>
+      <div class="sv-card"><h3><span class="tf-no">02</span>PostgreSQL dans le cluster</h3><p>Plutôt qu'une base managée&nbsp;: le pattern StatefulSet et volume persistant devient concret, et l'infrastructure reste simple à reproduire.</p></div>
+      <div class="sv-card"><h3><span class="tf-no">03</span>Billets servis par l'API</h3><p>Le stockage objet reste privé. Les PDF passent par une route authentifiée au lieu d'une URL de stockage exposée&nbsp;: meilleure posture de sécurité.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header"><span class="section-num">05</span><h2 class="section-title">Livraison</h2></div>
+    <p class="sv-lead">Terraform provisionne le groupe de ressources, le registre d'images, le cluster AKS, le stockage et le coffre de secrets. À chaque push sur <code>main</code>, GitHub Actions construit et publie les quatre images, puis met à jour le cluster.</p>
+    <ul class="sv-tl">
+      <li class="ok"><span class="d">22 juin 2026</span><b>Squelette et infrastructure</b><p>Monorepo, services, manifestes Kubernetes, Terraform pour Azure.</p></li>
+      <li class="ok"><span class="d">23 juin 2026</span><b>Déploiement continu et audit</b><p>Pipeline de déploiement activé, audit de conformité qui relève deux défauts bloquants avant la démo, corrigés dans la foulée.</p></li>
+      <li class="ok"><span class="d">24 juin 2026</span><b>Démonstration</b><p>Guide de déploiement, script de démo&nbsp;: un commit en direct part en production pendant la soutenance.</p></li>
+      <li class="final"><span class="d">Terminé, juin 2026</span><b>Résultat</b><p>Les dix concepts attendus démontrés par du code vérifiable, une démo de bout en bout, et un dépôt documenté (architecture, contrat d'API, ADR, guide de déploiement).</p></li>
+    </ul>
+    <p class="sv-note">Pas besoin de compte Azure pour l'essayer&nbsp;: tout le projet se lance en local avec une seule commande, <code>docker compose up</code>.</p>
+    <div class="sv-actions" style="margin-top:2.5rem">
+      <a class="btn btn-primary" href="https://github.com/SamymaS/ticketflow" target="_blank" rel="noopener">Dépôt GitHub</a>
+      <a class="btn" href="index.html#projets">Retour au portfolio</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="sv-foot">
+  <div class="container">
+    <p>© 2026 Samy Boudaoud, Aix-en-Provence</p>
+    <p><a href="index.html">← retour au portfolio</a></p>
+  </div>
+</footer>
+<script src="achievements.js" defer></script>
+<script src="case.js" defer></script>
+</body>
+</html>

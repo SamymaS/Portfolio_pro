@@ -54,7 +54,9 @@
     $$('[data-l-alt-fr]').forEach((el) => { el.alt = el.dataset[en ? 'lAltEn' : 'lAltFr']; });
     updateAchievements();
   }
+  const unlock = (id) => { if (window.achievements) window.achievements.unlock(id); };
   $('#langBtn').addEventListener('click', () => {
+    unlock('polyglot');
     root.lang = root.lang === 'en' ? 'fr' : 'en';
     store.set('sb-lang', root.lang);
     applyLang();
@@ -324,6 +326,7 @@
 
   /* ── Fiche joueur : onglets de statistiques ─────────────────── */
   const tabs = $$('.st-tabs [role=tab]');
+  const seenTabs = new Set(['tab-general']);
   function selectTab(tab, focus) {
     tabs.forEach((b) => {
       const on = b === tab;
@@ -332,6 +335,8 @@
       $('#' + b.getAttribute('aria-controls')).hidden = !on;
     });
     if (focus) tab.focus();
+    seenTabs.add(tab.id);
+    if (seenTabs.size >= tabs.length) unlock('stats_all');
     const pane = $('#' + tab.getAttribute('aria-controls'));
     if (hasGsap && !reduce) gsap.fromTo($$('.st-row, .st-sub', pane), { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: .35, ease: 'power2.out', stagger: .03 });
   }
@@ -344,6 +349,14 @@
       else if (e.key === 'End') { e.preventDefault(); selectTab(tabs[tabs.length - 1], true); }
     });
   });
+
+  /* ── Succès « Lecteur assidu » : cinq projets ouverts ─────── */
+  const opened = new Set();
+  $$('.row').forEach((r, i) => r.addEventListener('toggle', () => {
+    if (!r.open) return;
+    opened.add(i);
+    if (opened.size >= 5) unlock('reader');
+  }));
 
   /* ── Filtres de l'index ─────────────────────────────────────── */
   const rows = $$('.row');
@@ -390,6 +403,15 @@
     return gamesPromise;
   }
   const gamesEl = $('#games');
+  // Succès « Touche-à-tout » : cinq jeux différents lancés
+  gamesEl.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-game]'); if (!b) return;
+    let played = [];
+    try { played = JSON.parse(localStorage.getItem('sb-played')) || []; } catch (err) { /* stockage indisponible */ }
+    if (!played.includes(b.dataset.game)) played.push(b.dataset.game);
+    store.set('sb-played', JSON.stringify(played));
+    if (played.length >= 5) unlock('arcade_5');
+  }, true);
   gamesEl.addEventListener('pointerenter', () => { loadGames().catch(() => {}); }, { once: true });
   gamesEl.addEventListener('click', (e) => {
     const b = e.target.closest('[data-game]');
@@ -418,6 +440,7 @@
     const barEl = $('#achBar'), line = $('#achLine');
     if (barEl) barEl.style.setProperty('--a', (tot ? (n / tot) * 100 : 0) + '%');
     const pf = $('#pfAch'); if (pf) pf.textContent = n;
+    $$('.achTot').forEach((el) => { el.textContent = tot; });
     if (line) line.innerHTML = '<b>' + n + '</b>/' + tot + (root.lang === 'en' ? ' unlocked' : ' débloqués');
     $$('[data-game]').forEach((b) => b.classList.toggle('won', !!(GAME_ACH[b.dataset.game] && a.has(GAME_ACH[b.dataset.game]))));
   }
@@ -537,6 +560,7 @@
       });
     }
     function open() {
+      unlock('hacker');
       if (!el) build();
       el.hidden = false; out.textContent = '';
       say(en() ? "Hi. Type 'help'." : "Salut. Tapez 'help'.", 'a');

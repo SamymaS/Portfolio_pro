@@ -73,7 +73,12 @@ export function createAvatar(container, opts = {}) {
   // Lumières : douce de face, rasante cyan de derrière pour détacher la silhouette
   scene.add(new AmbientLight(0xffffff, 1.55));
   const key = new DirectionalLight(0xffffff, 1.6); key.position.set(-30, 40, 60); scene.add(key);
-  const rim = new DirectionalLight(0x38bdf8, 2.2); rim.position.set(40, 20, -50); scene.add(rim);
+  // Éclairage selon l'heure du visiteur : chaud le jour, froid et bleuté la nuit
+  const hour = new Date().getHours();
+  const night = hour < 7 || hour >= 20;
+  if (night) { key.color.setHex(0xa8c4ff); key.intensity = 1.25; }
+  else if (hour < 10 || hour >= 17) { key.color.setHex(0xffd9b0); }
+  const rim = new DirectionalLight(0x38bdf8, night ? 2.8 : 2.2); rim.position.set(40, 20, -50); scene.add(rim);
   const rim2 = new DirectionalLight(0x1f6feb, 1.4); rim2.position.set(-50, 10, -40); scene.add(rim2);
 
   const root = new Group();
@@ -141,17 +146,22 @@ export function createAvatar(container, opts = {}) {
   let waveT = reduce ? 99 : -0.6;
   function wave() { if (waveT > 1.8 || waveT < 0) waveT = 0; }
 
+  // Un succès débloqué : petit saut de joie et coucou
+  let jumpT = 99;
+  document.addEventListener('achievement', () => { jumpT = 0; wave(); if (reduce) renderOnce(); });
+
   // Glisser pour faire tourner, avec un peu d'inertie
-  let spin = 0, spinV = 0, dragging = false, dragX = 0, moved = 0;
+  let spin = 0, spinV = 0, dragging = false, dragX = 0, moved = 0, dragSpin = 0;
   canvas.style.touchAction = 'pan-y';
   canvas.addEventListener('pointerdown', (e) => {
-    dragging = true; dragX = e.clientX; moved = 0; spinV = 0;
+    dragging = true; dragX = e.clientX; moved = 0; spinV = 0; dragSpin = 0;
     canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing';
   });
   canvas.addEventListener('pointermove', (e) => {
     if (!dragging) return;
     const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx);
-    spin += dx * 0.012; spinV = dx * 0.012 * 60;
+    spin += dx * 0.012; spinV = dx * 0.012 * 60; dragSpin += dx * 0.012;
+    if (Math.abs(dragSpin) >= Math.PI * 2 && window.achievements) window.achievements.unlock('spin');
     if (reduce) renderOnce();
   });
   const endDrag = () => {
@@ -218,13 +228,19 @@ export function createAvatar(container, opts = {}) {
         }
       }
       root.rotation.y = look.x * 0.42 + spin;
+      if (jumpT < 0.9) {
+        jumpT += dt;
+        const j = Math.min(1, jumpT / 0.9);
+        root.position.y = Math.sin(j * Math.PI * 2) > 0 ? Math.sin(j * Math.PI * 2) * 3.2 * (1 - j) : 0;
+        parts.legL.rotation.x = parts.legR.rotation.x = -Math.max(0, Math.sin(j * Math.PI * 2)) * 0.35 * (1 - j);
+      } else root.position.y = 0;
       parts.head.rotation.y = look.x * 0.5;
       parts.head.rotation.x = look.y * 0.32;
       parts.body.position.y = 12 + breath * 0.12;
       parts.head.position.y = 24 + breath * 0.18;
       parts.armL.rotation.x = breath * 0.05;
       parts.armL.rotation.z = 0.05 + Math.max(0, breath) * 0.02;
-      parts.legR.rotation.x = 0; parts.legL.rotation.x = 0;
+      if (jumpT >= 0.9) { parts.legR.rotation.x = 0; parts.legL.rotation.x = 0; }
 
       // coucou : le bras droit se lève, trois va-et-vient, redescend
       if (waveT < 1.8) {

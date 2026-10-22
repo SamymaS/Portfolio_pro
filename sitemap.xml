@@ -22,4 +22,20 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://samy-boudaoud.com/ticketflow.html</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://samy-boudaoud.com/ticketflow.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://samy-boudaoud.com/ticketflow.en.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://samy-boudaoud.com/ticketflow.html"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://samy-boudaoud.com/ticketflow.en.html</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://samy-boudaoud.com/ticketflow.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://samy-boudaoud.com/ticketflow.en.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://samy-boudaoud.com/ticketflow.html"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>

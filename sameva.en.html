@@ -33,6 +33,8 @@
 <link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="sameva.css">
+<link rel="stylesheet" href="achievements.css">
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};if(/(^|\.)samy-boudaoud\.com$/.test(location.hostname)){var va=document.createElement('script');va.defer=true;va.src='/_vercel/insights/script.js';document.head.appendChild(va)}</script>
 </head>
 <body>
 
@@ -44,7 +46,7 @@
   <span class="lvl" aria-hidden="true">./sameva</span>
   <div class="tools">
     <a class="tool" href="sameva.html" hreflang="fr" lang="fr" data-setlang="fr" aria-label="Lire cette page en français">FR</a>
-    <a class="tool tool-cv tool-back" href="index.html#sameva">Portfolio</a>
+    <a class="tool tool-cv" href="index.html#sameva">Portfolio</a>
   </div>
 </header>
 
@@ -54,7 +56,7 @@
   <div class="container">
     <div class="sv-hero-grid">
       <div>
-        <span class="sv-kicker">v1.0.4 · MVP in acceptance testing</span>
+        <span class="sv-kicker pause">v1.0.4 shipped · on hold since August 2026</span>
         <h1 class="sv-h1"><span class="sv-name">Sameva</span><span class="sv-sub">Habits become RPG quests</span></h1>
         <p class="sv-lead">
           A <strong>Flutter</strong> mobile app that turns everyday habits into RPG quests.
@@ -312,8 +314,7 @@
   <div class="container">
     <div class="section-header"><span class="section-num">05</span><h2 class="section-title">Where the project stands</h2></div>
     <p class="sv-lead">
-      Sameva is a product under construction, not a showcase. Here is exactly where the line falls between what
-      runs today, what is in progress and what is still ahead.
+      Sameva is a real product, not a showcase. Development has been on hold since the certification (August 2026): here is exactly what runs, what stopped along the way and what is still ahead.
     </p>
 
     <div class="sv-status">
@@ -333,7 +334,7 @@
       </div>
 
       <div class="sv-col wip">
-        <h3>In progress</h3>
+        <h3>On hold</h3>
         <ul>
           <li>Functional acceptance testing on a physical device</li>
           <li>Raising test coverage beyond 48.4%</li>
@@ -412,9 +413,7 @@
     <p><a href="index.html">← back to the portfolio</a></p>
   </div>
 </footer>
-<script>
-(function(){var x=document.querySelector('.xp');function u(){var m=document.documentElement.scrollHeight-innerHeight;x.style.setProperty('--p',m>0?(scrollY/m).toFixed(4):0)}addEventListener('scroll',u,{passive:true});u();
-document.querySelectorAll('[data-setlang]').forEach(function(a){a.addEventListener('click',function(){try{localStorage.setItem('sb-lang',a.dataset.setlang)}catch(e){}})})})();
-</script>
+<script src="achievements.js" defer></script>
+<script src="case.js" defer></script>
 </body>
 </html>
