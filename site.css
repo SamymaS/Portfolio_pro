@@ -245,7 +245,8 @@ main,.foot{position:relative;z-index:2}
 
 .pcard-in{display:grid;gap:1.1rem;padding:1.3rem}
 .pcard-id{display:flex;align-items:center;gap:1.1rem}
-.pcard-id img{width:88px;height:88px;flex:none;image-rendering:pixelated;border-radius:6px;box-shadow:0 0 0 1px var(--line),5px 5px 0 var(--blue)}
+.pcard-id img{width:112px;height:112px;flex:none;border-radius:50%;box-shadow:0 0 0 2px rgba(56,189,248,.55),5px 5px 0 var(--blue)}
+@media (max-width:520px){.pcard-id img{width:88px;height:88px}}
 .pcard-name{font:400 clamp(1.9rem,3vw,2.5rem)/.95 var(--fp);text-transform:uppercase;text-shadow:.07em .07em 0 var(--blue)}
 .pcard-title{margin-top:.45rem;font:500 .82rem var(--fm);color:var(--cyan)}
 .pcard-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
