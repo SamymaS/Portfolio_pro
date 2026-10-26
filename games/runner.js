@@ -69,7 +69,7 @@ SBG.register('runner', {
       grad.addColorStop(0, C.bg); grad.addColorStop(1, '#101C2E');
       g.fillStyle = grad; g.fillRect(0, 0, W, H);
       // lune carrée, façon Minecraft
-      const mx = 520, my = 30, ms = 22;
+      const mx = 452, my = 38, ms = 22;
       g.fillStyle = 'rgba(210,168,255,0.10)'; g.fillRect(mx - 6, my - 6, ms + 12, ms + 12);
       g.fillStyle = 'rgba(210,168,255,0.06)'; g.fillRect(mx - 12, my - 12, ms + 24, ms + 24);
       g.fillStyle = '#E8E3F5'; g.fillRect(mx, my, ms, ms);
@@ -253,13 +253,12 @@ SBG.register('runner', {
     }
     const duckA = duckFrame(false), duckB = duckFrame(true);
     const deadS = sprite(PW, PH, (r) => {
+      // surpris : bras en l'air, bouche ouverte
       r(2, 14, 2, 4, SK.greyDk); shoe(r, 1, 18, 3, true);
       head(r, 2, 0); torso(r, 3, 8);
+      r(8, 6, 2, 1, '#3B1F14'); r(8, 7, 1, 1, '#3B1F14');
       r(5, 14, 2, 4, SK.grey); shoe(r, 5, 18, 4, false);
-      r(5, 3, 3, 2, SK.skin);                              // lunettes envolées
-      r(5, 3, 1, 1, SK.glass); r(7, 3, 1, 1, SK.glass); r(6, 4, 1, 1, SK.glass); r(5, 5, 1, 0.5, SK.glass); r(7, 5, 1, 0.5, SK.glass);
-      r(6, 6, 2, 1, SK.mouth);
-      r(7, 9, 2, 2, SK.navyLt); r(9, 8, 1, 2, SK.skin);
+      r(6, 8, 2, 2, SK.navyLt); r(8, 7, 2, 2, SK.navyLt); r(10, 5, 1, 3, SK.skin);
     });
     // silhouette rouge pour le flash de collision
     function tint(src, col) {

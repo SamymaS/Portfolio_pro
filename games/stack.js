@@ -204,7 +204,8 @@ SBG.register('stack', {
       p.vx = sg * (30 + Math.random() * 30);
       p.vy = 40;
       p.rot = 0;
-      p.vr = api.reduced ? 0 : sg * (ax ? 1 : -1) * (1.4 + Math.random() * 1.6);
+      // les gros morceaux tournent moins vite : chute plus lourde
+      p.vr = api.reduced ? 0 : sg * (ax ? 1 : -1) * (1.2 + Math.random() * 1.2) * (60 / (60 + (ax ? p.w : p.d)));
       p.a = 1; p.t = 0;
       p.back = sg < 0;                          // côté arrière : caché par la tour
       if (debris.length > 24) debris.shift();
