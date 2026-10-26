@@ -309,32 +309,30 @@ SBG.register('runner', {
     }
 
     // phantom : deux battements d'ailes
-    const PHW = 34, PHH = 18;
+    const PHW = 36, PHH = 20;
     function phantomFrame(up) {
       const L = layer(PHW, PHH), g = L.g;
-      const body = '#41507A', dark = '#2A3454', light = '#5C6E9E';
-      // ailes
-      g.fillStyle = dark;
+      g.setTransform(-dpr, 0, 0, dpr, PHW * dpr, 0);     // dessiné vers la droite, puis retourné : il fonce sur le joueur
+      const body = '#41507A', dark = '#28324F', light = '#6A7DB0';
+      const R = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+      // aile : membrane en escalier, bord d'attaque clair
       if (up) {
-        g.fillRect(2, 2, 6, 2); g.fillRect(6, 4, 6, 3); g.fillRect(10, 6, 4, 3);
-        g.fillRect(4, 1, 3, 1);
+        R(11, 7, 13, 2, dark); R(12, 5, 10, 2, dark); R(13, 3, 7, 2, dark); R(14, 1, 4, 2, dark); R(15, 0, 2, 1, dark);
+        R(17, 1, 1, 2, light); R(19, 3, 1, 2, light); R(21, 5, 1, 2, light); R(23, 7, 1, 1, light);
       } else {
-        g.fillRect(2, 13, 6, 2); g.fillRect(5, 11, 7, 3); g.fillRect(10, 9, 4, 3);
+        R(11, 14, 13, 2, dark); R(12, 16, 9, 2, dark); R(14, 18, 5, 2, dark);
+        R(20, 16, 1, 2, light); R(18, 18, 1, 2, light); R(23, 14, 1, 2, light);
       }
-      g.fillStyle = light;
-      if (up) { g.fillRect(3, 2, 4, 1); g.fillRect(7, 4, 4, 1); } else { g.fillRect(6, 11, 5, 1); }
+      // queue effilée
+      R(4, 10, 6, 4, body); R(1, 11, 4, 2, dark); R(0, 12, 2, 1, dark);
       // corps
-      g.fillStyle = body; g.fillRect(10, 8, 16, 5);
-      g.fillStyle = light; g.fillRect(10, 8, 16, 1);
-      g.fillStyle = dark; g.fillRect(10, 12, 16, 1);
-      // queue
-      g.fillStyle = body; g.fillRect(4, 9, 6, 3); g.fillStyle = dark; g.fillRect(0, 10, 4, 2);
+      R(9, 9, 18, 6, body); R(9, 9, 18, 1, light); R(9, 14, 18, 1, dark);
+      R(13, 11, 2, 1, dark); R(18, 11, 2, 1, dark);
       // tête et yeux verts
-      g.fillStyle = body; g.fillRect(26, 7, 7, 7);
-      g.fillStyle = light; g.fillRect(26, 7, 7, 1);
-      g.fillStyle = 'rgba(63,185,80,0.35)'; g.fillRect(27, 8, 6, 4);
-      g.fillStyle = '#7EE787'; g.fillRect(28, 9, 2, 2); g.fillRect(31, 9, 2, 2);
-      g.fillStyle = dark; g.fillRect(28, 12, 5, 1);
+      R(26, 8, 9, 8, body); R(26, 8, 9, 1, light); R(26, 15, 9, 1, dark);
+      R(28, 10, 7, 3, 'rgba(63,185,80,0.35)');
+      R(29, 10, 2, 2, '#7EE787'); R(32, 10, 2, 2, '#7EE787');
+      R(28, 14, 6, 1, dark);
       return L;
     }
     const phantomUp = phantomFrame(true), phantomDown = phantomFrame(false);
@@ -416,8 +414,8 @@ SBG.register('runner', {
       if (canFly && r < 0.2) {
         const high = score > 450 && Math.random() < 0.3;
         // « tête » : il faut se baisser ; « haut » : passe au-dessus, sauf si l'on saute
-        const bottom = high ? GROUND - 54 : GROUND - 27;
-        o = { kind: 'phantom', x, y: bottom - 14, w: PHW, h: 14, hx: 6, hy: 2, hw: PHW - 9, hh: 10, t: Math.random() * 6, high };
+        const bottom = high ? GROUND - 56 : GROUND - 30;
+        o = { kind: 'phantom', x, y: bottom - 14, w: PHW, h: 14, hx: 2, hy: 3, hw: 26, hh: 9, t: Math.random() * 6, high };
       } else if (canTnt && r < 0.36) {
         o = { kind: 'tnt', x, y: GROUND - BLOCK, w: BLOCK, h: BLOCK, hx: 2, hy: 2, hw: BLOCK - 4, hh: BLOCK - 2, t: Math.random() * 3, rows: 1, cols: 1 };
       } else {
@@ -622,7 +620,7 @@ SBG.register('runner', {
       } else {
         const bob = Math.round(Math.sin(o.t * 5) * 2);
         const spr = Math.sin(o.t * 14) > 0 ? phantomUp : phantomDown;
-        ctx.drawImage(spr.c, x, o.y - 2 + bob, PHW, PHH);
+        ctx.drawImage(spr.c, x, o.y - 4 + bob, PHW, PHH);
       }
     }
 
