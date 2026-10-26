@@ -35,6 +35,10 @@
     whack_25:     { game: 'whack', title: 'Marteau', desc: '25 taupes en 30 s', en: ['Hammer', '25 moles in 30 seconds'] },
     taquin_win:   { game: 'taquin', title: 'Taquin résolu', desc: 'Remettre le taquin en ordre', en: ['Solved', 'Put the 15 puzzle back in order'] },
     rps_streak:   { game: 'rps', title: 'Série gagnante', desc: '5 victoires d’affilée', en: ['Winning streak', '5 wins in a row'] },
+    fruits_melon: { game: 'fruits', title: 'Melon !', desc: 'Faire pousser un melon aux Fruits', en: ['Melon!', 'Grow a melon in Fruits'] },
+    runner_1000:  { game: 'runner', title: 'Marathon', desc: 'Atteindre 1000 points à la Course', en: ['Marathon', 'Reach 1000 points in Run'] },
+    asteroids_wave3: { game: 'asteroids', title: 'Pilote', desc: 'Atteindre la vague 3 aux Astéroïdes', en: ['Pilot', 'Reach wave 3 in Asteroids'] },
+    stack_20:     { game: 'stack', title: 'Bâtisseur', desc: 'Empiler 20 blocs à la Pile', en: ['Builder', 'Stack 20 blocks'] },
     // exploration du site
     reader:       { icon: 'reader', title: 'Lecteur assidu', desc: 'Ouvrir 5 projets des archives', en: ['Bookworm', 'Open 5 projects in the archive'] },
     case_study:   { icon: 'study', title: 'Sous le capot', desc: 'Lire une étude de cas', en: ['Under the hood', 'Read a case study'] },

@@ -518,6 +518,7 @@ main,.foot{position:relative;z-index:2}
 .games button:hover .g-ico{transform:translateY(-2px) rotate(-6deg);color:var(--ink)}
 .games button .g-name{line-height:1.25}
 .games button i{position:absolute;top:.75rem;right:.75rem;font:700 .64rem var(--fm);font-style:normal;color:var(--cyan);border:1px solid rgba(56,189,248,.4);padding:.05rem .35rem;border-radius:3px}
+.games button i.new{color:#06202A;background:var(--ok);border-color:var(--ok)}
 .games button.won::after{content:'';position:absolute;bottom:.8rem;right:.8rem;width:9px;height:9px;background:var(--ok);box-shadow:0 0 10px var(--ok)}
 .g-ico .a1,.g-icon .a1{fill:var(--cyan)}
 .g-ico .a2,.g-icon .a2{fill:var(--violet)}

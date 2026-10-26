@@ -157,8 +157,8 @@ d.lang=l;d.classList.add('js')})();
           <dl class="st-row st-bar"><dt>IoT</dt><dd><i style="--w:40%"></i><b>4</b></dd></dl>
         </div>
         <div class="st-pane" role="tabpanel" id="pane-site" aria-labelledby="tab-site" tabindex="0" hidden>
-          <dl class="st-row"><dt><span data-l="fr">Jeux jouables</span><span data-l="en">Playable games</span></dt><dd>16</dd></dl>
-          <dl class="st-row"><dt><span data-l="fr">Succès débloqués par vous</span><span data-l="en">Achievements you unlocked</span></dt><dd><b id="pfAch">0</b>/<span class="achTot">21</span></dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Jeux jouables</span><span data-l="en">Playable games</span></dt><dd>20</dd></dl>
+          <dl class="st-row"><dt><span data-l="fr">Succès débloqués par vous</span><span data-l="en">Achievements you unlocked</span></dt><dd><b id="pfAch">0</b>/<span class="achTot">25</span></dd></dl>
           <dl class="st-row"><dt><span data-l="fr">Lignes écrites à la main</span><span data-l="en">Hand-written lines</span></dt><dd><span data-l="fr">~8&nbsp;000</span><span data-l="en">~8,000</span></dd></dl>
           <dl class="st-row"><dt><span data-l="fr">Frameworks</span><span data-l="en">Frameworks</span></dt><dd>0</dd></dl>
           <dl class="st-row"><dt><span data-l="fr">Blocs dans l'avatar</span><span data-l="en">Blocks in the avatar</span></dt><dd><span data-l="fr">12, une texture 64×64</span><span data-l="en">12, one 64×64 texture</span></dd></dl>
@@ -711,15 +711,15 @@ d.lang=l;d.classList.add('js')})();
     <div class="block-head">
       <div><p class="cmt">05 · <span data-l="fr">labo</span><span data-l="en">lab</span></p>
       <h2 id="labo-h" class="h2" data-split>Arcade</h2></div>
-      <p class="muted" data-reveal data-l="fr">Seize jeux écrits à la main en JavaScript, sans bibliothèque, sur un moteur commun à 120 pas par seconde.</p>
-      <p class="muted" data-reveal data-l="en">Sixteen games hand-written in plain JavaScript, on a shared engine running at 120 steps per second.</p>
+      <p class="muted" data-reveal data-l="fr">Vingt jeux écrits à la main en JavaScript, sans bibliothèque, sur un moteur commun à 120 pas par seconde.</p>
+      <p class="muted" data-reveal data-l="en">Twenty games hand-written in plain JavaScript, on a shared engine running at 120 steps per second.</p>
     </div>
     <div class="arcade">
       <div class="arcade-side">
         <div class="arcade-card" data-reveal>
           <h3><span data-l="fr">Succès</span><span data-l="en">Achievements</span></h3>
           <div class="ach-meter" aria-hidden="true"><i id="achBar"></i></div>
-          <p class="ach-line" id="achLine"><b>0</b>/21</p>
+          <p class="ach-line" id="achLine"><b>0</b>/25</p>
         </div>
         <div class="arcade-card" data-reveal>
           <h3>README</h3>
@@ -728,6 +728,10 @@ d.lang=l;d.classList.add('js')})();
         </div>
       </div>
     <div class="games" id="games">
+      <button type="button" data-game="fruits"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="14.5" cy="14.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 11.5c1-1 2.6-1.5 3.8-1.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="a1" cx="6.5" cy="10" r="2.8"/><path d="M6.5 7.2c.3-2 1.6-3.4 3.4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="s2" d="M9.9 3.2c1.4-.5 2.6.1 3 1.2-1.4.5-2.6 0-3-1.2z" fill="none" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Fruits</span><span data-l="en">Fruits</span></span><i class="new"><span data-l="fr">NOUVEAU</span><span data-l="en">NEW</span></i></button>
+      <button type="button" data-game="runner"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="13" cy="4.5" r="2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 7.5l-2 5 3.5 2.5-1 5M10.5 12.5l-3.5 1.5M13 9l3.5 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 21h18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a1" x="17" y="15.5" width="4" height="5.5" rx=".6"/></svg><span class="g-name"><span data-l="fr">Course</span><span data-l="en">Run</span></span><i class="new"><span data-l="fr">NOUVEAU</span><span data-l="en">NEW</span></i></button>
+      <button type="button" data-game="asteroids"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19l3.5-9 3.5 9-3.5-2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a2" d="M14 4.5l4-1 3 3-.5 4-3.5 1.5-3.5-2.5z"/><circle class="a1" cx="11" cy="6.5" r="1.3"/><path d="M9.2 9.8l.9-1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Astéroïdes</span><span data-l="en">Asteroids</span></span><i class="new"><span data-l="fr">NOUVEAU</span><span data-l="en">NEW</span></i></button>
+      <button type="button" data-game="stack"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15l8-3.5v3L12 18l-8-3.5v-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 11l7-3v3l-7 3-7-3V8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="a1" d="M12 4l5.5 2.3L12 8.6 6.5 6.3z"/></svg><span class="g-name"><span data-l="fr">Pile</span><span data-l="en">Stack</span></span><i class="new"><span data-l="fr">NOUVEAU</span><span data-l="en">NEW</span></i></button>
       <button type="button" data-game="connect4"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="9" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="14" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="a2" cx="12" cy="14" r="2"/><circle class="a1" cx="16" cy="14" r="2"/><circle class="a1" cx="12" cy="9" r="2"/></svg><span class="g-name"><span data-l="fr">Puissance 4</span><span data-l="en">Connect Four</span></span><i>IA</i></button>
       <button type="button" data-game="tetris"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12v4H4zM8 13h4v4H8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect class="a1" x="14.5" y="13.5" width="5" height="5" rx="1"/><rect class="a2" x="14.5" y="4.5" width="5" height="5" rx="1"/><path d="M4 21h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="g-name"><span data-l="fr">Blocs</span><span data-l="en">Blocks</span></span></button>
       <button type="button" data-game="snake"><svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c0-3 3-3 5-3s3-1 3-3-1-3-3-3H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/><path d="M12 11c0 2 1 3 3 3h2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/><circle class="a1" cx="19.2" cy="14" r="1.9"/><circle class="a2" cx="18" cy="6" r="1.6"/></svg><span class="g-name">Snake</span></button>

@@ -61,6 +61,10 @@
     whack:       { fr: 'Tape-taupe', en: 'Whack-a-mole', hfr: 'Touchez les signaux avant qu\'ils s\'éteignent. 30 secondes.', hen: 'Hit the signals before they fade. 30 seconds.' },
     rps:         { fr: 'Pierre-feuille-ciseaux', en: 'Rock paper scissors', hfr: 'Choisissez, ou touches 1, 2, 3. L\'ordinateur apprend vos habitudes.', hen: 'Pick, or keys 1, 2, 3. The computer learns your habits.' },
     reflex:      { fr: 'Réflexes', en: 'Reaction time', hfr: 'Attendez le signal, puis cliquez ou appuyez sur Espace.', hen: 'Wait for the signal, then click or press Space.' },
+    fruits:      { fr: 'Fruits', en: 'Fruits', hfr: 'Visez à la souris, au doigt ou avec ← →, lâchez au clic ou avec Espace. Deux fruits identiques fusionnent.', hen: 'Aim with the mouse, finger or ← →, drop with a click or Space. Two identical fruits merge.' },
+    runner:      { fr: 'Course', en: 'Run', hfr: 'Espace, ↑ ou toucher pour sauter (maintenir pour sauter plus haut), ↓ pour se baisser.', hen: 'Space, ↑ or tap to jump (hold to jump higher), ↓ to duck.' },
+    asteroids:   { fr: 'Astéroïdes', en: 'Asteroids', hfr: '← → tourner, ↑ propulser, Espace tirer. Au doigt : maintenir pour viser et tirer.', hen: '← → rotate, ↑ thrust, Space fire. Touch: hold to aim and fire.' },
+    stack:       { fr: 'Pile', en: 'Stack', hfr: 'Clic, toucher ou Espace pour poser le bloc. Ce qui dépasse tombe.', hen: 'Click, tap or Space to place the block. Whatever hangs over falls off.' },
     quiz:        { fr: 'Quiz tech', en: 'Tech quiz', hfr: 'Dix questions, quinze secondes chacune. Touches 1 à 4 possibles.', hen: 'Ten questions, fifteen seconds each. Keys 1 to 4 work too.' },
   };
 
