@@ -394,7 +394,8 @@
     if (!gamesPromise) {
       gamesPromise = new Promise((resolve, reject) => {
         const s = document.createElement('script');
-        s.src = 'games/core.js?v=1';
+        window.SBG_VERSION = '2';
+        s.src = 'games/core.js?v=2';
         s.onload = resolve;
         s.onerror = () => { gamesPromise = null; reject(); };
         document.body.appendChild(s);
@@ -431,6 +432,7 @@
     connect4: 'champion', snake: 'snake_50', quiz: 'quiz_master', memory: 'memory_king',
     tictactoe: 'tictac_master', pong: 'pong_win', flappy: 'flappy_20', reflex: 'reflex_pro',
     minesweeper: 'mine_sweeper', tetris: 'tetris_10', whack: 'whack_25', taquin: 'taquin_win', rps: 'rps_streak',
+    fruits: 'fruits_melon', runner: 'runner_1000', asteroids: 'asteroids_wave3', stack: 'stack_20',
   };
   function updateAchievements() {
     const a = window.achievements, out = $('#achCount');
