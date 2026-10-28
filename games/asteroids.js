@@ -6,6 +6,9 @@
    à travers les bords. Rien de lourd n'est alloué par image : tirs en
    réserve fixe, champ d'étoiles pré-rendu, un seul tracé par taille
    de rocher.
+   Bonus : un rocher détruit laisse parfois une capsule qui dérive
+   lentement (tir triple, tir rapide, bouclier, bombe). Les capsules
+   sont des sprites pré-rendus, gérés dans une réserve fixe.
    ================================================================== */
 SBG.register('asteroids', {
   create(api) {
@@ -22,6 +25,7 @@ SBG.register('asteroids', {
     const TURN = 4.4, THRUST = 270, DRAG = 0.55, VMAX = 310;
     const SHIP_R = 10, INVULN = 2.6, RESPAWN = 1.5;
     const B_MAX = 6, B_SPEED = 500, B_LIFE = 0.85, B_COOL = 0.17, B_COOL_PTR = 0.24;
+    const B_MAX_RAPID = 10, B_POOL = 30, SPREAD = 0.17;
     const PTR_FAR = 90;
     const EXTRA = 10000, MAX_LIVES = 5;
     // tailles : 0 grand, 1 moyen, 2 petit
@@ -30,8 +34,16 @@ SBG.register('asteroids', {
       { r: 22, pts: 50, v: 68, stroke: 'rgba(210,168,255,0.80)', fill: 'rgba(210,168,255,0.07)' },
       { r: 12, pts: 100, v: 98, stroke: 'rgba(232,222,255,0.95)', fill: 'rgba(210,168,255,0.10)' },
     ];
-
-    /* ── Calques pré-rendus ──────────────────────────────────────── */
+    // bonus : 0 tir triple, 1 tir rapide, 2 bouclier, 3 bombe
+    const PW = [
+      { fr: 'Tir triple', en: 'Triple shot', col: C.warm, lt: '#FFD2A8', rgb: '255,166,87', dur: 10 },
+      { fr: 'Tir rapide', en: 'Rapid fire', col: C.good, lt: '#9BE9A8', rgb: '63,185,80', dur: 8 },
+      { fr: 'Bouclier', en: 'Shield', col: C.cyan, lt: '#A5E4FC', rgb: '56,189,248', dur: 15 },
+      { fr: 'Bombe', en: 'Smart bomb', col: C.bad, lt: '#FFC1BC', rgb: '255,123,114', dur: 0 },
+    ];
+    const DROP = [0.06, 0.08, 0.12];          // chance de capsule par taille de rocher
+    const CAP_LIFE = 8, CAP_R = 12;
+    const BOMB_R = 170, BOMB_T = 0.5;
     // champ d'étoiles : fond, deux nébuleuses très discrètes, étoiles fixes
     const starLayer = document.createElement('canvas');
     starLayer.width = cv.el.width; starLayer.height = cv.el.height;
@@ -71,6 +83,51 @@ SBG.register('asteroids', {
     const glowCyan = glowSprite('56,189,248', 0.22);
     const glowWarm = glowSprite('255,166,87', 0.5);
 
+    // capsules de bonus : halo, gélule à contour clair et petit pictogramme
+    function capSprite(i) {
+      const P = PW[i], s = 48, c = document.createElement('canvas');
+      c.width = c.height = Math.round(s * cv.dpr);
+      const g = c.getContext('2d');
+      g.setTransform(cv.dpr, 0, 0, cv.dpr, 0, 0);
+      const gr = g.createRadialGradient(24, 24, 0, 24, 24, 23);
+      gr.addColorStop(0, 'rgba(' + P.rgb + ',0.38)'); gr.addColorStop(1, 'rgba(' + P.rgb + ',0)');
+      g.fillStyle = gr; g.fillRect(0, 0, s, s);
+      api.roundRect(g, 13, 17, 22, 14, 7);
+      g.fillStyle = C.bg; g.fill();
+      g.fillStyle = 'rgba(' + P.rgb + ',0.22)'; g.fill();
+      g.strokeStyle = P.lt; g.lineWidth = 1; g.stroke();
+      g.strokeStyle = P.lt; g.fillStyle = P.lt; g.lineWidth = 1.6; g.lineCap = 'round'; g.lineJoin = 'round';
+      g.beginPath();
+      if (i === 0) {
+        // trois traits en éventail
+        g.moveTo(24, 28); g.lineTo(24, 20.5);
+        g.moveTo(22.5, 28); g.lineTo(19, 21.5);
+        g.moveTo(25.5, 28); g.lineTo(29, 21.5);
+        g.stroke();
+      } else if (i === 1) {
+        // double chevron
+        g.moveTo(19.5, 20.5); g.lineTo(23, 24); g.lineTo(19.5, 27.5);
+        g.moveTo(24.5, 20.5); g.lineTo(28, 24); g.lineTo(24.5, 27.5);
+        g.stroke();
+      } else if (i === 2) {
+        // anneau et point central
+        g.arc(24, 24, 4.2, 0, TAU); g.stroke();
+        g.beginPath(); g.arc(24, 24, 1.3, 0, TAU); g.fill();
+      } else {
+        // noyau et rayons
+        g.arc(24, 24, 2.4, 0, TAU); g.fill();
+        g.lineWidth = 1.3; g.beginPath();
+        for (let k = 0; k < 8; k++) {
+          const a = k * TAU / 8, r0 = 3.8, r1 = k % 2 ? 5.2 : 6.2;
+          g.moveTo(24 + Math.cos(a) * r0, 24 + Math.sin(a) * r0 * 0.8);
+          g.lineTo(24 + Math.cos(a) * r1, 24 + Math.sin(a) * r1 * 0.8);
+        }
+        g.stroke();
+      }
+      return c;
+    }
+    const capSpr = [capSprite(0), capSprite(1), capSprite(2), capSprite(3)];
+
     // quelques étoiles scintillantes (positions fixes, phase propre)
     const TW_N = RED ? 0 : 18;
     const tw = new Float32Array(TW_N * 4);
@@ -82,12 +139,20 @@ SBG.register('asteroids', {
     /* ── État ────────────────────────────────────────────────────── */
     const ship = { x: W / 2, y: H / 2, px: W / 2, py: H / 2, vx: 0, vy: 0, a: -Math.PI / 2, pa: -Math.PI / 2, alive: false, inv: 0, thr: 0 };
     const bullets = [];
-    for (let i = 0; i < B_MAX; i++) bullets.push({ on: false, x: 0, y: 0, px: 0, py: 0, vx: 0, vy: 0, life: 0 });
+    for (let i = 0; i < B_POOL; i++) bullets.push({ on: false, x: 0, y: 0, px: 0, py: 0, vx: 0, vy: 0, life: 0 });
     const debris = [];
     for (let i = 0; i < 3; i++) debris.push({ x: 0, y: 0, vx: 0, vy: 0, a: 0, va: 0, len: 0, life: 0 });
     const rings = [];
     for (let i = 0; i < 10; i++) rings.push({ on: false, x: 0, y: 0, r: 0, t: 0 });
     let rocks = [];
+    // capsules, étiquettes flottantes et onde de la bombe (réserves fixes)
+    const caps = [];
+    for (let i = 0; i < 4; i++) caps.push({ on: false, x: 0, y: 0, px: 0, py: 0, vx: 0, vy: 0, life: 0, kind: 0, ph: 0 });
+    const labels = [];
+    for (let i = 0; i < 3; i++) labels.push({ on: false, text: '', x: 0, y: 0, t: 0, col: C.ink });
+    const bomb = { on: false, x: 0, y: 0, t: 0, seq: 0 };
+    const pw = [0, 0, 0];                     // temps restant : triple, rapide, bouclier
+    let pwMask = -1;
     const keys = { l: false, r: false, up: false, fire: false };
     const ptr = { on: false, id: -1, x: 0, y: 0 };
 
@@ -123,7 +188,7 @@ SBG.register('asteroids', {
         v[i * 2] = Math.cos(ang) * rr; v[i * 2 + 1] = Math.sin(ang) * rr;
       }
       const rot = Math.random() * TAU;
-      return { x, y, px: x, py: y, vx, vy, size, r: S.r, rot, prot: rot, spin: (Math.random() - 0.5) * (0.6 + size * 0.7), v, n };
+      return { x, y, px: x, py: y, vx, vy, size, r: S.r, rot, prot: rot, spin: (Math.random() - 0.5) * (0.6 + size * 0.7), v, n, bomb: 0 };
     }
     function spawnWave(n) {
       const count = Math.min(11, 3 + n);
@@ -136,9 +201,11 @@ SBG.register('asteroids', {
         rocks.push(makeRock(x, y, 0, Math.cos(a) * sp, Math.sin(a) * sp));
       }
     }
-    function breakRock(i) {
+    // viaBomb : les éclats portent le numéro de l'onde, qui ne les recasse pas
+    function breakRock(i, viaBomb) {
       const r = rocks[i];
       addScore(SIZES[r.size].pts);
+      if (!viaBomb && state === 'play' && Math.random() < DROP[r.size]) dropCap(r.x, r.y);
       fx.burst(r.x, r.y, { n: Math.round([22, 14, 9][r.size] * MANY), color: [C.violet, C.ink, '#B9A3F5'], speed: 70 + r.r * 3, life: 0.6, size: 1.7 });
       ring(r.x, r.y, r.r * 0.6);
       if (clock - lastBoom > 0.06) { api.sfx('boom'); lastBoom = clock; }
@@ -147,13 +214,96 @@ SBG.register('asteroids', {
         for (let k = 0; k < 2; k++) {
           const ang = base + (k ? 1 : -1) * (0.45 + Math.random() * 0.7);
           const mag = SIZES[s].v * speedMul() * (0.8 + Math.random() * 0.5);
-          rocks.push(makeRock(r.x, r.y, s, r.vx * 0.35 + Math.cos(ang) * mag, r.vy * 0.35 + Math.sin(ang) * mag));
+          const c = makeRock(r.x, r.y, s, r.vx * 0.35 + Math.cos(ang) * mag, r.vy * 0.35 + Math.sin(ang) * mag);
+          if (viaBomb) c.bomb = bomb.seq;
+          rocks.push(c);
         }
       }
       rocks[i] = rocks[rocks.length - 1]; rocks.pop();
     }
     function ring(x, y, r) {
       for (const g of rings) if (!g.on) { g.on = true; g.x = x; g.y = y; g.r = r; g.t = 0; return; }
+    }
+
+    /* ── Bonus ───────────────────────────────────────────────────── */
+    function dropCap(x, y) {
+      let c = null;
+      for (const q of caps) if (!q.on) { c = q; break; }
+      if (!c) return;
+      const v = Math.random() * 10;
+      c.kind = v < 3 ? 0 : v < 6 ? 1 : v < 8.6 ? 2 : 3;
+      const a = Math.random() * TAU, sp = 10 + Math.random() * 12;
+      c.on = true; c.x = c.px = x; c.y = c.py = y; c.vx = Math.cos(a) * sp; c.vy = Math.sin(a) * sp;
+      c.life = CAP_LIFE; c.ph = Math.random() * TAU;
+    }
+    function label(text, x, y, col) {
+      let l = labels[0];
+      for (const q of labels) { if (!q.on) { l = q; break; } if (q.t > l.t) l = q; }
+      l.on = true; l.text = text; l.col = col; l.t = 0;
+      l.x = Math.max(56, Math.min(W - 56, x)); l.y = Math.max(40, y - 18);
+    }
+    function chime() {
+      api.tone(660, 0.08, 'triangle', 0.3, 1.25);
+      api.after(60, () => api.tone(880, 0.08, 'triangle', 0.3, 1.25));
+      api.after(120, () => api.tone(1320, 0.16, 'sine', 0.28, 1.1));
+    }
+    function pickup(c) {
+      const P = PW[c.kind];
+      c.on = false;
+      chime();
+      fx.burst(c.x, c.y, { n: Math.round(14 * MANY), color: [P.col, P.lt, '#fff'], speed: 120, life: 0.5, size: 1.6 });
+      label(api.t(P.fr, P.en), c.x, c.y, P.lt);
+      if (c.kind === 3) startBomb();
+      else pw[c.kind] = P.dur;
+    }
+    function startBomb() {
+      bomb.on = true; bomb.x = ship.x; bomb.y = ship.y; bomb.t = 0; bomb.seq++;
+      api.sfx('boom'); api.tone(110, 0.5, 'sawtooth', 0.22, 0.4);
+      if (!RED) api.shake(6);
+      fx.burst(ship.x, ship.y, { n: Math.round(24 * MANY), color: [C.bad, PW[3].lt, C.warm], speed: 260, life: 0.6, size: 1.8 });
+    }
+    function shieldPop() {
+      pw[2] = 0; ship.inv = 1.0;
+      fx.burst(ship.x, ship.y, { n: Math.round(22 * MANY), color: [C.cyan, PW[2].lt, '#fff'], speed: 180, life: 0.55, size: 1.6 });
+      ring(ship.x, ship.y, 16);
+      api.tone(620, 0.22, 'sine', 0.3, 0.45);
+      if (!RED) api.shake(4);
+    }
+    function statusText() {
+      let s = api.t('Vague ' + wave, 'Wave ' + wave);
+      for (let i = 0; i < 3; i++) if (pw[i] > 0) s += ' · ' + api.t(PW[i].fr, PW[i].en);
+      return s;
+    }
+    function updatePowers(dt) {
+      let mask = 0;
+      for (let i = 0; i < 3; i++) {
+        if (pw[i] > 0) { pw[i] = Math.max(0, pw[i] - dt); if (pw[i] > 0) mask |= 1 << i; }
+      }
+      if (mask !== pwMask) { pwMask = mask; api.status(statusText()); }
+      for (const c of caps) {
+        if (!c.on) continue;
+        c.px = c.x; c.py = c.y;
+        c.life -= dt;
+        if (c.life <= 0) { c.on = false; continue; }
+        c.x = wrapX(c.x + c.vx * dt); c.y = wrapY(c.y + c.vy * dt);
+        if (ship.alive) {
+          const dx = wd(c.x - ship.x, W), dy = wd(c.y - ship.y, H), rr = CAP_R + SHIP_R;
+          if (dx * dx + dy * dy < rr * rr) pickup(c);
+        }
+      }
+      if (bomb.on) {
+        bomb.t += dt;
+        const rad = BOMB_R * api.ease.out(Math.min(1, bomb.t / BOMB_T));
+        if (bomb.t <= BOMB_T) {
+          for (let i = rocks.length - 1; i >= 0; i--) {
+            const r = rocks[i];
+            if (r.bomb === bomb.seq) continue;
+            const dx = wd(r.x - bomb.x, W), dy = wd(r.y - bomb.y, H), rr = rad + r.r * 0.5;
+            if (dx * dx + dy * dy < rr * rr) breakRock(i, true);
+          }
+        }
+        if (bomb.t > BOMB_T + 0.3) bomb.on = false;
+      }
     }
 
     /* ── Score, vaisseau, tirs ───────────────────────────────────── */
@@ -172,19 +322,29 @@ SBG.register('asteroids', {
       for (const r of rocks) if (Math.hypot(wd(r.x - W / 2, W), wd(r.y - H / 2, H)) < r.r + 70) return false;
       return true;
     }
+    // un tir, ou trois en éventail ; le plafond de tirs actifs suit les bonus
     function fire() {
-      let b = null;
-      for (const q of bullets) if (!q.on) { b = q; break; }
-      if (!b) return false;
-      const ca = Math.cos(ship.a), sa = Math.sin(ship.a);
-      b.on = true; b.life = B_LIFE;
-      b.x = b.px = wrapX(ship.x + ca * 14); b.y = b.py = wrapY(ship.y + sa * 14);
-      b.vx = ship.vx + ca * B_SPEED; b.vy = ship.vy + sa * B_SPEED;
-      api.tone(1250, 0.05, 'triangle', 0.09, 0.45);
+      const n = pw[0] > 0 ? 3 : 1;
+      const cap = (pw[1] > 0 ? B_MAX_RAPID : B_MAX) * n;
+      let act = 0;
+      for (const q of bullets) if (q.on) act++;
+      if (act + n > cap) return false;
+      let k = 0;
+      for (const b of bullets) {
+        if (b.on) continue;
+        const a = ship.a + (n === 1 ? 0 : (k - 1) * SPREAD);
+        const ca = Math.cos(a), sa = Math.sin(a);
+        b.on = true; b.life = B_LIFE;
+        b.x = b.px = wrapX(ship.x + ca * 14); b.y = b.py = wrapY(ship.y + sa * 14);
+        b.vx = ship.vx + ca * B_SPEED; b.vy = ship.vy + sa * B_SPEED;
+        if (++k === n) break;
+      }
+      api.tone(n > 1 ? 1100 : 1250, 0.05, 'triangle', 0.09, 0.45);
       return true;
     }
     function killShip() {
       ship.alive = false; lives--;
+      pw[0] = pw[1] = pw[2] = 0;
       // le contour du vaisseau se disloque en trois segments
       const ca = Math.cos(ship.a), sa = Math.sin(ship.a);
       const seg = [[14, 0, -10, -9], [-10, -9, -10, 9], [-10, 9, 14, 0]];
