@@ -107,7 +107,7 @@ SBG.register('snake', {
     function collect() {
       const kind = item.kind, P = POWERS[kind];
       const cx = item.x * CELL + CELL / 2, cy = item.y * CELL + CELL / 2;
-      item = null; itemCD = 7 + Math.random() * 6;
+      item = null; itemCD = 6 + Math.random() * 5;
       chime();
       fx.burst(cx, cy, { n: Math.round(20 * MANY), color: [P.col, '#fff', P.col], speed: 210 });
       addLabel(cx, cy, api.t(P.fr, P.en), P.col);
@@ -226,7 +226,7 @@ SBG.register('snake', {
           pow[k] -= dt;
           if (pow[k] <= 0) { pow[k] = 0; if (k === 'slow') acc *= SLOW_K; }
         }
-        if (item) { item.life -= dt; if (item.life <= 0) { item = null; itemCD = 5 + Math.random() * 5; } }
+        if (item) { item.life -= dt; if (item.life <= 0) { item = null; itemCD = 4 + Math.random() * 4; } }
         else { itemCD -= dt; if (itemCD <= 0) spawnItem(); }
         syncStatus();
 
