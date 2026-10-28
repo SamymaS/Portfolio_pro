@@ -575,8 +575,8 @@ SBG.register('asteroids', {
           const ox = bomb.x + OFF[o * 2], oy = bomb.y + OFF[o * 2 + 1];
           ctx.moveTo(ox + rad, oy); ctx.arc(ox, oy, rad, 0, TAU);
         }
-        ctx.globalAlpha = 0.22 * fade; ctx.strokeStyle = C.bad; ctx.lineWidth = 10; ctx.stroke();
-        ctx.globalAlpha = 0.9 * fade; ctx.strokeStyle = PW[3].lt; ctx.lineWidth = 1.8; ctx.stroke();
+        ctx.globalAlpha = 0.3 * fade; ctx.strokeStyle = C.bad; ctx.lineWidth = 10; ctx.stroke();
+        ctx.globalAlpha = 0.95 * fade; ctx.strokeStyle = PW[3].lt; ctx.lineWidth = 2.2; ctx.stroke();
         ctx.globalAlpha = 1;
       }
 
