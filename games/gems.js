@@ -15,9 +15,9 @@ SBG.register('gems', {
     const BW = N * CELL;
     const W = BX * 2 + BW, H = BY + BW + 12;
     const MOVES = 30, TARGET = 3000, GOAL = 5000, BAR_MAX = 6000;
-    const PTS = 10;                          // points par bloc, multipliés par la cascade
-    const BONUS = [0, 30, 80, 60];           // création : rien, TNT, Balise, Éclair
-    const COMBO_BONUS = 150;
+    const PTS = 8;                           // points par bloc, multipliés par la cascade
+    const BONUS = [0, 20, 50, 40];           // création : rien, TNT, Balise, Éclair
+    const COMBO_BONUS = 100;
     const SWAP_T = 0.17, CLEAR_T = 0.2, HINT_DELAY = 6;
     const cv = api.canvas(W, H);
     const ctx = cv.ctx, dpr = cv.dpr;
