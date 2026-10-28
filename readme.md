@@ -38,19 +38,19 @@ Toutes les images sont en WebP, chargées en différé (`loading="lazy"`) : envi
 
 **Deux études de cas**, Sameva et TicketFlow (`ticketflow.html`, `ticketflow.en.html`), chacune en français et en anglais. **La page Sameva**, en [français](https://samy-boudaoud.com/sameva.html) et en [anglais](https://samy-boudaoud.com/sameva.en.html), dans la même DA : elle charge `site.css` puis `sameva.css` pour ses blocs propres.
 
-**Vingt mini-jeux**, réécrits sur un moteur commun (`games/core.js`) : canvas net sur écran Retina, boucle à pas fixe de 1/120 s (même vitesse sur toutes les machines, rendu interpolé), clavier, souris et tactile, sons synthétisés en WebAudio (coupables), records par jeu, écrans de début et de fin. Chaque jeu vit dans son propre fichier `games/<id>.js` et n'est chargé qu'à son ouverture. Vingt-cinq succès (dix-sept liés aux jeux, huit à l'exploration du site : archives, onglets, langue, terminal, avatar, études de cas, page 404), une icône dessinée pour chacun, aucun émoji. Tapez `s` puis `b` pour ouvrir un terminal caché.
+**Vingt-quatre mini-jeux**, réécrits sur un moteur commun (`games/core.js`) : canvas net sur écran Retina, boucle à pas fixe de 1/120 s (même vitesse sur toutes les machines, rendu interpolé), clavier, souris et tactile, sons synthétisés en WebAudio (coupables), records par jeu, écrans de début et de fin. Chaque jeu vit dans son propre fichier `games/<id>.js` et n'est chargé qu'à son ouverture. Vingt-neuf succès (vingt et un liés aux jeux, huit à l'exploration du site : archives, onglets, langue, terminal, avatar, études de cas, page 404), une icône dessinée pour chacun, aucun émoji. Tapez `s` puis `b` pour ouvrir un terminal caché.
 
 | Jeu | Fichier | Particularité |
 | --- | --- | --- |
 | Puissance 4 | `connect4.js` | IA minimax alpha-bêta (profondeur 5), chute des jetons avec rebond |
 | Morpion | `tictactoe.js` | IA minimax qui peut se tromper dans l'ouverture, traits animés |
 | Blocs | `tetris.js` | Rotations avec rattrapage au mur, pièce fantôme, réserve, répétition des touches gérée par le jeu |
-| Snake | `snake.js` | Serpent interpolé entre les cases, file de commandes |
+| Snake | `snake.js` | Serpent interpolé entre les cases, file de commandes, bonus (orbe dorée, ralenti, fantôme, traversée des murs, ciseaux) |
 | 2048 | `2048.js` | Tuiles qui glissent, fusion animée, coup mis en file |
 | Démineur | `minesweeper.js` | Premier clic sûr, révélation en onde, drapeau à l'appui long |
-| Casse-briques | `breakout.js` | Collisions continues (la balle ne traverse jamais une brique), niveaux |
-| Pong | `pong.js` | Effet selon la vitesse de la raquette, IA battable |
-| Envol | `flappy.js` | Avion de papier, physique au pas fixe, décor en parallaxe |
+| Casse-briques | `breakout.js` | Collisions continues (la balle ne traverse jamais une brique), niveaux, huit capsules de pouvoirs (multi-balle, laser, balle de feu, aimant...) |
+| Pong | `pong.js` | Effet selon la vitesse de la raquette, IA battable, pouvoirs pour les deux camps (bouclier, smash, multi-balle) |
+| Envol | `flappy.js` | Avion de papier, physique au pas fixe, décor en parallaxe, bonus (bouclier, mini, points doublés, ralenti) |
 | Memory | `memory.js` | Retournement 3D, huit symboles dessinés |
 | Séquence | `simon.js` | Une note par touche, tempo croissant |
 | Taquin | `taquin.js` | Mélanges toujours solubles, lignes entières déplaçables |
@@ -59,9 +59,13 @@ Toutes les images sont en WebP, chargées en différé (`loading="lazy"`) : envi
 | Réflexes | `reflex.js` | Mesure au pointerdown, cinq essais, graphique |
 | Quiz tech | `quiz.js` | 31 questions bilingues sur la stack (TETRA, Qt, MQTT, Kubernetes…) |
 | Fruits | `fruits.js` | Fusion façon Suika : onze fruits de la cerise à la pastèque, physique de Verlet à pas fixe, sprites pré-rendus |
-| Course | `runner.js` | Course sans fin en pixel art, saut à hauteur variable, tolérance au sol et mémoire du saut |
-| Astéroïdes | `asteroids.js` | Vaisseau à inertie, rochers qui se fragmentent, vagues, contrôle au doigt |
+| Course | `runner.js` | Course sans fin en pixel art, saut à hauteur variable, tolérance au sol et mémoire du saut, bonus (bouclier, double saut, fusée) |
+| Astéroïdes | `asteroids.js` | Vaisseau à inertie, rochers qui se fragmentent, vagues, contrôle au doigt, bonus (tir triple, tir rapide, bouclier, bombe) |
 | Pile | `stack.js` | Blocs isométriques, découpe de ce qui dépasse, bonus des poses parfaites |
+| Invasion | `invaders.js` | Formation en pixel art, abris destructibles, vaisseau mystère, vagues, pouvoirs |
+| Bulles | `bubbles.js` | Grille hexagonale, rebonds sur les murs, chutes des grappes détachées, bulles spéciales |
+| Minerais | `gems.js` | Match-3 aux minerais Minecraft, cascades, TNT, balise et éclair combinables |
+| Traversée | `crossy.js` | Rangées générées à l'infini : routes, rivières, rails, avatar voxel, bonus |
 
 ---
 
