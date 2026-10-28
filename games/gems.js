@@ -14,8 +14,8 @@ SBG.register('gems', {
     const N = 8, CELL = 48, BX = 12, BY = 84;
     const BW = N * CELL;
     const W = BX * 2 + BW, H = BY + BW + 12;
-    const MOVES = 30, TARGET = 3500, GOAL = 5000, BAR_MAX = 6000;
-    const PTS = 10;                          // points par bloc, multipliés par la cascade
+    const MOVES = 30, TARGET = 3000, GOAL = 5000, BAR_MAX = 6000;
+    const PTS = 10;                          // points par bloc, x1.5, x2, x2.5... en cascade
     const BONUS = [0, 20, 50, 40];           // création : rien, TNT, Balise, Éclair
     const COMBO_BONUS = 100;
     const SWAP_T = 0.17, CLEAR_T = 0.2, HINT_DELAY = 6;
@@ -425,7 +425,7 @@ SBG.register('gems', {
         if (dly[i] > maxD) maxD = dly[i];
       }
       for (const cr of creates) bonus += BONUS[cr.sp];
-      const gained = n * PTS * mult + bonus;
+      const gained = Math.round(n * PTS * mult) + bonus;
       score += gained;
       api.hud({ score });
       if (n) addLabel(BX + (sx / n + 0.5) * CELL, BY + (sy / n + 0.5) * CELL, '+' + gained, mult > 1 ? C.warm : C.ink, Math.min(26, 15 + mult * 2 + (gained > 300 ? 4 : 0)));
@@ -464,7 +464,7 @@ SBG.register('gems', {
         for (const i of gp.cells) if (i !== spawn) push(i, 0, spawn);
       }
       processQueue();
-      commit(cascade + 1, 0);
+      commit(1 + cascade * 0.5, 0);
     }
 
     // deux spéciaux échangés : t1 est le bloc déplacé, arrivé en i1
@@ -700,11 +700,11 @@ SBG.register('gems', {
       const good = score >= TARGET;
       api.sfx(good ? 'win' : 'lose');
       const record = api.setBest(score);
-      api.status(api.t('Cascade max x' + maxCascade + ', blocs spéciaux : ' + specialsMade, 'Best cascade x' + maxCascade + ', special blocks: ' + specialsMade));
+      api.status(api.t('Plus longue cascade : ' + maxCascade + ', blocs spéciaux : ' + specialsMade, 'Longest cascade: ' + maxCascade + ', special blocks: ' + specialsMade));
       api.after(600, () => api.overlay({
         kicker: record && score > 0 ? api.t('Nouveau record', 'New best') : '',
         title: good ? api.t('Objectif atteint', 'Target reached') : api.t('Plus de coups', 'Out of moves'),
-        text: api.t(score + ' points, cascade max x' + maxCascade, score + ' points, best cascade x' + maxCascade),
+        text: api.t(score + ' points, plus longue cascade : ' + maxCascade, score + ' points, longest cascade: ' + maxCascade),
         action: api.t('Rejouer', 'Play again'),
         tone: record && score > 0 ? 'good' : '',
         onAction: start,
@@ -848,7 +848,7 @@ SBG.register('gems', {
       ctx.textAlign = 'left'; ctx.font = '700 11px ' + api.font;
       if (cascade > 0 && phase !== 'idle') {
         ctx.fillStyle = C.warm;
-        ctx.fillText(api.t('Cascade x', 'Cascade x') + (cascade + 1), BAR_X, 68);
+        ctx.fillText(api.t('Cascade ', 'Cascade ') + (cascade + 1) + '   x' + (1 + cascade * 0.5), BAR_X, 68);
       } else {
         ctx.fillStyle = C.faint;
         ctx.fillText(api.t('4 : TNT   5 : Balise   L ou T : Éclair', '4: TNT   5: Beacon   L or T: Lightning'), BAR_X, 68);
@@ -875,7 +875,7 @@ SBG.register('gems', {
         }
         if (t.pop < 1) s *= 0.3 + 0.7 * api.ease.back(t.pop);
         if (i === sel && !t.dead) s *= 1.07 + Math.sin(time * 8) * 0.02;
-        if ((i === hintA || i === hintB) && phase === 'idle') { s *= 1 + Math.abs(Math.sin(time * 4)) * 0.07; white = Math.abs(Math.sin(time * 4)) * 0.22; }
+        if ((i === hintA || i === hintB) && phase === 'idle') { const h = Math.abs(Math.sin(time * 3.2)); s *= 1 + h * 0.05; white = h * 0.14; }
         const sqy = 1 - 0.14 * t.sq, sqx = 1 + 0.09 * t.sq;
         const w = CELL * s * sqx, h = CELL * s * sqy;
         const dx = x + (CELL - w) / 2, dy = y + (CELL + CELL * s) / 2 - h;
