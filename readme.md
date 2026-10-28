@@ -45,7 +45,7 @@ Toutes les images sont en WebP, chargées en différé (`loading="lazy"`) : envi
 | Puissance 4 | `connect4.js` | IA minimax alpha-bêta (profondeur 5), chute des jetons avec rebond |
 | Morpion | `tictactoe.js` | IA minimax qui peut se tromper dans l'ouverture, traits animés |
 | Blocs | `tetris.js` | Rotations avec rattrapage au mur, pièce fantôme, réserve, répétition des touches gérée par le jeu |
-| Snake | `snake.js` | Serpent interpolé entre les cases, file de commandes, bonus (orbe dorée, ralenti, fantôme, traversée des murs) |
+| Snake | `snake.js` | Serpent interpolé entre les cases, file de commandes, bonus (orbe dorée, ralenti, fantôme, traversée des murs, ciseaux) |
 | 2048 | `2048.js` | Tuiles qui glissent, fusion animée, coup mis en file |
 | Démineur | `minesweeper.js` | Premier clic sûr, révélation en onde, drapeau à l'appui long |
 | Casse-briques | `breakout.js` | Collisions continues (la balle ne traverse jamais une brique), niveaux, huit capsules de pouvoirs (multi-balle, laser, balle de feu, aimant...) |
