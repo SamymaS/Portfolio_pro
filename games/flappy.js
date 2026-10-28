@@ -180,7 +180,10 @@ SBG.register('flappy', {
       const P = POWERS[it.kind];
       chime();
       fx.burst(it.x, it.y, { n: Math.round(18 * MANY), color: [P.col, '#fff', P.col], speed: 200, life: 0.55 });
-      labels.push({ x: api.clamp(it.x, 70, W - 70), y: it.y - 18, text: api.t(P.fr, P.en), col: P.col, t: 0 });
+      // décale l'étiquette si une autre vient d'apparaître, pour éviter qu'elles se chevauchent
+      let stack = 0;
+      for (const l of labels) if (l.t < 0.5) stack++;
+      labels.push({ x: api.clamp(it.x, 70, W - 70), y: it.y - 18 - stack * 16, text: api.t(P.fr, P.en), col: P.col, t: 0 });
       if (it.kind === 'shield') shield = true;
       else pow[it.kind] = P.dur;
     }

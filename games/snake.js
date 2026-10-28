@@ -99,7 +99,9 @@ SBG.register('snake', {
     }
 
     function addLabel(x, y, text, col) {
-      labels.push({ x: api.clamp(x, 60, W - 60), y: Math.max(26, y - 14), text, col, t: 0 });
+      let stack = 0;
+      for (const l of labels) if (l.t < 0.5) stack++;
+      labels.push({ x: api.clamp(x, 60, W - 60), y: Math.max(26, y - 14) - stack * 16, text, col, t: 0 });
     }
 
     function collect() {
