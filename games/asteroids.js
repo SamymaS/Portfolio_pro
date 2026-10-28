@@ -372,6 +372,10 @@ SBG.register('asteroids', {
       for (const b of bullets) b.on = false;
       for (const d of debris) d.life = 0;
       for (const g of rings) g.on = false;
+      for (const c of caps) c.on = false;
+      for (const l of labels) l.on = false;
+      bomb.on = false;
+      pw[0] = pw[1] = pw[2] = 0; pwMask = -1;
       fx.clear();
     }
     function start() {
@@ -385,7 +389,7 @@ SBG.register('asteroids', {
       spawnWave(1);
       banner = { text: api.t('Vague 1', 'Wave 1'), t: 0 };
       api.hud({ score: 0 });
-      api.status(api.t('Vague 1', 'Wave 1'));
+      api.status(statusText());
       state = 'play';
       if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
       loop.start();
@@ -394,12 +398,14 @@ SBG.register('asteroids', {
       wave++;
       waveT = 1.6;
       banner = { text: api.t('Vague ' + wave, 'Wave ' + wave), t: 0 };
-      api.status(api.t('Vague ' + wave, 'Wave ' + wave));
+      api.status(statusText());
       api.sfx('win');
       if (wave >= 3) api.unlock('asteroids_wave3');
     }
     function gameOver() {
       state = 'over'; overAt = performance.now(); ptr.on = false;
+      for (const c of caps) c.on = false;
+      bomb.on = false;
       api.sfx('lose');
       const record = api.setBest(score);
       const id = runId;
@@ -422,6 +428,7 @@ SBG.register('asteroids', {
       fx.update(dt);
       if (banner) { banner.t += dt; if (banner.t > 1.6) banner = null; }
       for (const g of rings) if (g.on) { g.t += dt; if (g.t > 0.45) g.on = false; }
+      for (const l of labels) if (l.on) { l.t += dt; if (l.t > 1.1) l.on = false; }
       for (const d of debris) if (d.life > 0) {
         d.life -= dt; d.x = wrapX(d.x + d.vx * dt); d.y = wrapY(d.y + d.vy * dt); d.a += d.va * dt;
       }
@@ -448,6 +455,7 @@ SBG.register('asteroids', {
         if (b.life <= 0) { b.on = false; continue; }
         b.x = wrapX(b.x + b.vx * dt); b.y = wrapY(b.y + b.vy * dt);
       }
+      updatePowers(dt);
       collide();
 
       if (rocks.length === 0 && waveT < 0) nextWave();
@@ -469,6 +477,7 @@ SBG.register('asteroids', {
         if (dx * dx + dy * dy > PTR_FAR * PTR_FAR && Math.abs(d) < 1.0) thr = true;
         shoot = true; rate = B_COOL_PTR;
       }
+      if (pw[1] > 0) rate *= 0.5;
       const ca = Math.cos(ship.a), sa = Math.sin(ship.a);
       if (thr) {
         ship.vx += ca * THRUST * dt; ship.vy += sa * THRUST * dt;
@@ -499,7 +508,11 @@ SBG.register('asteroids', {
         }
         if (!hit && ship.alive && ship.inv <= 0) {
           const dx = wd(ship.x - r.x, W), dy = wd(ship.y - r.y, H), rr = r.r * 0.85 + SHIP_R * 0.8;
-          if (dx * dx + dy * dy < rr * rr) { breakRock(i); killShip(); continue; }
+          if (dx * dx + dy * dy < rr * rr) {
+            breakRock(i);
+            if (pw[2] > 0) shieldPop(); else killShip();
+            continue;
+          }
         }
         if (hit) breakRock(i);
       }
@@ -551,6 +564,32 @@ SBG.register('asteroids', {
       }
       ctx.globalAlpha = 1;
 
+      // onde de la bombe : anneau large et doux, puis liseré clair
+      if (bomb.on) {
+        const q = Math.min(1, bomb.t / BOMB_T);
+        const rad = BOMB_R * api.ease.out(q);
+        const fade = bomb.t > BOMB_T ? 1 - (bomb.t - BOMB_T) / 0.3 : 1;
+        const n = wrapOffsets(bomb.x, bomb.y, rad + 4);
+        ctx.beginPath();
+        for (let o = 0; o < n; o++) {
+          const ox = bomb.x + OFF[o * 2], oy = bomb.y + OFF[o * 2 + 1];
+          ctx.moveTo(ox + rad, oy); ctx.arc(ox, oy, rad, 0, TAU);
+        }
+        ctx.globalAlpha = 0.22 * fade; ctx.strokeStyle = C.bad; ctx.lineWidth = 10; ctx.stroke();
+        ctx.globalAlpha = 0.9 * fade; ctx.strokeStyle = PW[3].lt; ctx.lineWidth = 1.8; ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+
+      // capsules de bonus (clignotent avant d'expirer)
+      for (const c of caps) {
+        if (!c.on) continue;
+        if (c.life < 2 && !RED && Math.floor(c.life * 8) % 2) ctx.globalAlpha = 0.35;
+        const x = lw(c.px, c.x, k, W), y = lw(c.py, c.y, k, H) + (RED ? 0 : Math.sin(clock * 3 + c.ph) * 1.5);
+        const n = wrapOffsets(x, y, 24);
+        for (let o = 0; o < n; o++) ctx.drawImage(capSpr[c.kind], x + OFF[o * 2] - 24, y + OFF[o * 2 + 1] - 24, 48, 48);
+        ctx.globalAlpha = 1;
+      }
+
       // tirs : traînée large et douce, puis cœur clair
       ctx.beginPath();
       let anyB = false;
@@ -573,6 +612,19 @@ SBG.register('asteroids', {
         const a = ship.pa + (ship.a - ship.pa) * k;
         const n = wrapOffsets(x, y, 20);
         for (let o = 0; o < n; o++) drawShip(x + OFF[o * 2], y + OFF[o * 2 + 1], a, 1, alpha, ship.thr, true);
+        // bouclier : anneau cyan qui respire, clignote quand il va tomber
+        if (pw[2] > 0 && (pw[2] > 3 || RED || Math.floor(pw[2] * 6) % 2 === 0)) {
+          const pulse = RED ? 0 : Math.sin(clock * 5) * 0.12;
+          ctx.beginPath();
+          for (let o = 0; o < n; o++) {
+            const ox = x + OFF[o * 2], oy = y + OFF[o * 2 + 1];
+            ctx.moveTo(ox + 19, oy); ctx.arc(ox, oy, 19, 0, TAU);
+          }
+          ctx.strokeStyle = C.cyan;
+          ctx.globalAlpha = 0.16; ctx.lineWidth = 5; ctx.stroke();
+          ctx.globalAlpha = 0.7 + pulse; ctx.lineWidth = 1.4; ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
       }
 
       // débris du vaisseau
@@ -594,6 +646,17 @@ SBG.register('asteroids', {
         ctx.fillStyle = 'rgba(56,189,248,0.6)';
         ctx.beginPath(); ctx.arc(ptr.x, ptr.y, 2, 0, TAU); ctx.fill();
       }
+
+      // noms des bonus ramassés, qui montent en s'effaçant
+      ctx.font = '700 12px ' + api.font; ctx.textAlign = 'center';
+      for (const l of labels) {
+        if (!l.on) continue;
+        const q = l.t / 1.1;
+        ctx.globalAlpha = q < 0.15 ? q / 0.15 : 1 - Math.max(0, (q - 0.45) / 0.55);
+        ctx.fillStyle = l.col;
+        ctx.fillText(l.text, l.x, l.y - api.ease.out(q) * 24);
+      }
+      ctx.globalAlpha = 1;
 
       if (state !== 'ready') drawHud();
 
@@ -642,6 +705,15 @@ SBG.register('asteroids', {
       ctx.fillStyle = C.muted; ctx.font = '600 13px ' + api.font; ctx.textAlign = 'right';
       ctx.fillText(api.t('Vague ', 'Wave ') + wave, W - 18, 24);
       ctx.textBaseline = 'alphabetic';
+      // comptes à rebours des bonus actifs, un liseré par bonus au bord haut
+      let row = 0;
+      for (let i = 0; i < 3; i++) {
+        if (pw[i] <= 0) continue;
+        const y = 1 + row * 4;
+        ctx.fillStyle = 'rgba(240,246,252,0.06)'; ctx.fillRect(0, y, W, 2);
+        ctx.fillStyle = PW[i].col; ctx.fillRect(0, y, W * (pw[i] / PW[i].dur), 2);
+        row++;
+      }
     }
 
     const loop = api.loop({ update, render });
@@ -688,8 +760,8 @@ SBG.register('asteroids', {
     api.overlay({
       title: api.t('Astéroïdes', 'Asteroids'),
       text: api.t(
-        '← → pour pivoter, ↑ pour avancer, Espace pour tirer. Au doigt ou à la souris : maintenez l\'appui, le vaisseau vise et tire tout seul.',
-        '← → to turn, ↑ to thrust, Space to fire. Touch or mouse: hold down, the ship aims and fires on its own.'
+        '← → pour pivoter, ↑ pour avancer, Espace pour tirer. Au doigt ou à la souris : maintenez l\'appui, le vaisseau vise et tire tout seul. Foncez dans les capsules laissées par les rochers : tir triple, tir rapide, bouclier ou bombe.',
+        '← → to turn, ↑ to thrust, Space to fire. Touch or mouse: hold down, the ship aims and fires on its own. Fly into the capsules left by rocks: triple shot, rapid fire, shield or bomb.'
       ),
       action: api.t('Jouer', 'Play'),
       onAction: start,

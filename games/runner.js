@@ -9,6 +9,8 @@
    Saut à hauteur variable, tampon de saut et temps « coyote » pour
    que les commandes restent justes, boîtes de collision un peu
    plus petites que le dessin.
+   Bonus : de temps en temps, une capsule flotte dans un creux entre
+   deux obstacles (bouclier, double saut, points x2, fusée).
    ================================================================== */
 SBG.register('runner', {
   create(api) {
@@ -30,6 +32,17 @@ SBG.register('runner', {
     const FAST_FALL = 2.8, COYOTE = 0.08, BUFFER = 0.12;
     const SPEED0 = 300, SPEED_MAX = 640;
     const METERS = 25;            // px parcourus par point
+
+    // bonus : 0 bouclier, 1 double saut, 2 points x2, 3 fusée
+    const PU = [
+      { fr: 'Bouclier', en: 'Shield', col: C.cyan, lt: '#A5E4FC', dk: '#0F3A52', dur: 0 },
+      { fr: 'Double saut', en: 'Double jump', col: C.good, lt: '#9BE9A8', dk: '#123D22', dur: 12 },
+      { fr: 'Aimant à points', en: 'Score boost', col: C.warm, lt: '#FFD2A8', dk: '#4A2A10', dur: 10 },
+      { fr: 'Fusée', en: 'Rocket', col: C.violet, lt: '#EEDDFF', dk: '#352452', dur: 5 },
+    ];
+    const IW = 22, IH = 14, IPAD = 6;   // capsule et marge du halo
+    const ROCKET_Y = GROUND - 128;      // altitude des pieds en vol : au-dessus de tout
+    const INV_LAND = 1;
 
     const MANY = api.reduced ? 0.35 : 1;
 
@@ -337,6 +350,36 @@ SBG.register('runner', {
     }
     const phantomUp = phantomFrame(true), phantomDown = phantomFrame(false);
 
+    // capsules de bonus : halo en escalier, gélule aux coins coupés, pictogramme en texels
+    const GLYPHS = [
+      ['XXXXXXX', 'XooooOX', 'XooooOX', 'XooooOX', '.XoooX.', '..XXX..'],
+      ['...X...', '..X.X..', '.X...X.', '...X...', '..X.X..', '.X...X.'],
+      ['....XXX', 'X.X...X', '.X..XXX', 'X.X.X..', '....XXX'],
+      ['...X...', '..XXX..', '..XoX..', '..XXX..', '.XXXXX.', '.F.F.F.'],
+    ];
+    function capsule(i) {
+      const P = PU[i], L = layer(IW + IPAD * 2, IH + IPAD * 2), g = L.g;
+      const R = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(IPAD + x, IPAD + y, w, h); };
+      const rgb = P.col === C.cyan ? '56,189,248' : P.col === C.good ? '63,185,80' : P.col === C.warm ? '255,166,87' : '210,168,255';
+      g.fillStyle = 'rgba(' + rgb + ',0.07)'; g.fillRect(1, 3, IW + IPAD * 2 - 2, IH + IPAD * 2 - 6); g.fillRect(3, 1, IW + IPAD * 2 - 6, IH + IPAD * 2 - 2);
+      g.fillStyle = 'rgba(' + rgb + ',0.12)'; g.fillRect(3, 5, IW + IPAD * 2 - 6, IH + IPAD * 2 - 10); g.fillRect(5, 3, IW + IPAD * 2 - 10, IH + IPAD * 2 - 6);
+      // contour clair, puis corps sombre en retrait d'un texel
+      R(2, 0, IW - 4, IH, P.lt); R(1, 1, IW - 2, IH - 2, P.lt); R(0, 2, IW, IH - 4, P.lt);
+      R(2, 1, IW - 4, IH - 2, P.dk); R(1, 2, IW - 2, IH - 4, P.dk);
+      R(3, 2, IW - 6, 1, 'rgba(255,255,255,0.14)');
+      const rows = GLYPHS[i], gw = rows[0].length, gh = rows.length;
+      const ox = Math.floor((IW - gw) / 2), oy = Math.floor((IH - gh) / 2);
+      for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) {
+        const ch = rows[y][x];
+        if (ch === 'X') R(ox + x, oy + y, 1, 1, P.lt);
+        else if (ch === 'o') R(ox + x, oy + y, 1, 1, P.col);
+        else if (ch === 'O') R(ox + x, oy + y, 1, 1, P.lt);
+        else if (ch === 'F') R(ox + x, oy + y, 1, 1, C.warm);
+      }
+      return L;
+    }
+    const caps = [capsule(0), capsule(1), capsule(2), capsule(3)];
+
     /* ── Débris carrés (réserve fixe, aucune allocation en jeu) ──── */
     const DEBRIS = 64;
     const debris = [];
@@ -381,8 +424,16 @@ SBG.register('runner', {
     // entrées
     let jumpHeld = false, duckKey = false, duckTouch = false, duckTimer = 0, bufferT = 0, coyoteT = 0, holdT = 0;
     let touchId = -1, touchY = 0, touchT = 0;
+    // bonus
+    let items = [], itemNext = 0, pts = 0;
+    let shield = false, djT = 0, boostT = 0, rocketT = 0, rocketFall = false, invT = 0, airJumps = 1, flameT = 0, puMask = -1;
+    const labels = [];
+    for (let i = 0; i < 3; i++) labels.push({ on: false, text: '', x: 0, y: 0, t: 0, col: C.ink });
 
     function reset() {
+      items = []; itemNext = 5 + Math.random() * 3; pts = 0;
+      shield = false; djT = 0; boostT = 0; rocketT = 0; rocketFall = false; invT = 0; airJumps = 1; flameT = 0; puMask = -1;
+      for (const l of labels) l.on = false;
       p.y = p.prevY = GROUND; p.vy = 0; p.air = false; p.airT = 0; p.duck = false; p.landT = 0;
       obstacles = []; speed = SPEED0; dist = prevDist = 0; runT = 0; score = 0; lastHud = 0;
       milestone = 0; flashT = 0; deadT = 0; hitFlash = 0; unlocked = false;
@@ -431,6 +482,65 @@ SBG.register('runner', {
       // écart minimal qui grandit avec la vitesse, pour qu'un saut suffise toujours
       const base = speed * 0.62 + 150 + o.w;
       nextGap = base + Math.random() * speed * 0.7 + (o.kind === 'phantom' && !o.high ? 70 : 0);
+      // de temps en temps, une capsule flotte au milieu du creux qui suit
+      if (runT > itemNext && rocketT <= 0 && !rocketFall && Math.random() < 0.6) {
+        itemNext = runT + 8 + Math.random() * 6;
+        const v = Math.random() * 10;
+        let kind = v < 3 ? 0 : v < 5.5 ? 1 : v < 8 ? 2 : 3;
+        if (kind === 0 && shield) kind = 2;
+        const h = Math.random();
+        // au ras du sol, petit saut ou grand saut : toujours à portée
+        const y = h < 0.3 ? GROUND - IH - 8 : h < 0.7 ? GROUND - 62 : GROUND - 94;
+        items.push({ x: x + o.w + (nextGap - o.w) * 0.5 - IW / 2, y, kind, t: Math.random() * 6, got: false });
+      }
+    }
+
+    /* ── Bonus ───────────────────────────────────────────────────── */
+    function chime() {
+      api.tone(660, 0.08, 'square', 0.12, 1.25);
+      api.after(60, () => api.tone(880, 0.08, 'square', 0.12, 1.25));
+      api.after(120, () => api.tone(1320, 0.16, 'triangle', 0.3, 1.1));
+    }
+    function label(text, x, y, col) {
+      let l = labels[0], lift = 0;
+      for (const q of labels) { if (!q.on) { l = q; break; } if (q.t > l.t) l = q; }
+      // bonus pris presque ensemble : chaque étiquette se place au-dessus de la précédente
+      for (const q of labels) if (q !== l && q.on && q.t < 0.6 && Math.abs(q.x - x) < 90) lift += 13;
+      l.on = true; l.text = text; l.col = col; l.t = 0; l.x = Math.max(70, x); l.y = Math.max(30, y - lift);
+    }
+    function pickup(it) {
+      const P = PU[it.kind];
+      it.got = true;
+      chime();
+      emit(it.x + IW / 2, it.y + IH / 2, 12, { speed: 140, size: 2, life: 0.5, colors: [P.col, P.lt, '#E6EDF3'], ground: false });
+      label(api.t(P.fr, P.en), it.x + IW / 2, it.y - 6, P.lt);
+      if (it.kind === 0) shield = true;
+      else if (it.kind === 1) { djT = P.dur; airJumps = 1; }
+      else if (it.kind === 2) boostT = P.dur;
+      else {
+        rocketT = P.dur; rocketFall = false;
+        p.air = true; p.duck = false; p.vy = 0; bufferT = 0;
+        api.tone(180, 0.4, 'sawtooth', 0.14, 2.4);
+      }
+    }
+    // le bouclier encaisse le choc : l'obstacle vole en éclats
+    function shatter(o) {
+      shield = false; o.gone = true; invT = 0.5;
+      api.tone(620, 0.22, 'sine', 0.3, 0.45); api.sfx('hit');
+      if (!api.reduced) api.shake(4);
+      const cx = o.x + o.w / 2, cy = o.y + o.h / 2;
+      if (o.kind === 'tnt') { api.sfx('boom'); emit(cx, cy, 24, { speed: 260, size: 3, life: 0.8, colors: [C.warm, C.bad, '#F2CC60', '#E6EDF3'], gravity: 600 }); }
+      else if (o.kind === 'cactus') emit(cx, cy, 18, { speed: 200, size: 3, life: 0.8, colors: ['#3FB950', '#1F7A33', '#56D364'], gravity: 650 });
+      else emit(cx, cy, 16, { speed: 180, size: 3, life: 0.8, colors: ['#41507A', '#6A7DB0', '#7EE787'], gravity: 500 });
+      emit(PX + 13, p.y - 20, 12, { speed: 160, size: 2, life: 0.45, colors: [C.cyan, '#A5E4FC'], ground: false });
+    }
+    function powerStatus() {
+      let s = '';
+      if (shield) s = api.t(PU[0].fr, PU[0].en);
+      if (djT > 0) s += (s ? ' · ' : '') + api.t(PU[1].fr, PU[1].en);
+      if (boostT > 0) s += (s ? ' · ' : '') + api.t(PU[2].fr, PU[2].en);
+      if (rocketT > 0) s += (s ? ' · ' : '') + api.t(PU[3].fr, PU[3].en);
+      return s;
     }
 
     /* ── Saut et accroupi ────────────────────────────────────────── */
@@ -443,9 +553,16 @@ SBG.register('runner', {
       jumpHeld = false;
       if (p.air && p.vy < JUMP_CUT) p.vy = JUMP_CUT;
     }
-    function doJump() {
+    function doJump(air) {
       p.vy = JUMP_V; p.air = true; p.airT = 0; p.duck = false;
       bufferT = 0; coyoteT = 0; holdT = 0;
+      if (air) {
+        // second saut : plus court et sans maintien, pour rester dans le cadre
+        p.vy = JUMP_V * 0.9; holdT = HOLD_MAX;
+        api.tone(620, 0.08, 'square', 0.12, 1.6);
+        emit(PX + 13, p.y - 2, 8, { speed: 90, angle: Math.PI / 2, spread: 2.6, size: 2, life: 0.35, colors: ['#E6EDF3', '#9BE9A8', C.good], ground: false });
+        return;
+      }
       api.tone(420, 0.08, 'square', 0.12, 1.6);
       emit(PX + 8, GROUND - 1, 4, { speed: 50, angle: Math.PI, spread: 1.2, size: 2, life: 0.35, colors: ['#56D364', '#6B4A2B'], gravity: 300 });
     }
@@ -460,6 +577,7 @@ SBG.register('runner', {
     function collide() {
       const b = hitbox();
       for (const o of obstacles) {
+        if (o.gone) continue;
         const ox = o.x + o.hx, oy = o.y + o.hy;
         if (b.x < ox + o.hw && b.x + b.w > ox && b.y < oy + o.hh && b.y + b.h > oy) return o;
       }
@@ -468,6 +586,7 @@ SBG.register('runner', {
 
     function die(o) {
       state = 'dead'; deadT = 0; hitFlash = 1;
+      api.status('');
       p.vy = Math.min(p.vy, -260); p.air = true; p.duck = false;
       api.shake(o.kind === 'tnt' ? 10 : 7);
       if (o.kind === 'tnt') {
@@ -506,6 +625,7 @@ SBG.register('runner', {
         hitFlash = Math.max(0, hitFlash - dt * 3);
         flashT = Math.max(0, flashT - dt);
         duckTimer = Math.max(0, duckTimer - dt);
+        for (const l of labels) if (l.on) { l.t += dt; if (l.t > 1.1) l.on = false; }
         for (const o of obstacles) o.t += dt;
 
         if (state === 'ready') {
@@ -530,26 +650,49 @@ SBG.register('runner', {
         speed = SPEED0 + (SPEED_MAX - SPEED0) * (1 - Math.exp(-runT / 95));
         dist += speed * dt;
 
-        // saut : tampon et temps coyote
-        bufferT = Math.max(0, bufferT - dt);
-        if (!p.air) coyoteT = COYOTE; else coyoteT = Math.max(0, coyoteT - dt);
-        if (bufferT > 0 && coyoteT > 0) doJump();
+        // minuteries des bonus
+        djT = Math.max(0, djT - dt);
+        boostT = Math.max(0, boostT - dt);
+        invT = Math.max(0, invT - dt);
 
-        const wantDuck = ducking();
-        let g = GRAV;
-        if (p.air) {
-          p.airT += dt;
-          if (p.vy < 0 && jumpHeld && holdT < HOLD_MAX) { g *= HOLD_GRAV; holdT += dt; }
-          if (wantDuck) { g *= FAST_FALL; if (p.vy < 120) p.vy = Math.max(p.vy, 120); }
-          p.vy += g * dt;
-          p.y += p.vy * dt;
-          if (p.y >= GROUND) {
-            p.y = GROUND; p.vy = 0; p.air = false; p.landT = 0.12;
-            emit(PX + 6, GROUND - 1, 5, { speed: 70, angle: Math.PI, spread: 1.4, size: 2, life: 0.4, colors: ['#6B4A2B', '#56D364', '#8B949E'], gravity: 400 });
+        if (rocketT > 0) {
+          // fusée : montée douce vers l'altitude de croisière, aucune gravité
+          rocketT -= dt;
+          p.y += (ROCKET_Y - p.y) * Math.min(1, dt * 6);
+          p.vy = 0; p.air = true; p.duck = false; bufferT = 0;
+          flameT -= dt;
+          if (flameT <= 0) {
+            flameT = 0.03;
+            emit(PX + 5, p.y - 8, 1, { speed: 130, angle: Math.PI / 2, spread: 0.6, size: 2.5, life: 0.35, colors: [C.warm, '#F2CC60', C.bad], ground: false });
           }
+          if (rocketT <= 0) { rocketT = 0; rocketFall = true; holdT = HOLD_MAX; airJumps = 0; }
+        } else {
+          // saut : tampon et temps coyote, puis second saut en l'air si le bonus est actif
+          bufferT = Math.max(0, bufferT - dt);
+          if (!p.air) coyoteT = COYOTE; else coyoteT = Math.max(0, coyoteT - dt);
+          if (bufferT > 0 && coyoteT > 0) doJump(false);
+          else if (bufferT > 0 && p.air && djT > 0 && airJumps > 0 && !rocketFall) { airJumps--; doJump(true); }
+
+          const wantDuck = ducking();
+          let g = GRAV;
+          if (p.air) {
+            p.airT += dt;
+            if (p.vy < 0 && jumpHeld && holdT < HOLD_MAX) { g *= HOLD_GRAV; holdT += dt; }
+            if (wantDuck) { g *= FAST_FALL; if (p.vy < 120) p.vy = Math.max(p.vy, 120); }
+            p.vy += g * dt;
+            p.y += p.vy * dt;
+            if (p.y >= GROUND) {
+              p.y = GROUND; p.vy = 0; p.air = false; p.landT = 0.12; airJumps = 1;
+              if (rocketFall) { rocketFall = false; invT = INV_LAND; }
+              emit(PX + 6, GROUND - 1, 5, { speed: 70, angle: Math.PI, spread: 1.4, size: 2, life: 0.4, colors: ['#6B4A2B', '#56D364', '#8B949E'], gravity: 400 });
+            }
+          }
+          p.duck = !p.air && wantDuck;
         }
-        p.duck = !p.air && wantDuck;
         p.landT = Math.max(0, p.landT - dt);
+
+        const mask = (shield ? 1 : 0) | (djT > 0 ? 2 : 0) | (boostT > 0 ? 4 : 0) | (rocketT > 0 ? 8 : 0);
+        if (mask !== puMask) { puMask = mask; api.status(powerStatus()); }
 
         // obstacles
         for (const o of obstacles) o.x -= speed * dt;
@@ -557,8 +700,18 @@ SBG.register('runner', {
         const last = obstacles[obstacles.length - 1];
         if (!last || last.x < W + 24 - nextGap) spawn();
 
-        // score
-        score = Math.floor(dist / METERS);
+        // capsules : défilent avec le sol, ramassées au contact
+        const hb = hitbox();
+        for (const it of items) {
+          it.x -= speed * dt; it.t += dt;
+          if (it.got || rocketT > 0) continue;
+          if (hb.x < it.x + IW + 3 && hb.x + hb.w > it.x - 3 && hb.y < it.y + IH + 3 && hb.y + hb.h > it.y - 3) pickup(it);
+        }
+        while (items.length && (items[0].got || items[0].x + IW < -20)) items.shift();
+
+        // score : le bonus x2 double les points gagnés, pas la vitesse
+        pts += speed * dt * (boostT > 0 ? 2 : 1);
+        score = Math.floor(pts / METERS);
         if (score - lastHud >= 25) { lastHud = score - (score % 25); api.hud({ score: lastHud }); }
         const m = Math.floor(score / 100);
         if (m > milestone) {
@@ -568,8 +721,9 @@ SBG.register('runner', {
         if (!unlocked && score >= 1000) { unlocked = true; api.unlock('runner_1000'); }
 
         updateDebris(dt, speed);
+        if (rocketT > 0 || rocketFall || invT > 0) return;
         const hit = collide();
-        if (hit) die(hit);
+        if (hit) { if (shield) shatter(hit); else die(hit); }
       },
 
       render(alpha) {
@@ -585,11 +739,18 @@ SBG.register('runner', {
 
         // obstacles (interpolés entre deux pas fixes)
         const shift = state === 'play' ? speed * (1 - alpha) / 120 : 0;
-        for (const o of obstacles) drawObstacle(o, snap(o.x + shift));
+        for (const o of obstacles) if (!o.gone) drawObstacle(o, snap(o.x + shift));
+        for (const it of items) {
+          if (it.got) continue;
+          const bob = api.reduced ? 0 : Math.round(Math.sin(it.t * 4) * 2);
+          ctx.drawImage(caps[it.kind].c, snap(it.x + shift) - IPAD, it.y - IPAD + bob, IW + IPAD * 2, IH + IPAD * 2);
+        }
 
         drawPlayer(alpha);
         drawDebris();
+        drawLabels();
         drawScore();
+        drawBars();
       },
     });
 
@@ -639,11 +800,70 @@ SBG.register('runner', {
       else if (p.air) spr = jumpS;
       else spr = Math.floor(dist / 22) % 2 ? runA : runB;
       const squash = p.landT > 0 && !p.duck && !dead ? 1 : 0;
+      // invulnérable après la fusée ou un choc encaissé : le coureur clignote
+      const blink = !dead && (rocketFall || invT > 0) && Math.floor(animT * 14) % 2 === 0;
+      if (blink) ctx.globalAlpha = 0.4;
+      if (rocketT > 0 && !dead) drawPack(y);
       ctx.drawImage(spr.c, PX, y - spr.h + squash, spr.w, spr.h - squash);
+      ctx.globalAlpha = 1;
+      if (shield && !dead) drawShield(y, spr.h);
       if (dead && hitFlash > 0 && Math.floor(deadT * 16) % 2 === 0) {
         ctx.globalAlpha = Math.min(1, hitFlash * 1.2);
         ctx.drawImage(deadFlash.c, PX, y - deadFlash.h, deadFlash.w, deadFlash.h);
         ctx.globalAlpha = 1;
+      }
+    }
+
+    // réacteur dorsal : corps gris, coiffe violette, flamme qui vacille
+    function drawPack(y) {
+      const x = PX - 3, top = snap(y - 32);
+      ctx.fillStyle = '#59616D'; ctx.fillRect(x, top, 7, 16);
+      ctx.fillStyle = '#7D8591'; ctx.fillRect(x + 1, top, 2, 16);
+      ctx.fillStyle = C.violet; ctx.fillRect(x, top - 3, 7, 3);
+      ctx.fillStyle = '#EEDDFF'; ctx.fillRect(x + 2, top - 5, 3, 2);
+      ctx.fillStyle = '#2B2F36'; ctx.fillRect(x + 1, top + 16, 5, 2);
+      const f = api.reduced ? 6 : 5 + Math.floor(Math.random() * 5);
+      ctx.fillStyle = C.warm; ctx.fillRect(x + 1, top + 18, 5, f);
+      ctx.fillStyle = '#F2CC60'; ctx.fillRect(x + 2, top + 18, 3, f - 2);
+    }
+    // bouclier : bulle cyan et deux éclats qui tournent autour du coureur
+    function drawShield(y, h) {
+      const cx = PX + 13, cy = y - h / 2, r = h / 2 + 7;
+      ctx.globalAlpha = 0.08; ctx.fillStyle = C.cyan;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 0.55 + (api.reduced ? 0 : Math.sin(animT * 5) * 0.15);
+      ctx.strokeStyle = C.cyan; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.globalAlpha = 1;
+      if (api.reduced) return;
+      ctx.fillStyle = '#A5E4FC';
+      for (let k = 0; k < 2; k++) {
+        const a = animT * 3 + k * Math.PI;
+        ctx.fillRect(snap(cx + Math.cos(a) * r - 1), snap(cy + Math.sin(a) * r - 1), 2, 2);
+      }
+    }
+    // noms des bonus ramassés, qui montent en s'effaçant
+    function drawLabels() {
+      ctx.font = '700 11px ' + MONO; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      for (const l of labels) {
+        if (!l.on) continue;
+        const q = l.t / 1.1;
+        ctx.globalAlpha = q < 0.15 ? q / 0.15 : 1 - Math.max(0, (q - 0.45) / 0.55);
+        ctx.fillStyle = l.col;
+        ctx.fillText(l.text, l.x, snap(l.y - api.ease.out(q) * 22));
+      }
+      ctx.globalAlpha = 1;
+    }
+    // comptes à rebours des bonus à durée, un liseré par bonus au bord haut
+    function drawBars() {
+      if (state !== 'play') return;
+      let row = 0;
+      for (let i = 1; i < 4; i++) {
+        const t = i === 1 ? djT : i === 2 ? boostT : rocketT;
+        if (t <= 0) continue;
+        const y = 1 + row * 4;
+        ctx.fillStyle = 'rgba(240,246,252,0.06)'; ctx.fillRect(0, y, W, 2);
+        ctx.fillStyle = PU[i].col; ctx.fillRect(0, y, Math.round(W * t / PU[i].dur), 2);
+        row++;
       }
     }
 
@@ -666,6 +886,15 @@ SBG.register('runner', {
       if (flashing && !api.reduced) { ctx.shadowColor = C.cyan; ctx.shadowBlur = 10; }
       ctx.fillText(pad(shown), W - 16, 14);
       ctx.shadowBlur = 0;
+      drawBoost();
+    }
+    // badge x2 sous le compteur pendant le bonus de points
+    function drawBoost() {
+      if (boostT <= 0 || state !== 'play') return;
+      if (boostT < 2 && Math.floor(boostT * 6) % 2) return;
+      ctx.textBaseline = 'top'; ctx.textAlign = 'right';
+      ctx.font = '700 13px ' + MONO; ctx.fillStyle = C.warm;
+      ctx.fillText('x2', W - 16, 33);
     }
 
     /* ── Entrées ─────────────────────────────────────────────────── */
@@ -726,8 +955,8 @@ SBG.register('runner', {
     api.overlay({
       title: api.t('Course', 'Run'),
       text: api.t(
-        'Sautez par-dessus les blocs, baissez-vous sous les phantoms. Maintenez pour sauter plus haut.',
-        'Jump over the blocks, duck under the phantoms. Hold to jump higher.'
+        'Sautez par-dessus les blocs, baissez-vous sous les phantoms. Maintenez pour sauter plus haut. Attrapez les capsules : bouclier, double saut, points x2 et fusée.',
+        'Jump over the blocks, duck under the phantoms. Hold to jump higher. Grab the floating capsules: shield, double jump, x2 score and rocket.'
       ),
       action: api.t('Jouer', 'Play'),
       onAction: start,
