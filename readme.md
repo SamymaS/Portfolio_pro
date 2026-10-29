@@ -120,7 +120,8 @@ Définis dans `vercel.json` (CSP, HSTS, `X-Frame-Options`, `nosniff`, `Referrer-
 ├── 404.html                Page d'erreur
 ├── assets/                 Skin et icônes (mougi/), visuels (visuals/, thumbs/, sameva/), logos (logos/), image de partage
 ├── sw.js, manifest.webmanifest, vercel.json, sitemap.xml, robots.txt
-└── CV_Samy_Boudaoud.pdf    Curriculum vitae
+├── CV_Samy_Boudaoud.pdf    CV classique (lisible par les ATS)
+└── CV_Samy_Boudaoud_Gaming.pdf  CV version gaming
 ```
 
 ---

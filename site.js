@@ -528,13 +528,14 @@
     const go = (sel) => { close(); scrollToEl($(sel)); };
     const cmds = {
       help: () => say(en()
-        ? 'whoami  work  stack  contact  cv  github  linkedin  games  lang  clear  exit'
-        : 'whoami  projets  stack  contact  cv  github  linkedin  jeux  lang  clear  exit', 'a'),
+        ? 'whoami  work  stack  contact  cv  cv-gaming  github  linkedin  games  lang  clear  exit'
+        : 'whoami  projets  stack  contact  cv  cv-gaming  github  linkedin  jeux  lang  clear  exit', 'a'),
       whoami: () => say(en() ? 'Samy Boudaoud, software engineer at CS GROUP. Aix-en-Provence, France.' : 'Samy Boudaoud, ingénieur logiciel chez CS GROUP. Aix-en-Provence.'),
       stack: () => say('C++/Qt  .NET  Java/Kotlin  Dart/Flutter  Python  TypeScript\nPostgreSQL  Redis  Docker  Kubernetes  Terraform\nESP32  Modbus RTU  MQTT  BLE'),
       projets: () => go('#projets'),
       contact: () => say('samyboudaoud95@gmail.com'),
-      cv: () => { const a = document.createElement('a'); a.href = 'CV_Samy_Boudaoud.pdf'; a.download = ''; a.click(); },
+      cv: () => { const a = document.createElement('a'); a.href = 'CV_Samy_Boudaoud.pdf'; a.download = 'CV_Samy_Boudaoud_ATS.pdf'; a.click(); },
+      'cv-gaming': () => { const a = document.createElement('a'); a.href = 'CV_Samy_Boudaoud_Gaming.pdf'; a.download = 'CV_Samy_Boudaoud_Gaming.pdf'; a.click(); },
       github: () => window.open('https://github.com/SamymaS', '_blank', 'noopener'),
       linkedin: () => window.open('https://www.linkedin.com/in/samy-boudaoud', '_blank', 'noopener'),
       jeux: () => go('#labo'),
